@@ -1,9 +1,11 @@
+const path = require('path')
 const express = require('express')
 const massive = require('massive')
 const bodyParser = require('body-parser')
 
 let app = express()
 
+app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -21,13 +23,14 @@ function connectDatabase () {
 }
 
 function setupRoutes (db) {
-  app.get('/', (req, res) => {
-    res.send('derp')
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve('public', 'index.html'))
   })
 }
 
 function startServer () {
-  app.listen(3000, () => {
-    console.log('server running at http://localhost:3000')
+  const port = 8000
+  app.listen(port, () => {
+    console.log(`server running at http://localhost:${port}`)
   })
 }
