@@ -4,6 +4,7 @@
   "description": "Website for scheduling courses at Miami University - Oxford.",
   "main": "index.js",
   "scripts": {
+    "start": "node server/index.js",
     "test": "standard",
     "lint": "standard --fix"
   },
@@ -12,6 +13,7 @@
   "dependencies": {
     "body-parser": "1.17.2",
     "express": "4.15.3",
+    "massive": "^3.0.0-rc1",
     "standard": "10.0.2"
   }
 }
