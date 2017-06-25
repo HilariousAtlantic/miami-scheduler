@@ -1,0 +1,17 @@
+{
+  "name": "miami-scheduler",
+  "version": "1.0.0",
+  "description": "Website for scheduling courses at Miami University - Oxford.",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard",
+    "lint": "standard --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "1.17.2",
+    "express": "4.15.3",
+    "standard": "10.0.2"
+  }
+}
