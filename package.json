@@ -8,7 +8,8 @@
     "test": "standard",
     "lint": "standard --fix",
     "build": "$(npm bin)/webpack",
-    "dev": "$(npm bin)/webpack-dev-server"
+    "dev": "$(npm bin)/webpack-dev-server",
+    "import": "cd import && node import.js && cd .."
   },
   "author": "",
   "license": "ISC",
