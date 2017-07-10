@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS meets (
 );
 
 CREATE TABLE IF NOT EXISTS instructors (
+  id                   SERIAL PRIMARY KEY,
   crn                  VARCHAR(8) NOT NULL,
   first                VARCHAR(64) NOT NULL,
   last                 VARCHAR(64) NOT NULL,
@@ -46,6 +47,7 @@ CREATE TABLE IF NOT EXISTS instructors (
 );
 
 CREATE TABLE IF NOT EXISTS attributes (
+  id                   SERIAL PRIMARY KEY,
   crn                  VARCHAR(8) NOT NULL,
   code                 VARCHAR(8),
   description          VARCHAR(32)

@@ -67,7 +67,7 @@ function importSections(db, terms) {
 
             for (meet of section.courseSchedules) {
 
-              if (meet.scheduleTypeCode === 'CLAS') {
+              if (meet.startDate !== meet.endDate) {
                 meets.push({
                   crn: section.courseId,
                   days: meet.days,
@@ -87,6 +87,18 @@ function importSections(db, terms) {
 
           }, [])).then(created => {
             console.log(`added ${created.length} meets in ${subject} from ${term}`)
+          })
+
+          db.attributes.insert(sections.reduce((attributes, section) => {
+
+            return attributes.concat(section.attributes.map(attribute => ({
+              crn: section.courseId,
+              code: attribute.attributeCode,
+              description: attribute.attributeDescription
+            })))
+
+          }, [])).then(created => {
+            console.log(`added ${created.length} attributes in ${subject} from ${term}`)
           })
 
         })
