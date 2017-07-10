@@ -9,7 +9,8 @@
     "lint": "standard --fix",
     "build": "$(npm bin)/webpack",
     "dev": "$(npm bin)/webpack-dev-server",
-    "import": "cd import && node import.js && cd .."
+    "db:setup": "psql -U miami_scheduler -d miami_scheduler -a -f database/setup.sql",
+    "db:import": "cd import && node import.js && cd .."
   },
   "author": "",
   "license": "ISC",

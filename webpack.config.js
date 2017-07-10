@@ -11,7 +11,7 @@ module.exports = {
 
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, 'public'),
+    path: path.resolve(__dirname, 'public')
   },
 
   devtool: 'inline-source-map',
@@ -26,17 +26,17 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-	test: /\.scss?$/,
-	use: [
-	  'style-loader',
-	  'css-loader',
-	  'sass-loader'
-	]
+        test: /\.scss?$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader'
+        ]
       },
       {
-	test: /\.(png|jpg)?$/,
-	use: 'file-loader',
-	exclude: /node_modules/
+        test: /\.(png|jpg)?$/,
+        use: 'file-loader',
+        exclude: /node_modules/
       }
     ]
   },

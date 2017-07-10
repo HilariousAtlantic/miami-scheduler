@@ -1,4 +1,3 @@
-const path = require('path')
 const express = require('express')
 const massive = require('massive')
 const bodyParser = require('body-parser')
@@ -25,22 +24,17 @@ function connectDatabase () {
 
 function setupRoutes (db) {
   app.get('/api/terms', (req, res) => {
-
     db.terms.find().then(terms => res.json(terms))
-    
   })
 
   app.get('/api/courses', (req, res) => {
-
     db.run(`
       SELECT DISTINCT term, subject, number, title, description
       FROM sections
     `).then(courses => res.json(courses))
-
   })
 
   app.get('/api/sections', (req, res) => {
-
     db.sections.find(req.query)
       .then(sections => Promise.all(sections.map(section => {
         return Promise.all([
@@ -55,7 +49,6 @@ function setupRoutes (db) {
         section.attributes = result[2]
         return section
       })))
-
   })
 }
 
