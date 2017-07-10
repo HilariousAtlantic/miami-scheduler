@@ -7,10 +7,11 @@
     "start": "node server/index.js",
     "test": "standard",
     "lint": "standard --fix",
-    "build": "$(npm bin)/webpack",
-    "dev": "$(npm bin)/webpack-dev-server",
+    "app:build": "$(npm bin)/webpack",
+    "app:serve": "$(npm bin)/webpack-dev-server",
+    "db:create": "createuser -d -s miami_scheduler && createdb -U miami_scheduler miami_scheduler",
     "db:setup": "psql -U miami_scheduler -d miami_scheduler -a -f database/setup.sql",
-    "db:import": "cd import && node import.js && cd .."
+    "db:import": "node database/import.js"
   },
   "author": "",
   "license": "ISC",

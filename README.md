@@ -7,6 +7,7 @@ Website for scheduling courses at Miami University - Oxford. www.miamischeduler.
 ```
 brew install postgres
 brew services start postgres
-createuser -d miami_scheduler
-createdb -U miami_scheduler miami_scheduler
+npm run db:create
+npm run db:setup
+npm run db:import
 ```

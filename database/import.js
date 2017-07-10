@@ -15,9 +15,6 @@ function connectDatabase () {
     port: 5432,
     username: 'miami_scheduler',
     database: 'miami_scheduler'
-  }).then(db => {
-    return db.run(fs.readFileSync('setup.sql', 'utf8'))
-      .then(() => db.reload())
   })
 }
 
