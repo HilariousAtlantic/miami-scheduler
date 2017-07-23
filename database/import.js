@@ -1,89 +1,87 @@
-const massive = require('massive')
-const axios = require('axios')
-const fs = require('fs')
+const { MongoClient } = require('mongodb')
+const { get } = require('axios')
 
 const subjects = require('./subjects.json')
 
 Promise.all([connectDatabase(), fetchTerms()])
   .then(([db, termResponses]) => {
     importSections(db, termResponses.map(res => res.data.termId))
-  })
+  }).catch(console.log)
 
 function connectDatabase () {
-  return massive({
-    host: '127.0.0.1',
-    port: 5432,
-    username: 'miami_scheduler',
-    database: 'miami_scheduler'
+  return new Promise((resolve, reject) => {
+    let connection = 'mongodb://localhost:27017/miami-scheduler'
+    MongoClient.connect(connection, (error, db) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(db)
+      }
+    })
   })
 }
 
 function fetchTerms () {
   return Promise.all([
-    axios.get('https://ws.muohio.edu/academicTerms/current'),
-    axios.get('https://ws.muohio.edu/academicTerms/next')
+    get('https://ws.muohio.edu/academicTerms/current'),
+    get('https://ws.muohio.edu/academicTerms/next')
   ])
 }
 
 function importSections (db, terms) {
+  const Courses = db.collection('courses')
+
   terms.forEach(term => {
+    Courses.deleteMany({term}, (error, result) => {
+      if (error) {
+        console.error(error)
+      } else {
+        console.log(`deleted ${result.deletedCount} courses`)
+      }
+    })
+
     subjects.forEach(subject => {
-      console.log(`fetching sections in ${subject} from ${term}`)
+      getCourseSections(term, subject)
+        .then(sections => {
+          Courses.insertMany(sections.reduce((courses, section) => {
+            let course = courses.find(course => course.number === section.courseNumber)
 
-      axios.get(`http://ws.miamioh.edu/courseSectionV2/${term}.json?campusCode=O&courseSubjectCode=${subject}`)
-        .then(response => {
-          let sections = response.data.courseSections
-
-          db.sections.insert(sections.map(section => ({
-            term: term,
-            crn: section.courseId,
-            subject: section.courseSubjectCode,
-            number: section.courseNumber,
-            name: section.courseSectionCode,
-            title: extractTitle(section),
-            description: extractDescription(section),
-            credits_lab_low: parseInt(section.labHoursLow) || 0,
-            credits_lab_high: parseInt(section.labHoursHigh) || 0,
-            credits_lecture_low: parseInt(section.lectureHoursLow) || 0,
-            credits_lecture_high: parseInt(section.lectureHoursHigh) || 0
-          }))).then(created => {
-            console.log(`added ${created.length} sections in ${subject} from ${term}`)
-          })
-
-          db.meets.insert(sections.reduce((meets, section) => {
-            for (let meet of section.courseSchedules) {
-              if (meet.startDate !== meet.endDate) {
-                meets.push({
-                  crn: section.courseId,
-                  days: meet.days,
-                  start_time: meet.startTime,
-                  end_time: meet.endTime,
-                  start_date: meet.startDate,
-                  end_date: meet.endDate,
-                  room_number: meet.room,
-                  building_code: meet.buildingCode,
-                  building_name: meet.buildingName
-                })
+            if (!course) {
+              course = {
+                term: term,
+                subject: subject,
+                number: section.courseNumber,
+                title: extractTitle(section),
+                description: extractDescription(section),
+                sections: []
               }
+              courses.push(course)
             }
 
-            return meets
-          }, [])).then(created => {
-            console.log(`added ${created.length} meets in ${subject} from ${term}`)
-          })
+            course.sections.push({
+              name: section.courseSectionCode,
+              meets: section.courseSchedules.filter(schedule => schedule.scheduleTypeCode === 'CLAS'),
+              exams: section.courseSchedules.filter(schedule => schedule.scheduleTypeCode !== 'CLAS'),
+              instructors: section.instructors,
+              attributes: section.attributes
+            })
 
-          db.attributes.insert(sections.reduce((attributes, section) => {
-            return attributes.concat(section.attributes.map(attribute => ({
-              crn: section.courseId,
-              code: attribute.attributeCode,
-              description: attribute.attributeDescription
-            })))
-          }, [])).then(created => {
-            console.log(`added ${created.length} attributes in ${subject} from ${term}`)
+            return courses
+          }, []), (error, result) => {
+            if (error) {
+              console.error(error)
+            } else {
+              console.log(`added ${result.insertedCount} courses`)
+            }
           })
         })
     })
   })
+}
+
+function getCourseSections (term, subject) {
+  return get(`http://ws.miamioh.edu/courseSectionV2/${term}.json?campusCode=O&courseSubjectCode=${subject}`)
+    .then(response => response.data.courseSections || [])
 }
 
 function extractDescription (section) {

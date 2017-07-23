@@ -7,11 +7,9 @@
     "start": "node server/index.js",
     "test": "standard",
     "lint": "standard --fix",
-    "app:build": "$(npm bin)/webpack",
-    "app:serve": "$(npm bin)/webpack-dev-server",
-    "db:create": "createuser -d -s miami_scheduler && createdb -U miami_scheduler miami_scheduler",
-    "db:setup": "psql -U miami_scheduler -d miami_scheduler -a -f database/setup.sql",
-    "db:import": "node database/import.js"
+    "build": "$(npm bin)/webpack",
+    "serve": "$(npm bin)/webpack-dev-server",
+    "import": "node database/import.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +17,7 @@
     "axios": "^0.16.2",
     "body-parser": "1.17.2",
     "express": "4.15.3",
-    "massive": "^3.0.0-rc1",
+    "mongodb": "^2.2.30",
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "standard": "10.0.2"
