@@ -14,6 +14,13 @@ module.exports = {
     path: path.resolve(__dirname, 'public')
   },
 
+  resolve: {
+    modules: [
+      path.resolve('./app'),
+      path.resolve('./node_modules')
+    ]
+  },
+
   devtool: 'inline-source-map',
 
   module: {
@@ -51,6 +58,10 @@ module.exports = {
     host: 'localhost',
     port: 8080,
     historyApiFallback: true,
-    hot: true
+    hot: true,
+    stats: {
+      colors: true
+    },
+    contentBase: path.join(__dirname, 'public')
   }
 }

@@ -1,13 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Home from './views/home/home'
+import App from './views/app/app'
 
-const Application = () => (
-  <Home />
-)
+const render = () => {
+  ReactDOM.render(
+    <App />,
+    document.getElementById('app')
+  )
+}
 
-ReactDOM.render(
-  <Application />,
-  document.getElementById('app')
-)
+render()
+
+if (module.hot) {
+  module.hot.accept('./views/app/app', () => {
+    render()
+  })
+}

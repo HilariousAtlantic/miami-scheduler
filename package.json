@@ -7,9 +7,9 @@
     "start": "node server/index.js",
     "test": "standard",
     "lint": "standard --fix",
-    "build": "$(npm bin)/webpack",
-    "serve": "$(npm bin)/webpack-dev-server",
-    "import": "node database/import.js"
+    "import": "node database/import.js",
+    "build": "webpack",
+    "dev": "webpack-dev-server"
   },
   "author": "",
   "license": "ISC",
@@ -20,7 +20,10 @@
     "mongodb": "^2.2.30",
     "react": "15.6.1",
     "react-dom": "15.6.1",
-    "standard": "10.0.2"
+    "react-hot-loader": "3.0.0-beta.7",
+    "standard": "10.0.2",
+    "webpack-dev-middleware": "1.11.0",
+    "webpack-hot-middleware": "2.18.1"
   },
   "devDependencies": {
     "babel-core": "6.25.0",
