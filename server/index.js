@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectID } = require('mongodb')
 const bodyParser = require('body-parser')
 
 let app = express()
@@ -29,7 +29,40 @@ function connectDatabase () {
 function setupRoutes (db) {
   app.get('/api/courses', (req, res) => {
     db.collection('courses').find(req.query).toArray((error, courses) => {
-      res.json(courses)
+      if (error) {
+        res.sendStatus(404)
+      } else {
+        res.json(courses.map(course => {
+          return {
+            id: course._id,
+            school: course.school,
+            department: course.department,
+            subject: course.subject,
+            number: course.number,
+            title: course.title,
+            description: course.description,
+            credits: course.credits,
+            section_count: course.sections.length
+          }
+        }))
+      }
+    })
+  })
+
+  app.get('/api/courses/:id', (req, res) => {
+    db.collection('courses').find({_id: new ObjectID(req.params.id)}).next((error, course) => {
+      if (error) {
+        res.sendStatus(404)
+      } else {
+        res.json({
+          subject: course.subject,
+          number: course.number,
+          title: course.title,
+          description: course.description,
+          credits: course.credits,
+          sections: course.sections
+        })
+      }
     })
   })
 }
