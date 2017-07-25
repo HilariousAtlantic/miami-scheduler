@@ -40,6 +40,8 @@ function importSections (db, terms) {
       }
     })
 
+    let count = 0
+
     subjects.forEach(subject => {
       getCourseSections(term, subject)
         .then(sections => {
@@ -49,30 +51,29 @@ function importSections (db, terms) {
             if (!course) {
               course = {
                 term: term,
+                school: section.standardizedDivisionName,
+                department: section.traditionalStandardizedDeptName,
                 subject: subject,
                 number: section.courseNumber,
                 title: extractTitle(section),
                 description: extractDescription(section),
+                credits: extractCredits(section),
                 sections: []
               }
               courses.push(course)
             }
 
             course.sections.push({
+              crn: section.courseId,
               name: section.courseSectionCode,
-              meets: section.courseSchedules.filter(schedule => schedule.scheduleTypeCode === 'CLAS'),
-              exams: section.courseSchedules.filter(schedule => schedule.scheduleTypeCode !== 'CLAS'),
-              instructors: section.instructors,
-              attributes: section.attributes
+              meets: extractMeets(section.courseSchedules),
+              instructors: formatInstructors(section.instructors),
+              attributes: formatAttributes(section.attributes)
             })
 
             return courses
           }, []), (error, result) => {
-            if (error) {
-              console.error(error)
-            } else {
-              console.log(`added ${result.insertedCount} courses`)
-            }
+            console.log(`[${term}](${count++}/${subjects.length}) added ${error ? 0 : result.insertedCount} courses`)
           })
         })
     })
@@ -91,9 +92,59 @@ function extractDescription (section) {
 
 function extractTitle (section) {
   let pattern = /\d+ ([a-zA-Z ]+) \(\d/
+
   if (section.courseDescription && pattern.test(section.courseDescription)) {
     return section.courseDescription.match(pattern)[1]
   } else {
     return section.courseTitle
   }
+}
+
+function extractCredits (section) {
+  const format = credits => parseFloat(credits) || 0
+
+  return {
+    lecture_low: format(section.lectureHoursLow),
+    lecture_high: format(section.lectureHoursHigh),
+    lab_low: format(section.labHoursLow),
+    lab_high: format(section.labHoursHigh)
+  }
+}
+
+function extractMeets (schedules) {
+  return schedules.reduce((meets, schedule) => {
+    if (schedule.startDate !== schedule.endDate) {
+      meets.push({
+        start_date: schedule.startDate,
+        end_date: schedule.endDate,
+        start_time: schedule.startTime,
+        end_time: schedule.endTime,
+        days: schedule.days,
+        room: schedule.room,
+        hall: schedule.buildingCode
+      })
+    }
+    return meets
+  }, [])
+}
+
+function formatInstructors (instructors) {
+  return instructors.map(instructor => {
+    return {
+      first_name: instructor.nameFirst,
+      last_name: instructor.nameLast,
+      prefix: instructor.namePrefix,
+      email: `${instructor.username.toLowerCase()}@miamioh.edu`,
+      primary: Boolean(instructor.primaryInstructor)
+    }
+  })
+}
+
+function formatAttributes (attributes) {
+  return attributes.map(attribute => {
+    return {
+      code: attribute.attributeCode,
+      name: attribute.attributeDescription
+    }
+  })
 }
