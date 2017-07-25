@@ -18,6 +18,7 @@
     "body-parser": "1.17.2",
     "express": "4.15.3",
     "mongodb": "^2.2.30",
+    "primer-css": "9.1.0",
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-hot-loader": "3.0.0-beta.7",

@@ -21,7 +21,7 @@ module.exports = {
     ]
   },
 
-  devtool: 'inline-source-map',
+  devtool: '#inline-source-map',
 
   module: {
     rules: [
@@ -30,15 +30,15 @@ module.exports = {
         use: [
           'babel-loader'
         ],
-        exclude: /node_modules/
+	exclude: /node_modules/
       },
       {
         test: /\.scss?$/,
         use: [
           'style-loader',
           'css-loader',
-          'sass-loader'
-        ]
+	  'sass-loader?includePaths[]=./node_modules'
+	]
       },
       {
         test: /\.(png|jpg)?$/,
@@ -59,6 +59,7 @@ module.exports = {
     port: 8080,
     historyApiFallback: true,
     hot: true,
+    compress: true,
     stats: {
       colors: true
     },

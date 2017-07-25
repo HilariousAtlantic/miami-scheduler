@@ -1,5 +1,6 @@
 const express = require('express')
 const { MongoClient, ObjectID } = require('mongodb')
+const { resolve } = require('path')
 const bodyParser = require('body-parser')
 
 let app = express()
@@ -65,6 +66,12 @@ function setupRoutes (db) {
       }
     })
   })
+
+  if (process.env.NODE_ENV == 'production') {
+    app.get('/', (req, res) => {
+      res.sendFile(resolve('public', 'index.html'))
+    })
+  }
 }
 
 function startServer () {
