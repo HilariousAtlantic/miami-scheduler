@@ -1,10 +1,10 @@
 import React from 'react'
 
-import Home from 'views/home/home'
+import CoursesView from 'views/courses/courses'
 
 import './app.scss'
 
 const App = () =>
-  <Home />
+  <CoursesView />
 
 export default App

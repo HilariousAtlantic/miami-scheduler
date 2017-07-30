@@ -16,7 +16,9 @@
   "dependencies": {
     "axios": "^0.16.2",
     "body-parser": "1.17.2",
+    "cors": "^2.8.4",
     "express": "4.15.3",
+    "lodash": "^4.17.4",
     "mongodb": "^2.2.30",
     "primer-css": "9.1.0",
     "react": "15.6.1",
