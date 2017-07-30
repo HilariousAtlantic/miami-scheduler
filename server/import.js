@@ -91,7 +91,7 @@ function extractDescription (section) {
 }
 
 function extractTitle (section) {
-  let pattern = /\d+ ([a-zA-Z ]+) \(\d/
+  let pattern = /\d+ ([a-zA-Z, ]+) \(\d/
 
   if (section.courseDescription && pattern.test(section.courseDescription)) {
     return section.courseDescription.match(pattern)[1]
