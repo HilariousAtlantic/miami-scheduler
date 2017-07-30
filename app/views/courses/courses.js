@@ -8,23 +8,35 @@ export default class CoursesView extends Component {
 
   constructor() {
     super()
-    this.state = {courses: [], selectedCourses: []}
+    this.state = {terms: [], selectedTerm: null, courses: [], selectedCourses: []}
     this.handleChange = this.handleChange.bind(this)
+    this.selectTerm = this.selectTerm.bind(this)
     this.selectCourse = this.selectCourse.bind(this)
     this.deselectCourse = this.deselectCourse.bind(this)
-    this.deselectAllCourses = this.deselectAllCourses.bind(this)
     this.searchCourses = debounce(this.searchCourses.bind(this), 600)
   }
 
-  handleChange(e) {
-    let query = encodeURI(e.target.value)
-    this.searchCourses(query)
+  componentDidMount() {
+    get('http://localhost:8000/api/terms')
+      .then(response => response.data)
+      .then(terms => terms.sort((a, b) => b.id - a.id))
+      .then(terms => this.setState({terms}))
   }
 
-  searchCourses(query) {
-    get(`http://localhost:8000/api/courses?term=201810&q=${query}`)
+  handleChange(e) {
+    let term = this.state.selectedTerm
+    let query = encodeURI(e.target.value)
+    this.searchCourses(term, query)
+  }
+
+  searchCourses(term, query) {
+    get(`http://localhost:8000/api/courses?term=${term}&q=${query}`)
       .then(response => response.data)
       .then(courses => this.setState({courses}))
+  }
+
+  selectTerm(e) {
+    this.setState({selectedTerm: e.target.value, selectedCourses: []})
   }
 
   selectCourse(course) {
@@ -36,10 +48,6 @@ export default class CoursesView extends Component {
     this.setState({selectedCourses: this.state.selectedCourses.filter(selectedCourse => selectedCourse.id !== course.id)})
   }
 
-  deselectAllCourses() {
-    this.setState({selectedCourses: []})
-  }
-
   render() {
     let creditTotal = this.state.selectedCourses.reduce((total, course) => {
       total.low += course.credits.lecture_low + course.credits.lab_low
@@ -49,8 +57,13 @@ export default class CoursesView extends Component {
 
     return (
       <div className="view courses-view">
-        <div className="course-search">
-          <input type="text" placeholder="Search Courses" onChange={this.handleChange} />
+        <div className="course-list">
+          <div className="course-search">
+            <input type="text" placeholder="Search Courses" onChange={this.handleChange} />
+            <select onChange={this.selectTerm}>
+              {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
+            </select>
+          </div>
           <ul>
             {this.state.courses.map(course => {
               const selectCourse = () => {
@@ -65,22 +78,22 @@ export default class CoursesView extends Component {
           </ul>
         </div>
         <div className="selected-courses">
-          <div className="courses-toolbar">
-            <button className="btn btn-secondary btn-sm" onClick={this.deselectAllCourses}>Remove All</button>
-            <div className="clearfix">
-              <button className="btn btn-secondary btn-sm btn-with-count">Credits</button>
-              <span className="social-count">{creditTotal.low} - {creditTotal.high}</span>
-            </div>
-          </div>
           <ul>
-            {this.state.selectedCourses.map(course => (
-              <li key={course.id}>
-                <h5>{course.subject} {course.number}</h5>
-                <span>{course.title}</span>
-                <p>{course.description}</p>
-              </li>
-            ))}
+            {this.state.selectedCourses.map(course => {
+              const deselectCourse = () => {
+                this.deselectCourse(course)
+              }
+              return (
+                <li key={course.id}>
+                  <button className="btn btn-secondary btn-sm deselect-course" onClick={deselectCourse}>Remove</button>
+                  <span className="course-code">{course.subject} {course.number}</span>
+                  <span className="course-title">{course.title}</span>
+                  <p>{course.description}</p>
+                </li>
+              )
+            })}
           </ul>
+          <button className="generate-schedules">Generate Schedules</button>
         </div>
       </div>
     )

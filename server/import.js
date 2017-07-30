@@ -3,9 +3,10 @@ const { get } = require('axios')
 
 const subjects = require('./subjects.json')
 
-Promise.all([connectDatabase(), fetchTerms()])
-  .then(([db, termResponses]) => {
-    importSections(db, termResponses.map(res => res.data.termId))
+Promise.all([connectDatabase(), fetchTerms(), fetchNextTerm()])
+  .then(([db, terms, nextTerms]) => {
+    importTerms(db, terms.data.academicTerm)
+    //importSections(db, nextTerms.map(term => term.data.termId))
   }).catch(console.log)
 
 function connectDatabase () {
@@ -21,11 +22,32 @@ function connectDatabase () {
   })
 }
 
-function fetchTerms () {
+function fetchNextTerm() {
   return Promise.all([
     get('https://ws.muohio.edu/academicTerms/current'),
     get('https://ws.muohio.edu/academicTerms/next')
   ])
+}
+
+function fetchTerms () {
+  return get('https://ws.muohio.edu/academicTerms')
+}
+
+function importTerms (db, terms) {
+  db.collection('terms').deleteMany({}, (error, result) => {
+    db.collection('terms').insertMany(terms.reduce((active, term) => {
+      if (term.displayTerm === 'true' && term.termId >= '2016') {
+        let [full, season, type, year] = term.name.match(/(\w+) (Term|Semester|Session) (\d+)/)
+        active.push({
+          id: term.termId,
+          name: `${season} ${year}`
+        })
+      }
+      return active
+    }, []), (error, result) => {
+      console.log(`imported ${result.insertedCount} terms`)
+    })
+  })
 }
 
 function importSections (db, terms) {

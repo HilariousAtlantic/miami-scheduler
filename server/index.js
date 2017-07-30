@@ -23,7 +23,12 @@ function connectDatabase () {
       if (error) {
         reject(error)
       } else {
-        db.collection('courses').createIndex({subject: 'text', number: 'text', title: 'text', description: 'text'})
+        db.collection('courses').createIndex({
+          subject: 'text', 
+          number: 'text', 
+          title: 'text', 
+          description: 'text'
+        })
         resolve(db)
       }
     })
@@ -31,12 +36,19 @@ function connectDatabase () {
 }
 
 function setupRoutes (db) {
+
+  app.get('/api/terms', (req, res) => {
+    db.collection('terms').find().toArray((error, terms) => {
+      res.json(terms)
+    })
+  })
+
   app.get('/api/courses', (req, res) => {
     db.collection('courses').find(
       {term: req.query.term, $text: {$search: req.query.q}},
       {score: {$meta: "textScore"}}
-    ).sort({score: {$meta: "textScore"}})
-    .limit(1000).toArray((error, courses) => {
+    ).limit(50).sort({score: {$meta: "textScore"}})
+    .toArray((error, courses) => {
       if (error) {
         res.sendStatus(404)
       } else {
