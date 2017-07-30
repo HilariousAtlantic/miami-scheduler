@@ -7,7 +7,7 @@
     "start": "node server/index.js",
     "test": "standard",
     "lint": "standard --fix",
-    "import": "node database/import.js",
+    "import": "node server/import.js",
     "build": "webpack",
     "dev": "webpack-dev-server"
   },
