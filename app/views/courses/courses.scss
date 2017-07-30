@@ -51,6 +51,7 @@
   flex-direction: column;
 
   .generate-schedules {
+    position: relative;
     display: block;
     border: none;
     padding: 15px;
@@ -62,7 +63,9 @@
     text-align: center;
 
     .credit-total {
-      float: right;
+      position: absolute;
+      top: 15px;
+      right: 15px;
       color: #A1CFA3;
     }
   }
