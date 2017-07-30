@@ -4,7 +4,13 @@ import CoursesView from 'views/courses/courses'
 
 import './app.scss'
 
-const App = () =>
-  <CoursesView />
+const App = () => (
+  <div className="app">
+    <header>
+      <span>Miami Scheduler</span>
+    </header>
+    <CoursesView />
+  </div>
+)
 
 export default App

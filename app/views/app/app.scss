@@ -1,1 +1,29 @@
 @import "primer-core/index.scss";
+
+* {
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  background: #B61E2E;
+  color: #fff;
+  padding: 15px;
+  font-size: 1.25rem;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.view {
+  flex: 1;
+}
