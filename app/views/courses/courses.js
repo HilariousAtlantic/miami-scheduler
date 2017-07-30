@@ -93,7 +93,12 @@ export default class CoursesView extends Component {
               )
             })}
           </ul>
-          <button className="generate-schedules">Generate Schedules</button>
+          <button className="generate-schedules">
+            <span>Generate Schedules</span>
+            <span className="credit-total">
+              {creditTotal.low === creditTotal.high ? creditTotal.high : `${creditTotal.low} - ${creditTotal.high}`} Credits
+            </span>
+          </button>
         </div>
       </div>
     )
