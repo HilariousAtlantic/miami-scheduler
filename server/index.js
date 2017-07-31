@@ -3,10 +3,12 @@ const { MongoClient, ObjectID } = require('mongodb')
 const { resolve } = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const morgan = require('morgan')
 
 let app = express()
 
 app.use(cors())
+app.use(morgan('combined'))
 app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
