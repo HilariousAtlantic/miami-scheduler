@@ -36,7 +36,7 @@ export default class CoursesView extends Component {
   }
 
   selectTerm(e) {
-    this.setState({selectedTerm: e.target.value, selectedCourses: []})
+    this.setState({selectedTerm: e.target.value, courses: [], selectedCourses: []})
   }
 
   selectCourse(course) {
