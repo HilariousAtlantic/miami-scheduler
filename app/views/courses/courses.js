@@ -60,9 +60,12 @@ export default class CoursesView extends Component {
         <div className="course-list">
           <div className="course-search">
             <input type="text" placeholder="Search Courses" onChange={this.handleChange} />
-            <select onChange={this.selectTerm}>
-              {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
-            </select>
+            <div className="terms-dropdown">
+              <select onChange={this.selectTerm}>
+                {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
+              </select>
+              <i className="fa fa-angle-down"></i>
+            </div>
           </div>
           <ul>
             {this.state.courses.map(course => {
