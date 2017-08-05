@@ -20,7 +20,7 @@ export default class CoursesView extends Component {
     get('http://localhost:8000/api/terms')
       .then(response => response.data)
       .then(terms => terms.sort((a, b) => b.id - a.id))
-      .then(terms => this.setState({terms}))
+      .then(terms => this.setState({terms, selectedTerm: terms[0].id}))
   }
 
   handleChange(e) {
