@@ -6,10 +6,11 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: #f5f5f5;
+  background: #fafafa;
 
   .course-search {
     display: flex;
+    background: #eaeaea;
   }
 
   input {
@@ -19,7 +20,7 @@
     border: none;
     outline: none;
     padding: 0 10px;
-    border-right: 1px solid #eee;
+    border-right: 1px solid #ddd;
   }
 
   .terms-dropdown {
@@ -47,13 +48,18 @@
     overflow-y: scroll;
     margin: 0;
     padding: 0;
-    box-shadow: -2px 2px 15px rgba(0,0,0,.10) inset;
+    //box-shadow: -2px 2px 15px rgba(0,0,0,.10) inset;
   }
 
   ul li {
     font-size: .8rem;
     list-style: none;
     padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -73,6 +79,14 @@
     text-transform: uppercase;
     font-weight: 900;
     text-align: center;
+
+    &:hover {
+      background: darken(#43A047, 5%);
+    }
+
+    &:active {
+      background: darken(#43A047, 10%);
+    }
 
     .credit-total {
       position: absolute;

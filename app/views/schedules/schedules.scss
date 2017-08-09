@@ -1,0 +1,109 @@
+.schedules-view {
+  display: flex;
+}
+
+.schedule-options {
+  flex: 1;
+  padding: 15px;
+  background: #fafafa;
+}
+
+.schedule-list {
+  flex: 3;
+}
+
+.schedule {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.schedule-header {
+  display: flex;
+  background: #eaeaea;
+  color: #333;
+  padding: 10px;
+
+  .times {
+    flex: 0;
+  }
+
+  span {
+    flex: 2;
+    text-align: center;
+  }
+}
+
+.schedule-body {
+  flex: 1;
+  display: flex;
+  max-height: 1440px;
+  overflow-y: scroll;
+}
+
+.schedule-column {
+  flex: 2;
+}
+
+.schedule-hours {
+  flex: 0;
+}
+
+.schedule-hour {
+  display: flex;
+  align-items: flex-end;
+  height: 60px;
+  color: #ccc;
+  padding-left: 5px;
+  justify-content: center;
+}
+
+.schedule-actions {
+  display: flex;
+
+  button {
+    border: none;
+    padding: 10px;
+    outline: none;
+    text-transform: uppercase;
+    font-weight: 900;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    background: #eee;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #555;
+  }
+}
+
+.export-schedule {
+  flex: 4;
+  color: #fff;
+  background: #43A047;
+
+  &:hover {
+    background: darken(#43A047, 5%);
+  }
+
+  &:active {
+    background: darken(#43A047, 10%);
+  }
+}
+
+.schedule-nav {
+  flex: 1;
+  color: #333;
+  background: #ddd;
+
+  &:hover {
+    background: darken(#ddd, 5%);
+  }
+
+  &:active {
+    background: darken(#ddd, 10%);
+  }
+}
