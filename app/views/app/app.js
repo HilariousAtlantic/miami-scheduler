@@ -11,6 +11,7 @@ const App = () => (
       <span>Miami Scheduler</span>
     </header>
     <CoursesView />
+    <SchedulesView />
   </div>
 )
 

@@ -6,7 +6,7 @@ const subjects = require('./subjects.json')
 Promise.all([connectDatabase(), fetchTerms(), fetchNextTerm()])
   .then(([db, terms, nextTerms]) => {
     importTerms(db, terms.data.academicTerm)
-    //importSections(db, nextTerms.map(term => term.data.termId))
+    importSections(db, nextTerms.map(term => term.data.termId))
   }).catch(console.log)
 
 function connectDatabase () {
@@ -68,15 +68,14 @@ function importSections (db, terms) {
       getCourseSections(term, subject)
         .then(sections => {
           Courses.insertMany(sections.reduce((courses, section) => {
-            let course = courses.find(course => course.number === section.courseNumber)
+            let course = courses.find(course => course.code === `${subject} ${section.courseNumber}`)
 
             if (!course) {
               course = {
                 term: term,
                 school: section.standardizedDivisionName,
                 department: section.traditionalStandardizedDeptName,
-                subject: subject,
-                number: section.courseNumber,
+                code: `${subject} ${section.courseNumber}`,
                 title: extractTitle(section),
                 description: extractDescription(section),
                 credits: extractCredits(section),

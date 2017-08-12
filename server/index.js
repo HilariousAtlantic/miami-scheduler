@@ -26,8 +26,7 @@ function connectDatabase () {
         reject(error)
       } else {
         db.collection('courses').createIndex({
-          subject: 'text', 
-          number: 'text', 
+          code: 'text', 
           title: 'text', 
           description: 'text'
         })
@@ -86,8 +85,7 @@ function formatCourseResponse(course) {
     id: course._id,
     school: course.school,
     department: course.department,
-    subject: course.subject,
-    number: course.number,
+    code: course.code,
     title: course.title,
     description: course.description,
     credits: course.credits,
@@ -139,7 +137,7 @@ function formatSchedule(schedule) {
   let meets = {M: [], T: [], W: [], R: [], F: []}
   let meetCount = 0, meetTotal = 0
   for (let {course, section} of schedule) {
-    let {subject, number} = course
+    let {code} = course
     let {crn, name} = section
     crns.push(crn)
     for (let meet of section.meets) {
@@ -150,7 +148,7 @@ function formatSchedule(schedule) {
         meetTotal += parseInt(h)*60 + parseInt(m)
       }
       for (let day of meet.days) {
-        meets[day].push({crn, subject, number, name, start_time, end_time, room, hall})
+        meets[day].push({crn, code, name, start_time, end_time, room, hall})
       }
     }
   }

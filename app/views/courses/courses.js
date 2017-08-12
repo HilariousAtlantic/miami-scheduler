@@ -74,7 +74,7 @@ export default class CoursesView extends Component {
               }
               return (
                 <li key={course.id} onClick={selectCourse}>
-                  {course.subject} {course.number} - {course.title}
+                  {course.code} - {course.title}
                 </li>
               )
             })}
