@@ -68,9 +68,9 @@ export default class CoursesView extends Component {
       <div className="view schedules-view">
         <div className="schedule-sidebar">
           <div className="schedule-search">
-            <button className="schedule-nav" onClick={prevSchedule}><i className="fa fa-arrow-left"></i></button>
+            <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
               <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
-            <button className="schedule-nav" onClick={nextSchedule}><i className="fa fa-arrow-right"></i></button>
+            <button onClick={nextSchedule}><i className="fa fa-chevron-right"></i></button>
           </div>
           <div className="schedule-options">
             <h3>Sort Schedules</h3>

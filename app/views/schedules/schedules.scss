@@ -11,15 +11,16 @@
 .schedule-search {
   display: flex;
 
-  button {
-    flex: 1;
-    color: #333;
+  input, button {
     background: #eaeaea;
+    color: #333;
     border: none;
-    padding: 10px;
     outline: none;
-    text-transform: uppercase;
-    font-weight: 900;
+  }
+
+  button {
+    flex: 1;    
+    padding: 10px;
 
     &:hover {
       background: darken(#eaeaea, 5%);
@@ -31,13 +32,14 @@
   }
 
   input {
-    border: none;
-    outline: none;
-    background: #eaeaea;
+    flex: 3;
     text-align: center;
     text-transform: uppercase;
-    font-weight: 900;
-    color: #555;
+    font-weight: bold;
+
+    &:focus {
+      background: darken(#eaeaea, 5%);
+    }
   }
 }
 
