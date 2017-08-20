@@ -5,6 +5,7 @@ import { get } from 'axios'
 import './schedules.scss'
 
 const Days = ['M', 'T', 'W', 'R', 'F']
+const Colors = ['#0D47A1', '#B71C1C', '#1B5E20', '#E65100', '#4A148C', '#263238']
 
 function RadioButton({text, hint}) {
   return (
@@ -28,17 +29,18 @@ function RadioGroup({children, onChange}) {
   )
 }
 
-function Meet({crn, code, start_time, end_time, hall, room}) {
+function Meet({crn, code, start_time, end_time, hall, room, color}) {
   const toMinutes = time => {
     let [h, m] = time.split(':')
     return 60*parseInt(h) + parseInt(m)
   }
-  const positioning = {
+  const styles = {
+    background: color,
     top: toMinutes(start_time)+'px',
     height: (toMinutes(end_time)-toMinutes(start_time))+'px'
   }
   return (
-    <div key={crn} className="section" style={positioning}>
+    <div key={crn} className="section" style={styles}>
       <span>{code}</span>
       <span>{start_time} - {end_time} {hall} {room}</span>
     </div>
@@ -57,7 +59,7 @@ export default class CoursesView extends Component {
 
     const { currentScheduleIndex, schedulesSort } = this.state
     const { schedules } = this.props
-    const currentSchedule = schedules.sort(schedulesSort)[currentScheduleIndex]
+    const { crns, meets } = schedules.sort(schedulesSort)[currentScheduleIndex]
 
     const nextSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex + 1})
     const prevSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex - 1})
@@ -123,7 +125,7 @@ export default class CoursesView extends Component {
               </div>
               {Days.map(day =>
                 <div key={day} className="schedule-column">
-                  {currentSchedule.meets[day].map(meet => <Meet {...meet} />)}
+                  {meets[day].map(meet => <Meet {...meet} color={Colors[crns.indexOf(meet.crn)]} />)}
                 </div>
               )}
             </div>
