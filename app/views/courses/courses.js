@@ -8,11 +8,9 @@ export default class CoursesView extends Component {
 
   constructor() {
     super()
-    this.state = {terms: [], selectedTerm: null, courses: [], selectedCourses: []}
+    this.state = {terms: [], selectedTerm: null, courses: []}
     this.handleChange = this.handleChange.bind(this)
     this.selectTerm = this.selectTerm.bind(this)
-    this.selectCourse = this.selectCourse.bind(this)
-    this.deselectCourse = this.deselectCourse.bind(this)
     this.searchCourses = debounce(this.searchCourses.bind(this), 600)
   }
 
@@ -39,17 +37,11 @@ export default class CoursesView extends Component {
     this.setState({selectedTerm: e.target.value, courses: [], selectedCourses: []})
   }
 
-  selectCourse(course) {
-    if (this.state.selectedCourses.indexOf(course) !== -1) return
-    this.setState({selectedCourses: [...this.state.selectedCourses, course]})
-  }
-
-  deselectCourse(course) {
-    this.setState({selectedCourses: this.state.selectedCourses.filter(selectedCourse => selectedCourse.id !== course.id)})
-  }
-
   render() {
-    let creditTotal = this.state.selectedCourses.reduce((total, course) => {
+
+    const { selectedCourses, onSchedulesGenerate, onCourseSelect } = this.props
+
+    let creditTotal = selectedCourses.reduce((total, course) => {
       total.low += course.credits.lecture_low + course.credits.lab_low
       total.high += course.credits.lecture_high + course.credits.lab_high
       return total
@@ -70,7 +62,7 @@ export default class CoursesView extends Component {
           <ul>
             {this.state.courses.map(course => {
               const selectCourse = () => {
-                this.selectCourse(course)
+                onCourseSelect(course)
               }
               return (
                 <li key={course.id} onClick={selectCourse}>
@@ -82,9 +74,9 @@ export default class CoursesView extends Component {
         </div>
         <div className="selected-courses">
           <ul>
-            {this.state.selectedCourses.map(course => {
+            {selectedCourses.map(course => {
               const deselectCourse = () => {
-                this.deselectCourse(course)
+                onCourseSelect(course)
               }
               return (
                 <li key={course.id}>
@@ -96,7 +88,7 @@ export default class CoursesView extends Component {
               )
             })}
           </ul>
-          <button className="generate-schedules">
+          <button className="generate-schedules" onClick={onSchedulesGenerate}>
             <span>Generate Schedules</span>
             <span className="credit-total">
               {creditTotal.low === creditTotal.high ? creditTotal.high : `${creditTotal.low} - ${creditTotal.high}`} Credits

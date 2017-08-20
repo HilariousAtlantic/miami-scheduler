@@ -4,109 +4,85 @@ import { get } from 'axios'
 
 import './schedules.scss'
 
+const Days = ['M', 'T', 'W', 'R', 'F']
+
+function RadioButton({text, hint}) {
+  return (
+    <div className="form-checkbox">
+      <label>
+        <input type="radio" checked={false} />
+        <span>{text}</span>
+      </label>
+      <p className="note">
+        {hint}
+      </p>
+    </div>
+  )
+}
+
+function RadioGroup({children, onChange}) {
+  return (
+    <div className="radio-group">
+      {children}
+    </div>
+  )
+}
+
+function Meet({crn, code, start_time, end_time, hall, room}) {
+  const toMinutes = time => {
+    let [h, m] = time.split(':')
+    return 60*parseInt(h) + parseInt(m)
+  }
+  const positioning = {
+    top: toMinutes(start_time)+'px',
+    height: (toMinutes(end_time)-toMinutes(start_time))+'px'
+  }
+  return (
+    <div key={crn} className="section" style={positioning}>
+      <span>{code}</span>
+      <span>{start_time} - {end_time} {hall} {room}</span>
+    </div>
+  )
+}
+
 export default class CoursesView extends Component {
 
-  constructor() {
-    super()
-    this.state = {terms: [], selectedTerm: null, courses: [], selectedCourses: []}
-    this.handleChange = this.handleChange.bind(this)
-    this.selectTerm = this.selectTerm.bind(this)
-    this.selectCourse = this.selectCourse.bind(this)
-    this.deselectCourse = this.deselectCourse.bind(this)
-    this.searchCourses = debounce(this.searchCourses.bind(this), 600)
-  }
-
-  componentDidMount() {
-    get('http://localhost:8000/api/terms')
-      .then(response => response.data)
-      .then(terms => terms.sort((a, b) => b.id - a.id))
-      .then(terms => this.setState({terms}))
-  }
-
-  handleChange(e) {
-    let term = this.state.selectedTerm
-    let query = encodeURI(e.target.value)
-    this.searchCourses(term, query)
-  }
-
-  searchCourses(term, query) {
-    get(`http://localhost:8000/api/courses?term=${term}&q=${query}`)
-      .then(response => response.data)
-      .then(courses => this.setState({courses}))
-  }
-
-  selectTerm(e) {
-    this.setState({selectedTerm: e.target.value, courses: [], selectedCourses: []})
-  }
-
-  selectCourse(course) {
-    if (this.state.selectedCourses.indexOf(course) !== -1) return
-    this.setState({selectedCourses: [...this.state.selectedCourses, course]})
-  }
-
-  deselectCourse(course) {
-    this.setState({selectedCourses: this.state.selectedCourses.filter(selectedCourse => selectedCourse.id !== course.id)})
+  state = {
+    currentScheduleIndex: 0,
+    schedulesSort: () => {},
+    lockedSections: []
   }
 
   render() {
-    let creditTotal = this.state.selectedCourses.reduce((total, course) => {
-      total.low += course.credits.lecture_low + course.credits.lab_low
-      total.high += course.credits.lecture_high + course.credits.lab_high
-      return total
-    }, {low: 0, high: 0})
+
+    const { currentScheduleIndex, schedulesSort } = this.state
+    const { schedules } = this.props
+    const currentSchedule = schedules.sort(schedulesSort)[currentScheduleIndex]
+
+    const nextSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex + 1})
+    const prevSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex - 1})
 
     return (
       <div className="view schedules-view">
-        <div className="schedule-options">
-          <h3>Sort Schedules</h3>
-          <div className="form-checkbox">
-            <label>
-              <input type="radio" checked />
-              <span>Early classes</span>
-            </label>
-            <p className="note">
-              Schedules with earlier classes will appear first
-            </p>
+        <div className="schedule-sidebar">
+          <div className="schedule-search">
+            <button className="schedule-nav" onClick={prevSchedule}><i className="fa fa-arrow-left"></i></button>
+              <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
+            <button className="schedule-nav" onClick={nextSchedule}><i className="fa fa-arrow-right"></i></button>
           </div>
-          <div className="form-checkbox">
-            <label>
-              <input type="radio" checked={false} />
-              <span>Later classes</span>
-            </label>
-            <p className="note">
-              Schedules with later classes will appear first
-            </p>
+          <div className="schedule-options">
+            <h3>Sort Schedules</h3>
+            <RadioGroup>
+              <RadioButton text="Early Classes" hint="Schedules with earlier classes will show first" />
+              <RadioButton text="Later Classes" hint="Schedules with later classes will show first" />
+              <RadioButton text="Average Grade" hint="Schedules with good instructors will show first" />
+            </RadioGroup>
+            <h3>Full Sections</h3>
+            <RadioGroup>
+              <RadioButton text="Hide Schedule" hint="Schedules with a full section will not show" />
+              <RadioButton text="Fade Section" hint="Full sections will appear faded in the calendar" />
+            </RadioGroup>     
           </div>
-          <div className="form-checkbox">
-            <label>
-              <input type="radio" checked={false} />
-              <span>Average grade</span>
-            </label>
-            <p className="note">
-              Schedules with good instructors will appear first
-            </p>
-          </div>
-
-          <h3>Full Sections</h3>
-          <div className="form-checkbox">
-            <label>
-              <input type="checkbox" checked="checked" />
-              <span>Hide schedule</span>
-            </label>
-            <p className="note">
-              Schedules with a full section will not show
-            </p>
-          </div>
-          <div className="form-checkbox">
-            <label>
-              <input type="checkbox" checked="checked" />
-              <span>Fade section</span>
-            </label>
-            <p className="note">
-              Full sections will appear faded in the calendar
-            </p>
-          </div>
-            
         </div>
         <div className="schedule-list">
           <div className="schedule">
@@ -145,19 +121,13 @@ export default class CoursesView extends Component {
                 <div className="schedule-hour">11pm</div>
                 <div className="schedule-hour">12am</div>
               </div>
-              <div className="schedule-column"></div>
-              <div className="schedule-column"></div>
-              <div className="schedule-column"></div>
-              <div className="schedule-column"></div>
-              <div className="schedule-column"></div>
-              <div className="schedule-column"></div>
+              {Days.map(day =>
+                <div key={day} className="schedule-column">
+                  {currentSchedule.meets[day].map(meet => <Meet {...meet} />)}
+                </div>
+              )}
             </div>
-            <div className="schedule-actions">
-              <button className="export-schedule">Export Schedule</button>
-              <button className="schedule-nav"><i className="fa fa-arrow-left"></i></button>
-              <input type="text" value="1 of 20" />
-              <button className="schedule-nav"><i className="fa fa-arrow-right"></i></button>
-            </div>
+            <button className="export-schedule">Export Schedule</button>
           </div>
         </div>
       </div>
