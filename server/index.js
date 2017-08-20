@@ -108,12 +108,14 @@ function generateSchedules(courses, schedules = [], currentSchedule = []) {
 }
 
 function isScheduleValid(schedule) {
-  let times = {M: [], T: [], W: [], R: [], F: []}
   for (let i = 0; i < schedule.length; i++) {
     for (let meet1 of schedule[i].section.meets) {
       for (let j = i + 1; j < schedule.length; j++) {
         for (let meet2 of schedule[j].section.meets) {
-          if (containsSameDay(meet1, meet2) && meet1.start_time < meet2.end_time && meet1.end_time < meet2.start_time) {
+          if (containsSameDay(meet1, meet2) && (
+            meet1.start_time <= meet2.end_time && meet2.start_time <= meet1.end_time ||
+            meet2.start_time <= meet1.end_time && meet1.start_time <= meet2.end_time
+          )) {
             return false
           }
         }

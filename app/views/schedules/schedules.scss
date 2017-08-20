@@ -62,15 +62,7 @@
   display: flex;
   color: #333;
   padding: 10px 0;
-
-  .times {
-    flex: 1;
-  }
-
-  span {
-    flex: 3;
-    text-align: center;
-  }
+  text-align: center;
 }
 
 .schedule-body {
@@ -81,14 +73,15 @@
   font-size: .75rem;
 }
 
+.schedule-column:first-of-type {
+  width: 50px;
+  flex: unset;
+}
+
 .schedule-column {
   position: relative;
   flex: 3;
   padding: 2px;
-}
-
-.schedule-hours {
-  flex: 1;
 }
 
 .schedule-hour {

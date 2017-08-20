@@ -87,15 +87,15 @@ export default class CoursesView extends Component {
         <div className="schedule-list">
           <div className="schedule">
             <div className="schedule-header">
-              <span className="times"><i className="fa fa-clock-o"></i></span>
-              <span>Monday</span>
-              <span>Tuesday</span>
-              <span>Wednesday</span>
-              <span>Thursday</span>
-              <span>Friday</span>
+              <span className="schedule-column"><i className="fa fa-clock-o"></i></span>
+              <span className="schedule-column">Monday</span>
+              <span className="schedule-column">Tuesday</span>
+              <span className="schedule-column">Wednesday</span>
+              <span className="schedule-column">Thursday</span>
+              <span className="schedule-column">Friday</span>
             </div>
             <div className="schedule-body">
-              <div className="schedule-column schedule-hours">
+              <div className="schedule-column">
                 <div className="schedule-hour">1am</div>
                 <div className="schedule-hour">2am</div>
                 <div className="schedule-hour">3am</div>
