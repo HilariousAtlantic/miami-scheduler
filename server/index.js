@@ -142,8 +142,7 @@ function formatSchedule(schedule) {
     let {code} = course
     let {crn, name} = section
     crns.push(crn)
-    for (let meet of section.meets) {
-      let {start_time, end_time, room, hall} = meet
+    for (let {start_time, end_time, room, hall} of section.meets) {
       if (start_time) {
         let [h, m] = start_time.split(':')
         meetCount++

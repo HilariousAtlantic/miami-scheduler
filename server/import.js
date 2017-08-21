@@ -68,6 +68,9 @@ function importSections (db, terms) {
       getCourseSections(term, subject)
         .then(sections => {
           Courses.insertMany(sections.reduce((courses, section) => {
+
+            if (!section.courseSchedules.length) return courses;
+
             let course = courses.find(course => course.code === `${subject} ${section.courseNumber}`)
 
             if (!course) {
