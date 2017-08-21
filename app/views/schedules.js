@@ -50,15 +50,26 @@ function Meet({crn, code, start_time, end_time, hall, room, color}) {
 export default class CoursesView extends Component {
 
   state = {
+    loading: true,
+    schedules: [],
     currentScheduleIndex: 0,
     schedulesSort: () => {},
     lockedSections: []
   }
 
+  componentWillMount() {
+    get(`http://localhost:8000/api/schedules${this.props.location.search}`)
+      .then(res => {
+        const schedules = res.data;
+        this.setState({schedules, loading: false})
+      })
+  }
+
   render() {
 
-    const { currentScheduleIndex, schedulesSort } = this.state
-    const { schedules } = this.props
+    if (this.state.loading) return <span>Loading...</span>
+
+    const { schedules, currentScheduleIndex, schedulesSort } = this.state
     const { crns, meets } = schedules.sort(schedulesSort)[currentScheduleIndex]
 
     const nextSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex + 1})

@@ -1,19 +1,29 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { render } from 'react-dom'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 
-import App from './views/app/app'
+import CoursesView from 'views/courses'
+import SchedulesView from 'views/schedules'
 
-const render = () => {
-  ReactDOM.render(
-    <App />,
-    document.getElementById('app')
-  )
-}
+import './index.scss'
 
-render()
+const app =
+  <BrowserRouter>
+    <div className="app">
+      <header>
+        <span>Miami Scheduler</span>
+      </header>
+      <Switch>
+        <Route path="/courses" component={CoursesView} />
+        <Route path="/schedules" component={SchedulesView} /> 
+      </Switch>
+    </div>
+  </BrowserRouter>
+
+const start = () => render(app, document.getElementById('app'))
+
+start()
 
 if (module.hot) {
-  module.hot.accept('./views/app/app', () => {
-    render()
-  })
+  module.hot.accept('index', start)
 }
