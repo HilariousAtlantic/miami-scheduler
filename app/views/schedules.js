@@ -34,7 +34,7 @@ function RadioGroup({children, onChange}) {
   )
 }
 
-function Meet({crn, code, start_time, end_time, hall, room, color}) {
+function Meet({crn, code, start_time, end_time, hall, room, color, locked, onClick}) {
   const toMinutes = time => {
     let [h, m] = time.split(':')
     return 60*parseInt(h) + parseInt(m)
@@ -45,9 +45,13 @@ function Meet({crn, code, start_time, end_time, hall, room, color}) {
     height: (toMinutes(end_time)-toMinutes(start_time))+'px'
   }
   return (
-    <div key={crn} className="section" style={styles}>
+    <div key={crn} className={['section', locked && 'locked'].join(' ')} style={styles} onClick={onClick}>
       <span>{code}</span>
       <span>{start_time} - {end_time} {hall} {room}</span>
+      <div className="lock">
+        <span>Click to {locked && 'un'}lock</span>
+        <i className="fa fa-lock"></i>
+      </div>
     </div>
   )
 }
@@ -70,12 +74,28 @@ export default class CoursesView extends Component {
       })
   }
 
+  toggleLock = crn => {
+    this.setState(({lockedSections, currentScheduleIndex}) => {
+      if (lockedSections.includes(crn)) {
+        console.log('removing', crn)
+        return {lockedSections: lockedSections.filter(c => c !== crn)}
+      } else {
+        console.log('adding', crn)
+        return {lockedSections: [...lockedSections, crn]}
+      }
+    })
+  }
+
   render() {
 
     if (this.state.loading) return <span>Loading...</span>
 
-    const { schedules, currentScheduleIndex, schedulesSort } = this.state
-    const { crns, meets } = schedules.sort(sorts[schedulesSort])[currentScheduleIndex]
+    const { currentScheduleIndex, schedulesSort, lockedSections } = this.state
+    const schedules = this.state.schedules
+      .filter(schedule => lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1))
+      .sort(sorts[schedulesSort])
+    
+    const { crns, meets } = schedules[currentScheduleIndex]
 
     const nextSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex + 1})
     const prevSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex - 1})
@@ -141,7 +161,11 @@ export default class CoursesView extends Component {
               </div>
               {Days.map(day =>
                 <div key={day} className="schedule-column">
-                  {meets[day].map(meet => <Meet {...meet} color={Colors[crns.indexOf(meet.crn)]} />)}
+                  {meets[day].map(meet => <Meet {...meet} 
+                    color={Colors[crns.indexOf(meet.crn)]}
+                    locked={lockedSections.includes(meet.crn)}
+                    onClick={() => this.toggleLock(meet.crn)}
+                  />)}
                 </div>
               )}
             </div>
