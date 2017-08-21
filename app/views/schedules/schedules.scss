@@ -34,11 +34,14 @@
   input {
     flex: 3;
     text-align: center;
-    text-transform: uppercase;
     font-weight: bold;
 
-    &:focus {
+    &:hover {
       background: darken(#eaeaea, 5%);
+    }
+
+    &:focus {
+      background: darken(#eaeaea, 10%);
     }
   }
 }

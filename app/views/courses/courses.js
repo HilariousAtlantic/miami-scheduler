@@ -56,7 +56,7 @@ export default class CoursesView extends Component {
               <select onChange={this.selectTerm}>
                 {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
               </select>
-              <i className="fa fa-angle-down"></i>
+              <i className="fa fa-chevron-down"></i>
             </div>
           </div>
           <ul>

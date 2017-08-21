@@ -8,41 +8,6 @@
   flex: 1;
   background: #fafafa;
 
-  .course-search {
-    display: flex;
-    background: #eaeaea;
-  }
-
-  input {
-    width: 100%;
-    line-height: 2.5rem;
-    background: none;
-    border: none;
-    outline: none;
-    padding: 0 10px;
-    border-right: 1px solid #ddd;
-  }
-
-  .terms-dropdown {
-    position: relative;
-    i {
-      line-height: 2.5rem;
-      position: absolute;
-      right: 10px;
-      pointer-events: none;
-    }
-  }
-
-  select {
-    height: 100%;
-    background: none;
-    border: none;
-    outline: none;
-    width: 150px;
-    -webkit-appearance: none;
-    padding: 0 10px;
-  }
-
   ul {
     flex: 1;
     overflow-y: scroll;
@@ -61,7 +26,54 @@
       text-decoration: underline;
     }
   }
+
 }
+
+.course-search {
+  display: flex;
+  
+  input, select {
+    background: #eaeaea;
+    color: #333;
+    border: none;
+    outline: none;
+    font-weight: bold;
+    padding: 0 10px;
+
+    &:hover {
+      background: darken(#eaeaea, 5%);
+    }
+
+    &:active, &:focus {
+      background: darken(#eaeaea, 10%);
+    }
+  }
+
+  input {
+    width: 100%;
+    line-height: 2.5rem;
+  }
+
+  .terms-dropdown {
+    position: relative;
+
+    select {
+      line-height: 2.5rem;
+      width: 150px;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+
+    i {
+      line-height: 2.5rem;
+      position: absolute;
+      right: 10px;
+      pointer-events: none;
+    }
+  }
+}
+
+  
 
 .selected-courses {
   flex: 2;
