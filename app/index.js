@@ -14,6 +14,9 @@ const app =
         <span>Miami Scheduler</span>
       </header>
       <Switch>
+        <Route exact path="/">
+          <Redirect to="/courses" />
+        </Route>
         <Route path="/courses" component={CoursesView} />
         <Route path="/schedules" component={SchedulesView} /> 
       </Switch>
