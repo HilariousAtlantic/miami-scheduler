@@ -7,6 +7,11 @@ import './schedules.scss'
 const Days = ['M', 'T', 'W', 'R', 'F']
 const Colors = ['#0D47A1', '#B71C1C', '#1B5E20', '#E65100', '#4A148C', '#263238']
 
+const sorts = {
+  early: (a, b) => a.weight - b.weight,
+  later: (a, b) => b.weight - a.weight,
+}
+
 function RadioButton({text, hint}) {
   return (
     <div className="form-checkbox">
@@ -53,7 +58,7 @@ export default class CoursesView extends Component {
     loading: true,
     schedules: [],
     currentScheduleIndex: 0,
-    schedulesSort: () => {},
+    schedulesSort: 'early',
     lockedSections: []
   }
 
@@ -70,7 +75,7 @@ export default class CoursesView extends Component {
     if (this.state.loading) return <span>Loading...</span>
 
     const { schedules, currentScheduleIndex, schedulesSort } = this.state
-    const { crns, meets } = schedules.sort(schedulesSort)[currentScheduleIndex]
+    const { crns, meets } = schedules.sort(sorts[schedulesSort])[currentScheduleIndex]
 
     const nextSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex + 1})
     const prevSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex - 1})
