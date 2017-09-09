@@ -25,12 +25,20 @@ function connectDatabase () {
       if (error) {
         reject(error)
       } else {
-        db.collection('courses').createIndex({
-          code: 'text', 
-          title: 'text', 
-          description: 'text'
+        db.collection('courses').dropAllIndexes(err => {
+          db.collection('courses').createIndex({
+            code: 'text',
+            title: 'text',
+            description: 'text'
+          }, {
+            weights: {
+             code: 30,
+             title: 10,
+             description: 5
+            }
+          })
+          resolve(db)
         })
-        resolve(db)
       }
     })
   })
