@@ -28,13 +28,20 @@ function connectDatabase () {
         db.collection('courses').dropAllIndexes(err => {
           db.collection('courses').createIndex({
             code: 'text',
+            codeWithoutSuffix: 'text',
+            codeWithoutSpaces: 'text',
+            codeWithoutSpacesOrSuffix: 'text',
             title: 'text',
             description: 'text'
           }, {
+            name: 'courseSearch',
             weights: {
-             code: 30,
-             title: 10,
-             description: 5
+              code: 30,
+              codeWithoutSuffix: 30,
+              codeWithoutSpaces: 30,
+              codeWithoutSpacesOrSuffix: 30,
+              title: 10,
+              description: 5
             }
           })
           resolve(db)
