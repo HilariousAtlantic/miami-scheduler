@@ -10,7 +10,7 @@ export default class CoursesView extends Component {
 
   constructor() {
     super()
-    this.state = {loading: true, terms: [], selectedTerm: null, courses: [], selectedCourses: []}
+    this.state = {loading: true, terms: [], selectedTerm: null, courses: [], selectedCourses: [], query: ''}
     this.handleChange = this.handleChange.bind(this)
     this.selectTerm = this.selectTerm.bind(this)
     this.searchCourses = debounce(this.searchCourses.bind(this), 600)
@@ -24,19 +24,21 @@ export default class CoursesView extends Component {
   }
 
   handleChange(e) {
-    let term = this.state.selectedTerm
-    let query = encodeURI(e.target.value)
-    this.searchCourses(term, query)
+    this.setState({ query: encodeURI(e.target.value) })
+    this.searchCourses()
   }
 
-  searchCourses(term, query) {
-    get(`http://localhost:8000/api/courses?term=${term}&q=${query}`)
+  searchCourses() {
+    const { selectedTerm, query } = this.state
+    get(`http://localhost:8000/api/courses?term=${selectedTerm}&q=${query}`)
       .then(response => response.data)
       .then(courses => this.setState({courses}))
   }
 
   selectTerm(e) {
-    this.setState({selectedTerm: e.target.value, courses: [], selectedCourses: []})
+    this.setState({selectedTerm: e.target.value, courses: [], selectedCourses: []}, () => {
+      this.searchCourses()
+    })
   }
 
   selectCourse = course => {
