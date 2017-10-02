@@ -78,10 +78,10 @@ export default class CoursesView extends Component {
     this.setState(({lockedSections, currentScheduleIndex}) => {
       if (lockedSections.includes(crn)) {
         console.log('removing', crn)
-        return {lockedSections: lockedSections.filter(c => c !== crn)}
+        return {lockedSections: lockedSections.filter(c => c !== crn), currentScheduleIndex: 0}
       } else {
         console.log('adding', crn)
-        return {lockedSections: [...lockedSections, crn]}
+        return {lockedSections: [...lockedSections, crn], currentScheduleIndex: 0}
       }
     })
   }
@@ -102,74 +102,84 @@ export default class CoursesView extends Component {
 
     return (
       <div className="view schedules-view">
-        <div className="schedule-sidebar">
-          <div className="schedule-search">
-            <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
-              <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
-            <button onClick={nextSchedule}><i className="fa fa-chevron-right"></i></button>
-          </div>
-          <div className="schedule-options">
-            <h3>Sort Schedules</h3>
-            <RadioGroup>
-              <RadioButton text="Early Classes" hint="Schedules with earlier classes will show first" />
-              <RadioButton text="Later Classes" hint="Schedules with later classes will show first" />
-              <RadioButton text="Average Grade" hint="Schedules with good instructors will show first" />
-            </RadioGroup>
-            <h3>Full Sections</h3>
-            <RadioGroup>
-              <RadioButton text="Hide Schedule" hint="Schedules with a full section will not show" />
-              <RadioButton text="Fade Section" hint="Full sections will appear faded in the calendar" />
-            </RadioGroup>     
+        <div className="sidebar">
+          <header>
+            <i className="fa fa-calendar"></i>
+            <a href="/">Miami Scheduler</a>
+          </header>
+          <div className="schedule-sidebar">
+            <div className="schedule-options">
+              <h3>Sort Schedules</h3>
+              <RadioGroup>
+                <RadioButton text="Early Classes" hint="Schedules with earlier classes will show first" />
+                <RadioButton text="Later Classes" hint="Schedules with later classes will show first" />
+                <RadioButton text="Average Grade" hint="Schedules with easy instructors will show first" />
+              </RadioGroup>
+              <h3>Full Sections</h3>
+              <RadioGroup>
+                <RadioButton text="Hide Schedule" hint="Schedules with a full section will not show" />
+                <RadioButton text="Fade Section" hint="Full sections will appear faded in the calendar" />
+              </RadioGroup>     
+            </div>
           </div>
         </div>
-        <div className="schedule-list">
-          <div className="schedule">
-            <div className="schedule-header">
-              <span className="schedule-column"><i className="fa fa-clock-o"></i></span>
-              <span className="schedule-column">Monday</span>
-              <span className="schedule-column">Tuesday</span>
-              <span className="schedule-column">Wednesday</span>
-              <span className="schedule-column">Thursday</span>
-              <span className="schedule-column">Friday</span>
+        <div className="content">
+          <div className="toolbar">
+            <div className="schedule-search">
+              <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
+                <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
+              <button onClick={nextSchedule}><i className="fa fa-chevron-right"></i></button>
             </div>
-            <div className="schedule-body">
-              <div className="schedule-column">
-                <div className="schedule-hour">1am</div>
-                <div className="schedule-hour">2am</div>
-                <div className="schedule-hour">3am</div>
-                <div className="schedule-hour">4am</div>
-                <div className="schedule-hour">5am</div>
-                <div className="schedule-hour">6am</div>
-                <div className="schedule-hour">7am</div>
-                <div className="schedule-hour">8am</div>
-                <div className="schedule-hour">9am</div>
-                <div className="schedule-hour">10am</div>
-                <div className="schedule-hour">11am</div>
-                <div className="schedule-hour">12pm</div>
-                <div className="schedule-hour">1pm</div>
-                <div className="schedule-hour">2pm</div>
-                <div className="schedule-hour">3pm</div>
-                <div className="schedule-hour">4pm</div>
-                <div className="schedule-hour">5pm</div>
-                <div className="schedule-hour">6pm</div>
-                <div className="schedule-hour">7pm</div>
-                <div className="schedule-hour">8pm</div>
-                <div className="schedule-hour">9pm</div>
-                <div className="schedule-hour">10pm</div>
-                <div className="schedule-hour">11pm</div>
-                <div className="schedule-hour">12am</div>
+            <button className="button button--primary">Export Schedule</button>
+          </div>
+          <div className="schedule-container">
+            <div className="schedule">
+              <div className="schedule-header">
+                <span className="schedule-column"><i className="fa fa-clock-o"></i></span>
+                <span className="schedule-column">Monday</span>
+                <span className="schedule-column">Tuesday</span>
+                <span className="schedule-column">Wednesday</span>
+                <span className="schedule-column">Thursday</span>
+                <span className="schedule-column">Friday</span>
               </div>
-              {Days.map(day =>
-                <div key={day} className="schedule-column">
-                  {meets[day].map(meet => <Meet {...meet} 
-                    color={Colors[crns.indexOf(meet.crn)]}
-                    locked={lockedSections.includes(meet.crn)}
-                    onClick={() => this.toggleLock(meet.crn)}
-                  />)}
+              <div className="schedule-body">
+                <div className="schedule-column">
+                  <div className="schedule-hour">1am</div>
+                  <div className="schedule-hour">2am</div>
+                  <div className="schedule-hour">3am</div>
+                  <div className="schedule-hour">4am</div>
+                  <div className="schedule-hour">5am</div>
+                  <div className="schedule-hour">6am</div>
+                  <div className="schedule-hour">7am</div>
+                  <div className="schedule-hour">8am</div>
+                  <div className="schedule-hour">9am</div>
+                  <div className="schedule-hour">10am</div>
+                  <div className="schedule-hour">11am</div>
+                  <div className="schedule-hour">12pm</div>
+                  <div className="schedule-hour">1pm</div>
+                  <div className="schedule-hour">2pm</div>
+                  <div className="schedule-hour">3pm</div>
+                  <div className="schedule-hour">4pm</div>
+                  <div className="schedule-hour">5pm</div>
+                  <div className="schedule-hour">6pm</div>
+                  <div className="schedule-hour">7pm</div>
+                  <div className="schedule-hour">8pm</div>
+                  <div className="schedule-hour">9pm</div>
+                  <div className="schedule-hour">10pm</div>
+                  <div className="schedule-hour">11pm</div>
+                  <div className="schedule-hour">12am</div>
                 </div>
-              )}
+                {Days.map(day =>
+                  <div key={day} className="schedule-column">
+                    {meets[day].map(meet => <Meet {...meet} 
+                      color={Colors[crns.indexOf(meet.crn)]}
+                      locked={lockedSections.includes(meet.crn)}
+                      onClick={() => this.toggleLock(meet.crn)}
+                    />)}
+                  </div>
+                )}
+              </div>
             </div>
-            <button className="export-schedule">Export Schedule</button>
           </div>
         </div>
       </div>

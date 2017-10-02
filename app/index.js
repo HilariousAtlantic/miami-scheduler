@@ -10,15 +10,10 @@ import './index.scss'
 const app =
   <BrowserRouter>
     <div className="app">
-      <header>
-        <span>Miami Scheduler</span>
-      </header>
       <Switch>
-        <Route exact path="/">
-          <Redirect to="/courses" />
-        </Route>
-        <Route path="/courses" component={CoursesView} />
+        <Route exact path="/" component={CoursesView} />
         <Route path="/schedules" component={SchedulesView} /> 
+        <Redirect to="/" />
       </Switch>
     </div>
   </BrowserRouter>

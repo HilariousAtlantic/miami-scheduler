@@ -53,7 +53,7 @@ export default class CoursesView extends Component {
 
     if (this.state.loading) return <span>Loading...</span>
 
-    let creditTotal = this.state.selectedCourses.reduce((total, course) => {
+    const {low, high} = this.state.selectedCourses.reduce((total, course) => {
       total.low += course.credits.lecture_low + course.credits.lab_low
       total.high += course.credits.lecture_high + course.credits.lab_high
       return total
@@ -63,51 +63,64 @@ export default class CoursesView extends Component {
 
     return (
       <div className="view courses-view">
-        <div className="course-list">
-          <div className="course-search">
-            <input type="text" placeholder="Search Courses" onChange={this.handleChange} />
-            <div className="terms-dropdown">
-              <select onChange={this.selectTerm}>
-                {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
-              </select>
-              <i className="fa fa-chevron-down"></i>
+
+        <div className="sidebar">
+          <header>
+            <i className="fa fa-calendar"></i>
+            <a href="/">Miami Scheduler</a>
+          </header>
+          <div className="course-list">
+            <div className="course-search">
+              <div className="search-input">
+                <i className="fa fa-search"></i>
+                <input type="text" placeholder="Search Courses" onChange={this.handleChange} />
+              </div>
+              <div className="terms-dropdown">
+                <select onChange={this.selectTerm}>
+                  {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
+                </select>
+                <i className="fa fa-chevron-down"></i>
+              </div>
             </div>
+            <ul>
+              {this.state.courses.map(course => {
+                const selectCourse = () => {
+                  this.selectCourse(course)
+                }
+                return (
+                  <li key={course.id} onClick={selectCourse}>
+                    {course.code} - {course.title}
+                  </li>
+                )
+              })}
+            </ul>
           </div>
-          <ul>
-            {this.state.courses.map(course => {
-              const selectCourse = () => {
-                this.selectCourse(course)
-              }
-              return (
-                <li key={course.id} onClick={selectCourse}>
-                  {course.code} - {course.title}
-                </li>
-              )
-            })}
-          </ul>
         </div>
-        <div className="selected-courses">
-          <ul>
-            {this.state.selectedCourses.map(course => {
-              const deselectCourse = () => {
-                this.deselectCourse(course)
-              }
-              return (
-                <li key={course.id}>
-                  <button className="btn btn-secondary btn-sm deselect-course" onClick={deselectCourse}>Remove</button>
-                  <span className="course-code">{course.subject} {course.number}</span>
-                  <span className="course-title">{course.title}</span>
-                  <p>{course.description}</p>
-                </li>
-              )
-            })}
-          </ul>
-          <Link className="generate-schedules" to={`/schedules?courses=${courseIds}`}>
-            <span>Generate Schedules</span>
-            <span className="credit-total">
-              {creditTotal.low === creditTotal.high ? creditTotal.high : `${creditTotal.low} - ${creditTotal.high}`} Credits
-            </span>
-          </Link>
+        
+        <div className="content">
+          <div className="toolbar">
+            <span>{`${low}` + (low != high ? ' - ' + high : '')} Credits</span>
+            <Link className="button button--primary" to={`/schedules?courses=${courseIds}`}>
+              <span>Generate Schedules</span>
+            </Link>
+          </div>
+          <div className="selected-courses">
+            <ul>
+              {this.state.selectedCourses.map(course => {
+                const deselectCourse = () => {
+                  this.deselectCourse(course)
+                }
+                return (
+                  <li key={course.id}>
+                    <button className="button button--default deselect-course" onClick={deselectCourse}>Remove</button>
+                    <span className="course-code">{course.subject} {course.number}</span>
+                    <span className="course-title">{course.title}</span>
+                    <p>{course.description}</p>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </div>
       </div>
     )

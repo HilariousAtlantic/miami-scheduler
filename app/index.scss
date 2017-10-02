@@ -10,12 +10,19 @@ body {
 }
 
 header {
-  display: flex;
-  justify-content: space-between;
   background: #B61E2E;
   color: #fff;
   padding: 15px;
   font-size: 1.25rem;
+
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  i {
+    margin-right: 15px;
+  }
 }
 
 .app {
@@ -26,4 +33,52 @@ header {
 
 .view {
   flex: 1;
+}
+
+.button {
+  border: none;
+  border-radius: 3px;
+  background: #4CAF50;
+  color: #fff;
+  line-height: 2rem;
+  text-align: center;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &--primary {
+    width: 250px;
+    background: #4CAF50;
+    box-shadow: 2px 2px 10px rgba(0,0,0,.5);
+
+    &:hover {
+      background: darken(#4CAF50, 5%);
+    }
+  
+    &:active {
+      background: darken(#4CAF50, 10%);
+    }
+
+  }
+
+  &--default {
+    background: #f5f5f5;
+    color: #333;
+    padding: 0 10px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,.05);
+    border: 1px solid #ddd;
+
+    &:hover {
+      background: darken(#f5f5f5, 5%);
+      text-decoration: none;
+    }
+  
+    &:active {
+      background: darken(#f5f5f5, 10%);
+    }
+
+  }
+  
+  
 }
