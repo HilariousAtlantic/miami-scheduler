@@ -141,6 +141,7 @@ function isScheduleValid(schedule) {
 }
 
 function containsSameDay(meet1, meet2) {
+  if (!meet1.days || !meet2.days) return false;
   for (let day of meet1.days) {
     if (meet2.days.indexOf(day) !== -1) {
       return true
@@ -163,7 +164,7 @@ function formatSchedule(schedule) {
         meetCount++
         meetTotal += parseInt(h)*60 + parseInt(m)
       }
-      for (let day of days) {
+      for (let day of (days || [])) {
         meets[day].push({crn, code, name, start_time, end_time, room, hall})
       }
     }
