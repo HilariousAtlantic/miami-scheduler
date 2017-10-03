@@ -34,20 +34,30 @@ function RadioGroup({children, onChange}) {
   )
 }
 
-function Meet({crn, code, start_time, end_time, hall, room, color, locked, onClick}) {
-  const toMinutes = time => {
-    let [h, m] = time.split(':')
-    return 60*parseInt(h) + parseInt(m)
+function formatTime(minutes) {
+  let h = Math.floor(minutes / 60);
+  let m = minutes % 60;
+  if (h > 12) {
+    h -= 12;
+  } else if (h == 0) {
+    h = 12;
   }
+  return `${h}:${('0'+m).slice(-2)}`;
+}
+
+function Meet({crn, code, name, start_time, end_time, hall, room, instructors, color, locked, onClick}) {
   const styles = {
     background: color,
-    top: toMinutes(start_time)+'px',
-    height: (toMinutes(end_time)-toMinutes(start_time))+'px'
+    top: start_time+'px',
+    height: (end_time-start_time)+'px'
   }
   return (
     <div key={crn} className={['section', locked && 'locked'].join(' ')} style={styles} onClick={onClick}>
-      <span>{code}</span>
-      <span>{start_time} - {end_time} {hall} {room}</span>
+      <div className="section-info course-name">{code} {name}</div>
+      <div className="section-info course-time">{formatTime(start_time)} - {formatTime(end_time)} {hall} {room}</div>
+      <div className="section-info course-instructor">
+        {instructors[0] && <span>{instructors[0].first_name} {instructors[0].last_name}</span>}
+      </div>
       <div className="lock">
         <span>Click to {locked && 'un'}lock</span>
         <i className="fa fa-lock"></i>

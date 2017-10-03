@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient, ObjectID } = require('mongodb')
+const { MongoClient } = require('mongodb')
 const { resolve } = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -75,7 +75,7 @@ function setupRoutes (db) {
 
   app.get('/api/schedules', (req, res) => {
     db.collection('courses').find(
-      {_id: {$in: req.query.courses.split(',').map(ObjectID)}}
+      {id: {$in: req.query.courses.split(',')}}
     ).toArray((error, courses) => {
       res.json(generateSchedules(courses))
     })
@@ -97,7 +97,7 @@ function startServer () {
 
 function formatCourseResponse(course) {
   return {
-    id: course._id,
+    id: course.id,
     school: course.school,
     department: course.department,
     code: course.code,
@@ -160,12 +160,14 @@ function formatSchedule(schedule) {
     crns.push(crn)
     for (let {days, start_time, end_time, room, hall} of section.meets) {
       if (start_time) {
-        let [h, m] = start_time.split(':')
         meetCount++
-        meetTotal += parseInt(h)*60 + parseInt(m)
+        meetTotal += start_time
       }
       for (let day of (days || [])) {
-        meets[day].push({crn, code, name, start_time, end_time, room, hall})
+        meets[day].push({crn, code, name, start_time, end_time, room, hall,
+          instructors: section.instructors,
+          attributes: section.attributes
+        })
       }
     }
   }

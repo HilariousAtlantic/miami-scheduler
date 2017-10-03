@@ -76,6 +76,7 @@ function importSections (db, terms) {
 
             if (!course) {
               course = {
+                id: term + subject + section.courseNumber,
                 term: term,
                 school: section.standardizedDivisionName,
                 department: section.traditionalStandardizedDeptName,
@@ -150,8 +151,8 @@ function extractMeets (schedules) {
       meets.push({
         start_date: schedule.startDate,
         end_date: schedule.endDate,
-        start_time: schedule.startTime,
-        end_time: schedule.endTime,
+        start_time: toMinutes(schedule.startTime),
+        end_time: toMinutes(schedule.endTime),
         days: schedule.days,
         room: schedule.room,
         hall: schedule.buildingCode
@@ -159,6 +160,14 @@ function extractMeets (schedules) {
     }
     return meets
   }, [])
+}
+
+function toMinutes(time) {
+  if (time) {
+    let [h, m] = time.split(':')
+    return parseInt(h)*60 + parseInt(m)
+  }
+  return 0;
 }
 
 function formatInstructors (instructors) {
