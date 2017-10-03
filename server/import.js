@@ -25,7 +25,8 @@ function connectDatabase () {
 function fetchNextTerm() {
   return Promise.all([
     get('https://ws.muohio.edu/academicTerms/current'),
-    get('https://ws.muohio.edu/academicTerms/next')
+    get('https://ws.muohio.edu/academicTerms/next'),
+    get('https://ws.muohio.edu/academicTerms/201820')
   ])
 }
 
