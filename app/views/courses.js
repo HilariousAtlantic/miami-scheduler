@@ -63,13 +63,16 @@ export default class CoursesView extends Component {
 
     return (
       <div className="view courses-view">
-
-        <div className="sidebar">
-          <header>
-            <i className="fa fa-calendar"></i>
-            <a href="/">Miami Scheduler</a>
-          </header>
-          <div className="course-list">
+        <header>
+          <a className="brand" href="/"><i className="fa fa-calendar"></i> Miami Scheduler</a>
+          <nav>
+            <a className="active" href="/">Schedule Generator</a>
+            <a href="/courses">Course Catalog</a>
+            <a href="/reviews">Instructor Reviews</a>
+          </nav> 
+        </header>
+        <main>
+          <div className="sidebar">
             <div className="course-search">
               <div className="search-input">
                 <i className="fa fa-search"></i>
@@ -82,7 +85,7 @@ export default class CoursesView extends Component {
                 <i className="fa fa-chevron-down"></i>
               </div>
             </div>
-            <ul>
+            <ul className="course-list">
               {this.state.courses.map(course => {
                 const selectCourse = () => {
                   this.selectCourse(course)
@@ -94,18 +97,12 @@ export default class CoursesView extends Component {
                 )
               })}
             </ul>
-          </div>
-        </div>
-        
-        <div className="content">
-          <div className="toolbar">
-            <span>{`${low}` + (low != high ? ' - ' + high : '')} Credits</span>
             <Link className="button button--primary" to={`/schedules?courses=${courseIds}`}>
               <span>Generate Schedules</span>
             </Link>
           </div>
-          <div className="selected-courses">
-            <ul>
+          <div className="content">
+            <ul className="selected-courses">
               {this.state.selectedCourses.map(course => {
                 const deselectCourse = () => {
                   this.deselectCourse(course)
@@ -113,7 +110,7 @@ export default class CoursesView extends Component {
                 return (
                   <li key={course.id}>
                     <button className="button button--default deselect-course" onClick={deselectCourse}>Remove</button>
-                    <span className="course-code">{course.subject} {course.number}</span>
+                    <span className="course-code">{course.code}</span>
                     <span className="course-title">{course.title}</span>
                     <p>{course.description}</p>
                   </li>
@@ -121,7 +118,7 @@ export default class CoursesView extends Component {
               })}
             </ul>
           </div>
-        </div>
+        </main>
       </div>
     )
   }
