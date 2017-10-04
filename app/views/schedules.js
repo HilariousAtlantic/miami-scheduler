@@ -12,21 +12,21 @@ const sorts = {
   later: (a, b) => b.weight - a.weight,
 }
 
-function RadioButton({text, hint}) {
+function OptionButton({text, hint, type = 'checkbox', checked = false}) {
   return (
     <div className="form-checkbox">
       <label>
-        <input type="radio" checked={false} />
+        <input type={type} checked={checked} />
         <span>{text}</span>
       </label>
-      <p className="note">
+      {hint && <p className="note">
         {hint}
-      </p>
+      </p>}
     </div>
   )
 }
 
-function RadioGroup({children, onChange}) {
+function OptionGroup({children, onChange}) {
   return (
     <div className="radio-group">
       {children}
@@ -71,6 +71,8 @@ export default class CoursesView extends Component {
   state = {
     loading: true,
     schedules: [],
+    instructors: {},
+    attributes: {},
     currentScheduleIndex: 0,
     schedulesSort: 'early',
     lockedSections: []
@@ -79,8 +81,8 @@ export default class CoursesView extends Component {
   componentWillMount() {
     get(`http://localhost:8000/api/schedules${this.props.location.search}`)
       .then(res => {
-        const schedules = res.data;
-        this.setState({schedules, loading: false})
+        const {schedules, instructors, attributes} = res.data;
+        this.setState({schedules, instructors, attributes, loading: false})
       })
   }
 
@@ -98,7 +100,7 @@ export default class CoursesView extends Component {
 
     if (this.state.loading) return <span>Loading...</span>
 
-    const { currentScheduleIndex, schedulesSort, lockedSections } = this.state
+    const { currentScheduleIndex, schedulesSort, lockedSections, instructors, attributes } = this.state
     const schedules = this.state.schedules
       .filter(schedule => lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1))
       .sort(sorts[schedulesSort])
@@ -125,18 +127,30 @@ export default class CoursesView extends Component {
                 <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
               <button onClick={nextSchedule}><i className="fa fa-chevron-right"></i></button>
             </div>
-            <div className="schedule-options">
+            <div className="schedule-filters">
               <h3>Sort Schedules</h3>
-              <RadioGroup>
-                <RadioButton text="Early Classes" hint="Schedules with earlier classes will show first" />
-                <RadioButton text="Later Classes" hint="Schedules with later classes will show first" />
-                <RadioButton text="Average Grade" hint="Schedules with easy instructors will show first" />
-              </RadioGroup>
+              <OptionGroup>
+                <OptionButton type="radio" text="Early Classes" hint="Schedules with earlier classes will show first" checked />
+                <OptionButton type="radio" text="Later Classes" hint="Schedules with later classes will show first" />
+                <OptionButton type="radio" text="Average Grade" hint="Schedules with easy instructors will show first" />
+              </OptionGroup>
               <h3>Full Sections</h3>
-              <RadioGroup>
-                <RadioButton text="Hide Schedule" hint="Schedules with a full section will not show" />
-                <RadioButton text="Fade Section" hint="Full sections will appear faded in the calendar" />
-              </RadioGroup>     
+              <OptionGroup>
+                <OptionButton type="checkbox" text="Hide Schedule" hint="Schedules with a full section will not show" />
+                <OptionButton type="checkbox" text="Fade Section" hint="Full sections will appear faded in the calendar" />
+              </OptionGroup>
+              <h3>Instructors</h3>
+              <OptionGroup>
+                {Object.keys(instructors).map(instructor => 
+                  <OptionButton text={instructor} hint={instructors[instructor] + ' Schedules'} checked />
+                )}
+              </OptionGroup> 
+              <h3>Attributes</h3>
+              <OptionGroup>
+                {Object.keys(attributes).map(attribute => 
+                  <OptionButton text={attribute} hint={attributes[attribute] + ' Schedules'} checked />
+                )}
+              </OptionGroup>     
             </div>
             <button className="button button--primary">Export Schedule</button>
           </div>

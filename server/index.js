@@ -77,7 +77,11 @@ function setupRoutes (db) {
     db.collection('courses').find(
       {id: {$in: req.query.courses.split(',')}}
     ).toArray((error, courses) => {
-      res.json(generateSchedules(courses))
+      res.json({
+        instructors: getInstructors(courses),
+        attributes: getAttributes(courses),
+        schedules: generateSchedules(courses)
+      })
     })
   })
 
@@ -148,6 +152,30 @@ function containsSameDay(meet1, meet2) {
     }
   }
   return false
+}
+
+function getInstructors(courses) {
+  let instructors = {};
+  for (let course of courses) {
+    for (let section of course.sections) {
+      for (let {first_name, last_name} of section.instructors || []) {
+        instructors[first_name + ' ' + last_name] = instructors[first_name + ' ' + last_name] + 1 || 1
+      }
+    }
+  }
+  return instructors;
+}
+
+function getAttributes(courses) {
+  let attributes = {};
+  for (let course of courses) {
+    for (let section of course.sections) {
+      for (let {name} of section.attributes || []) {
+        attributes[name] = attributes[name] + 1 || 1
+      }
+    }
+  }
+  return attributes;
 }
 
 function formatSchedule(schedule) {

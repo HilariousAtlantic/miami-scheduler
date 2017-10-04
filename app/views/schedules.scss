@@ -70,10 +70,12 @@
   }
 }
 
-.schedule-options {
+.schedule-filters {
   flex: 1;
+  overflow-y: scroll;
   padding: 15px;
   background: #fafafa;
+  margin: 10px 0;
 }
 
 .schedule-container {
