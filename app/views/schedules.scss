@@ -32,15 +32,17 @@
 
 .schedule-search {
   display: flex;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 3px;
   overflow: hidden;
-  line-height: 2.25rem;
+  
 
   button {
+    color: #333;
     border: none;
     padding: 0 20px;
     background: #f5f5f5;
+    line-height: 2.5rem;
   }
 
   input {
@@ -50,6 +52,8 @@
     border-right: 1px solid #ddd;
     border-left: 1px solid #ddd;
     background: #fff;
+    line-height: 2.5rem;
+    color: #333;
   }
 
   button {
@@ -76,6 +80,54 @@
   padding: 15px;
   background: #fafafa;
   margin: 10px 0;
+}
+
+.break-form {
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+
+  input {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 12px;
+    background: #fff;
+    line-height: 1.5rem;
+    width: 65px;
+    text-align: center;
+    padding: 0;
+  }
+
+  > * + * {
+    margin-left: 5px;
+  }
+}
+
+.day-select {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: hidden;
+
+  button {
+    width: 30px;
+    font-size: 12px;
+    font-weight: normal;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    line-height: 1.5rem;
+    padding: 0;
+
+    &.selected {
+      background: #419BF9;
+      color: #fff;
+    }
+  }
+
+  button + button {
+    border-left: 1px solid #ddd;
+  }
 }
 
 .schedule-container {

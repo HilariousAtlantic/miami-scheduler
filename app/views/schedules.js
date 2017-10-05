@@ -79,7 +79,8 @@ export default class CoursesView extends Component {
   }
 
   componentWillMount() {
-    get(`http://localhost:8000/api/schedules${this.props.location.search}`)
+    const query = this.props.location.search;
+    get(`http://localhost:8000/api/schedules${query}`)
       .then(res => {
         const {schedules, instructors, attributes} = res.data;
         this.setState({schedules, instructors, attributes, loading: false})
@@ -132,7 +133,6 @@ export default class CoursesView extends Component {
               <OptionGroup>
                 <OptionButton type="radio" text="Early Classes" hint="Schedules with earlier classes will show first" checked />
                 <OptionButton type="radio" text="Later Classes" hint="Schedules with later classes will show first" />
-                <OptionButton type="radio" text="Average Grade" hint="Schedules with easy instructors will show first" />
               </OptionGroup>
               <h3>Full Sections</h3>
               <OptionGroup>
