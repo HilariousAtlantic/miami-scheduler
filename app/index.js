@@ -10,6 +10,14 @@ import './index.scss'
 const app =
   <BrowserRouter>
     <div className="app">
+      <header>
+        <a className="brand" href="/"><i className="fa fa-calendar"></i> Miami Scheduler</a>
+        <nav>
+          <a className="active" href="/">Schedule Generator</a>
+          <a href="/courses">Course Catalog</a>
+          <a href="/reviews">Instructor Reviews</a>
+        </nav> 
+      </header>
       <Switch>
         <Route exact path="/" component={CoursesView} />
         <Route path="/schedules" component={SchedulesView} /> 

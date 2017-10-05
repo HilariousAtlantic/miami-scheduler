@@ -63,62 +63,52 @@ export default class CoursesView extends Component {
 
     return (
       <div className="view courses-view">
-        <header>
-          <a className="brand" href="/"><i className="fa fa-calendar"></i> Miami Scheduler</a>
-          <nav>
-            <a className="active" href="/">Schedule Generator</a>
-            <a href="/courses">Course Catalog</a>
-            <a href="/reviews">Instructor Reviews</a>
-          </nav> 
-        </header>
-        <main>
-          <div className="sidebar">
-            <div className="course-search">
-              <div className="search-input">
-                <i className="fa fa-search"></i>
-                <input type="text" placeholder="Search Courses" onChange={this.handleChange} />
-              </div>
-              <div className="terms-dropdown">
-                <select onChange={this.selectTerm}>
-                  {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
-                </select>
-                <i className="fa fa-chevron-down"></i>
-              </div>
+        <div className="sidebar">
+          <div className="course-search">
+            <div className="search-input">
+              <i className="fa fa-search"></i>
+              <input type="text" placeholder="Search Courses" onChange={this.handleChange} />
             </div>
-            <ul className="course-list">
-              {this.state.courses.map(course => {
-                const selectCourse = () => {
-                  this.selectCourse(course)
-                }
-                return (
-                  <li key={course.id} onClick={selectCourse}>
-                    {course.code} - {course.title}
-                  </li>
-                )
-              })}
-            </ul>
-            <Link className="button button--primary" to={`/schedules?courses=${courseIds}`}>
-              <span>Generate Schedules</span>
-            </Link>
+            <div className="terms-dropdown">
+              <select onChange={this.selectTerm}>
+                {this.state.terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
+              </select>
+              <i className="fa fa-chevron-down"></i>
+            </div>
           </div>
-          <div className="content">
-            <ul className="selected-courses">
-              {this.state.selectedCourses.map(course => {
-                const deselectCourse = () => {
-                  this.deselectCourse(course)
-                }
-                return (
-                  <li key={course.id}>
-                    <button className="button button--default deselect-course" onClick={deselectCourse}>Remove</button>
-                    <span className="course-code">{course.code}</span>
-                    <span className="course-title">{course.title}</span>
-                    <p>{course.description}</p>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        </main>
+          <ul className="course-list">
+            {this.state.courses.map(course => {
+              const selectCourse = () => {
+                this.selectCourse(course)
+              }
+              return (
+                <li key={course.id} onClick={selectCourse}>
+                  {course.code} - {course.title}
+                </li>
+              )
+            })}
+          </ul>
+          <Link className="button button--primary" to={`/schedules?courses=${courseIds}`}>
+            <span>Generate Schedules</span>
+          </Link>
+        </div>
+        <div className="content">
+          <ul className="selected-courses">
+            {this.state.selectedCourses.map(course => {
+              const deselectCourse = () => {
+                this.deselectCourse(course)
+              }
+              return (
+                <li key={course.id}>
+                  <button className="button button--default deselect-course" onClick={deselectCourse}>Remove</button>
+                  <span className="course-code">{course.code}</span>
+                  <span className="course-title">{course.title}</span>
+                  <p>{course.description}</p>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       </div>
     )
   }

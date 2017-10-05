@@ -10,31 +10,34 @@ body {
 }
 
 header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
   background: #b71c1c;
   color: #f5f5f5;
-  padding: 0 10px;
+  padding: 0 20px;
 
   .brand {
     font-size: 1.25rem;
-    
+
     i {
       margin-right: 10px;
     }
   }
   
   a {
-    display: inline-block;
-    line-height: 60px;
     text-decoration: none;
     color: #fff;
-    padding: 0 10px;
+  }
+
+  nav a {
+    display: inline-block;
+    padding: 0 15px;
+    line-height: 50px;
 
     &.active {
       background: darken(#b71c1c, 5%);
-    }
-
-    & + a {
-      margin-left: 10px;
     }
   }
 

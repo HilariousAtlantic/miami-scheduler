@@ -1,18 +1,5 @@
 .courses-view {
   display: flex;
-  flex-direction: column;
-
-  header {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-  }
 
   .sidebar {
     flex: 1;
@@ -30,8 +17,6 @@
 
 }
 
-
-
 .course-search {
   display: flex;
   border: 1px solid #ccc;
@@ -45,22 +30,21 @@
 
 .search-input {
   display: flex;
-  align-items: center;
 
   i {
+    line-height: 2.25rem;
     color: #333;
     padding: 0 10px;
     background: #fff;
-    line-height: 2.5rem;
   }
 
   input {
+    line-height: 2.25rem;
     color: #333;
     flex: 1;
     padding: 0 5px;
     border: none;
     background: #fff;
-    line-height: 2.5rem;
   }
 
 }
@@ -70,10 +54,11 @@
   border-left: 1px solid #ddd;
   
   select {
+    line-height: 2.25rem;
     background: #F5F5F5;
     color: #333;
     padding-left: 10px;
-    line-height: 2.5rem;
+    line-height: 2.25rem;
     width: 150px;
     border: none;
     border-radius: inherit;
@@ -86,8 +71,9 @@
   }
 
   i {
+    line-height: 2.25rem;
     color: #333;
-    line-height: 2.5rem;
+    line-height: 2.25rem;
     position: absolute;
     right: 10px;
     pointer-events: none;

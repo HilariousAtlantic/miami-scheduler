@@ -1,18 +1,5 @@
 .schedules-view {
   display: flex;
-  flex-direction: column;
-
-  header {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-  }
 
   .sidebar {
     flex: 1;
@@ -35,29 +22,14 @@
   border: 1px solid #ccc;
   border-radius: 3px;
   overflow: hidden;
+  height: 2.25rem;
   
-
   button {
+    flex: 1;
     color: #333;
     border: none;
     padding: 0 20px;
     background: #f5f5f5;
-    line-height: 2.5rem;
-  }
-
-  input {
-    flex: 1;
-    padding: 0 20px;
-    border: none;
-    border-right: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    background: #fff;
-    line-height: 2.5rem;
-    color: #333;
-  }
-
-  button {
-    flex: 1;    
 
     &:hover {
       background: darken(#f5f5f5, 5%);
@@ -70,8 +42,15 @@
 
   input {
     flex: 3;
+    padding: 0 20px;
     text-align: center;
+    border: none;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    background: #fff;
+    color: #333;
   }
+
 }
 
 .schedule-filters {
