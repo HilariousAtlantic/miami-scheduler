@@ -38,10 +38,10 @@ function importTerms (db, terms) {
   db.collection('terms').deleteMany({}, (error, result) => {
     db.collection('terms').insertMany(terms.reduce((active, term) => {
       if (term.displayTerm === 'true' && term.termId >= '2016') {
-        let [full, season, type, year] = term.name.match(/(\w+) (Term|Semester|Session) (\d+)/)
+        let [full, season, type, year_begin, year_end] = term.name.match(/(\w+) (Term|Semester|Session) 20(\d+)-(\d+)/)
         active.push({
           id: term.termId,
-          name: `${season} ${year}`
+          name: `${season} 20${season == 'Fall' ? year_begin : year_end}`
         })
       }
       return active
