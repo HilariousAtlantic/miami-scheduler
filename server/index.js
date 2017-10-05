@@ -4,6 +4,7 @@ const { resolve } = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
+const { get } = require('axios')
 
 let app = express()
 
@@ -82,6 +83,28 @@ function setupRoutes (db) {
         attributes: getAttributes(courses),
         schedules: generateSchedules(courses)
       })
+    })
+  })
+
+  app.get('/api/slots', (req, res) => {
+    db.collection('courses').find(
+      {id: {$in: req.query.courses.split(',')}}
+    ).toArray((error, courses) => {
+      const {subjects, numbers} = courses.reduce((query, course) => {
+        query.subjects.push(course.subject)
+        query.numbers.push(course.number)
+        return query
+      }, {subjects: [], numbers: []})
+      get(`http://ws.miamioh.edu/courseSectionV2/201820.json?campusCode=O&courseSubjectCode=${subjects.join(',')}&courseNumber=${numbers.join(',')}`)
+        .then(res => res.data.courseSections)
+        .then(sections => {
+          res.json({
+            slots: sections.reduce((slots, section) => {
+              slots[section.courseId] = {rem: parseInt(section.enrollmentCountAvailable), cap: parseInt(section.enrollmentCountMax)}
+              return slots
+            }, {})
+          })
+        })
     })
   })
 

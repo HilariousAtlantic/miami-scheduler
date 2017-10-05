@@ -198,6 +198,13 @@
     line-height: .9rem;
   }
 
+  .section-slots {
+    text-align: right;
+    position: absolute;
+    top: 3px;
+    right: 5px;
+  }
+
   &:hover, &.locked {
     left: 1px;
     right: 1px;

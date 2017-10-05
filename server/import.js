@@ -78,6 +78,8 @@ function importSections (db, terms) {
               course = {
                 id: term + subject + section.courseNumber,
                 term: term,
+                subject: subject,
+                number: section.courseNumber,
                 school: section.standardizedDivisionName,
                 department: section.traditionalStandardizedDeptName,
                 code: `${subject} ${section.courseNumber}`,

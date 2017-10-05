@@ -45,7 +45,7 @@ function formatTime(minutes) {
   return `${h}:${('0'+m).slice(-2)}`;
 }
 
-function Meet({crn, code, name, start_time, end_time, hall, room, instructors, color, locked, onClick}) {
+function Meet({crn, code, name, start_time, end_time, hall, room, instructors, color, locked, onClick, slots}) {
   const styles = {
     background: color,
     top: start_time+'px',
@@ -58,6 +58,9 @@ function Meet({crn, code, name, start_time, end_time, hall, room, instructors, c
       <div className="section-info course-instructor">
         {instructors[0] && <span>{instructors[0].first_name} {instructors[0].last_name}</span>}
       </div>
+      {slots && <div className="section-slots">
+        {slots.rem} Slots Left
+      </div>}
       <div className="lock">
         <span>Click to {locked && 'un'}lock</span>
         <i className="fa fa-lock"></i>
@@ -71,6 +74,7 @@ export default class CoursesView extends Component {
   state = {
     loading: true,
     schedules: [],
+    slots: [],
     instructors: {},
     attributes: {},
     currentScheduleIndex: 0,
@@ -85,6 +89,8 @@ export default class CoursesView extends Component {
         const {schedules, instructors, attributes} = res.data;
         this.setState({schedules, instructors, attributes, loading: false})
       })
+      get(`http://localhost:8000/api/slots${query}`)
+        .then(res => this.setState({slots: res.data.slots}))
   }
 
   toggleLock = crn => {
@@ -194,7 +200,8 @@ export default class CoursesView extends Component {
                   </div>
                   {Days.map(day =>
                     <div key={day} className="schedule-column">
-                      {meets[day].map(meet => <Meet {...meet} 
+                      {meets[day].map(meet => <Meet {...meet}
+                        slots={this.state.slots[meet.crn]}
                         color={Colors[crns.indexOf(meet.crn)]}
                         locked={lockedSections.includes(meet.crn)}
                         onClick={() => this.toggleLock(meet.crn)}
