@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { debounce } from 'lodash'
 import { get } from 'axios'
+import download from 'downloadjs';
 
 import './schedules.scss'
 
@@ -48,7 +49,7 @@ function formatTime(minutes) {
 function Meet({crn, code, name, start_time, end_time, hall, room, instructors, color, locked, onClick, slots}) {
   const styles = {
     background: color,
-    top: start_time+'px',
+    top: (start_time - 360)+'px',
     height: (end_time-start_time)+'px'
   }
   return (
@@ -103,6 +104,18 @@ export default class CoursesView extends Component {
     })
   }
 
+  downloadSchedule() {
+    const schedule = document.querySelector('.schedule').cloneNode(true);
+    schedule.className += ' exported';
+    document.body.appendChild(schedule);
+    html2canvas(schedule, {scale: 2.5})
+      .then(canvas => {
+        download(canvas.toDataURL('image/jpg', 1), 'schedule.jpg', 'image/jpg');
+        document.body.removeChild(schedule)
+      });
+
+  }
+
   render() {
 
     if (this.state.loading) return <span>Loading...</span>
@@ -149,7 +162,7 @@ export default class CoursesView extends Component {
               )}
             </OptionGroup>     
           </div>
-          <button className="button button--primary">Export Schedule</button>
+          <button className="button button--primary" onClick={this.downloadSchedule}>Export Schedule</button>
         </div>
         <div className="content">
           <div className="schedule-container">
@@ -164,12 +177,6 @@ export default class CoursesView extends Component {
               </div>
               <div className="schedule-body">
                 <div className="schedule-column">
-                  <div className="schedule-hour">1am</div>
-                  <div className="schedule-hour">2am</div>
-                  <div className="schedule-hour">3am</div>
-                  <div className="schedule-hour">4am</div>
-                  <div className="schedule-hour">5am</div>
-                  <div className="schedule-hour">6am</div>
                   <div className="schedule-hour">7am</div>
                   <div className="schedule-hour">8am</div>
                   <div className="schedule-hour">9am</div>
@@ -186,8 +193,6 @@ export default class CoursesView extends Component {
                   <div className="schedule-hour">8pm</div>
                   <div className="schedule-hour">9pm</div>
                   <div className="schedule-hour">10pm</div>
-                  <div className="schedule-hour">11pm</div>
-                  <div className="schedule-hour">12am</div>
                 </div>
                 {Days.map(day =>
                   <div key={day} className="schedule-column">

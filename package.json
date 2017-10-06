@@ -17,6 +17,7 @@
     "axios": "^0.16.2",
     "body-parser": "1.17.2",
     "cors": "^2.8.4",
+    "downloadjs": "^1.4.7",
     "express": "4.15.3",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.30",
