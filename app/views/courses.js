@@ -20,17 +20,24 @@ export default class CoursesView extends Component {
     get('http://localhost:8000/api/terms')
       .then(response => response.data)
       .then(terms => terms.sort((a, b) => b.id - a.id))
-      .then(terms => this.setState({terms, selectedTerm: terms[0].id, loading: false}))
+      .then(terms => {
+        this.setState({terms, selectedTerm: terms[0].id, loading: false}, this.searchCourses);
+      });
   }
 
   handleChange(e) {
-    this.setState({ query: encodeURI(e.target.value) })
+    this.setState({ query: e.target.value})
     this.searchCourses()
   }
 
   searchCourses() {
     const { selectedTerm, query } = this.state
-    get(`http://localhost:8000/api/courses?term=${selectedTerm}&q=${query}`)
+    const subjects = query.match(/([a-zA-z]{3})/g);
+    const numbers = query.match(/(\d+)/g);
+    const subjects_query = subjects ? `&subjects=${subjects.join(',')}` : '';
+    const numbers_query = numbers ? `&numbers=${numbers.join(',')}` : '';
+    console.log(subjects, numbers);
+    get(`http://localhost:8000/api/courses?term=${selectedTerm}${subjects_query}${numbers_query}`)
       .then(response => response.data)
       .then(courses => this.setState({courses}))
   }

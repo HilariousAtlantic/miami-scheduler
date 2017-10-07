@@ -83,9 +83,6 @@ function importSections (db, terms) {
                 school: section.standardizedDivisionName,
                 department: section.traditionalStandardizedDeptName,
                 code: `${subject} ${section.courseNumber}`,
-                codeWithoutSuffix: `${subject} ${extractNumber(section)}`,
-                codeWithoutSpaces: `${subject}${section.courseNumber}`,
-                codeWithoutSpacesOrSuffix: `${subject}${extractNumber(section)}`,
                 title: extractTitle(section),
                 description: extractDescription(section),
                 credits: extractCredits(section),
@@ -129,11 +126,6 @@ function extractTitle (section) {
   } else {
     return section.courseTitle
   }
-}
-
-function extractNumber (section) {
-  let pattern = /\d+/
-  return section.courseNumber.match(pattern)[0]
 }
 
 function extractCredits (section) {

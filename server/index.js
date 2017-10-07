@@ -28,22 +28,8 @@ function connectDatabase () {
       } else {
         db.collection('courses').dropAllIndexes(err => {
           db.collection('courses').createIndex({
-            code: 'text',
-            codeWithoutSuffix: 'text',
-            codeWithoutSpaces: 'text',
-            codeWithoutSpacesOrSuffix: 'text',
             title: 'text',
             description: 'text'
-          }, {
-            name: 'courseSearch',
-            weights: {
-              code: 30,
-              codeWithoutSuffix: 30,
-              codeWithoutSpaces: 30,
-              codeWithoutSpacesOrSuffix: 30,
-              title: 10,
-              description: 5
-            }
           })
           resolve(db)
         })
@@ -61,11 +47,12 @@ function setupRoutes (db) {
   })
 
   app.get('/api/courses', (req, res) => {
-    db.collection('courses').find(
-      {term: req.query.term, $text: {$search: req.query.q}},
-      {score: {$meta: "textScore"}}
-    ).limit(50).sort({score: {$meta: "textScore"}})
-    .toArray((error, courses) => {
+    const { term, subjects, numbers } = req.query;
+    let query = { term };
+    if (subjects || numbers) query['$and'] = [];
+    if (subjects) query['$and'].push({subject: {$in: subjects.toUpperCase().split(',')}})
+    if (numbers) query['$and'].push({number: {$regex: '^('+numbers.toUpperCase().replace(',', '|')+')'}})
+    db.collection('courses').find(query).sort({subject: 1, number: 1}).limit(100).toArray((error, courses) => {
       if (error) {
         res.sendStatus(404)
       } else {
