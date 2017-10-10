@@ -6,6 +6,8 @@ const cors = require('cors')
 const morgan = require('morgan')
 const { get } = require('axios')
 
+const config = require('./config');
+
 let app = express()
 
 app.use(cors())
@@ -19,23 +21,8 @@ connectDatabase()
   .then(startServer)
   .catch(console.log)
 
-function connectDatabase () {
-  return new Promise((resolve, reject) => {
-    let connection = 'mongodb://localhost:27017/miami-scheduler'
-    MongoClient.connect(connection, (error, db) => {
-      if (error) {
-        reject(error)
-      } else {
-        db.collection('courses').dropAllIndexes(err => {
-          db.collection('courses').createIndex({
-            title: 'text',
-            description: 'text'
-          })
-          resolve(db)
-        })
-      }
-    })
-  })
+function connectDatabase() {
+  return MongoClient.connect(config.db);
 }
 
 function setupRoutes (db) {
@@ -103,10 +90,9 @@ function setupRoutes (db) {
 }
 
 function startServer () {
-  const port = 8000
-  app.listen(port, () => {
-    console.log(`server running at http://localhost:${port}`)
-  })
+  app.listen(config.port, () => {
+    console.log(`server running at http://localhost:${config.port}`)
+  });
 }
 
 function formatCourseResponse(course) {

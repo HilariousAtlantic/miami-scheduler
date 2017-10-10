@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb')
 const { get } = require('axios')
+const config = require('./config');
 
 const subjects = require('./subjects.json')
 
@@ -21,8 +22,7 @@ async function run() {
 run();
 
 async function connectDatabase() {
-  let connection = 'mongodb://localhost:27017/miami-scheduler';
-  return MongoClient.connect(connection);
+  return MongoClient.connect(config.db);
 }
 
 function clearCollection(collection) {

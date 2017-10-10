@@ -1,0 +1,1 @@
+web: npm run import && npm run build && npm start
