@@ -9,7 +9,8 @@
     "lint": "standard --fix",
     "import": "node server/import.js",
     "build": "webpack",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "heroku-preinstall": "npm install --only=dev"
   },
   "author": "",
   "license": "ISC",
