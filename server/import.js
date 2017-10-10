@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb')
 const { get } = require('axios')
-const config = require('./config');
+const config = require('../config');
 
 const subjects = require('./subjects.json')
 

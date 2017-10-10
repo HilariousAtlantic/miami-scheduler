@@ -6,7 +6,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 const { get } = require('axios')
 
-const config = require('./config');
+const config = require('../config');
 
 let app = express()
 
