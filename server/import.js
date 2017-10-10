@@ -3,114 +3,116 @@ const { get } = require('axios')
 
 const subjects = require('./subjects.json')
 
-Promise.all([connectDatabase(), fetchTerms(), fetchNextTerm()])
-  .then(([db, terms, nextTerms]) => {
-    importTerms(db, terms.data.academicTerm)
-    importSections(db, nextTerms.map(term => term.data.termId))
-  }).catch(console.log)
+async function run() {
 
-function connectDatabase () {
+  try {
+    const db = await connectDatabase();
+    await clearDatabase(db);
+    const terms = await fetchTerms();
+    await importCourses(db, terms);
+    process.exit();
+  } catch (error) {
+    console.error('Error during import.');
+    console.log(error);
+  }
+
+}
+
+run();
+
+async function connectDatabase() {
+  let connection = 'mongodb://localhost:27017/miami-scheduler';
+  return MongoClient.connect(connection);
+}
+
+function clearCollection(collection) {
   return new Promise((resolve, reject) => {
-    let connection = 'mongodb://localhost:27017/miami-scheduler'
-    MongoClient.connect(connection, (error, db) => {
+    collection.deleteMany({}, (error, success) => {
       if (error) {
-        reject(error)
+        reject(error);
       } else {
-        resolve(db)
+        resolve(true);
       }
-    })
-  })
+    });
+  });
 }
 
-function fetchNextTerm() {
-  return Promise.all([
-    get('https://ws.muohio.edu/academicTerms/current'),
-    get('https://ws.muohio.edu/academicTerms/next'),
-    get('https://ws.muohio.edu/academicTerms/201820')
-  ])
+async function clearDatabase(db) {
+  await db.collection('terms').deleteMany({});
+  await db.collection('courses').deleteMany({});
 }
 
-function fetchTerms () {
-  return get('https://ws.muohio.edu/academicTerms')
+async function fetchTerms(db) {
+
+  const formatTerm = term => ({
+    id: term.termId,
+    name: term.name.replace(/ (Semester|Term) /, ' ')
+  });
+
+  const res = await get('https://ws.muohio.edu/academicTerms');
+  return res.data.academicTerm
+    .filter(term => term.displayTerm == 'true')
+    .sort((a, b) => b.termId - a.termId)
+    .slice(0, 5)
+    .map(formatTerm);
 }
 
-function importTerms (db, terms) {
-  db.collection('terms').deleteMany({}, (error, result) => {
-    db.collection('terms').insertMany(terms.reduce((active, term) => {
-      if (term.displayTerm === 'true' && term.termId >= '2016') {
-        let [full, season, type, year_begin, year_end] = term.name.match(/(\w+) (Term|Semester|Session) 20(\d+)-(\d+)/)
-        active.push({
-          id: term.termId,
-          name: `${season} 20${season == 'Fall' ? year_begin : year_end}`
-        })
+async function importCourses(db, terms) {
+  const Terms = db.collection('terms');
+  await Terms.insertMany(terms);
+  const Courses = db.collection('courses');
+  for (let term of terms) {
+    console.log(`Fetching ${term.name} courses...`);
+    const sections = await fetchSections(term);
+    const courses = formatCourses(sections);
+    const result = await Courses.insertMany(courses);
+    console.log(`Imported ${result.insertedCount} courses`);
+  }
+  return true;
+}
+
+function formatCourses(sections) {
+
+  return sections.reduce((courses, section) => {
+
+    if (!section.courseSchedules.length) return courses;
+
+    let course = courses.find(course => course.code === `${section.courseSubjectCode} ${section.courseNumber}`)
+
+    if (!course) {
+      course = {
+        id: section.academicTerm + section.courseSubjectCode + section.courseNumber,
+        term: section.academicTerm,
+        subject: section.courseSubjectCode,
+        number: section.courseNumber,
+        school: section.standardizedDivisionName,
+        department: section.traditionalStandardizedDeptName,
+        code: `${section.courseSubjectCode} ${section.courseNumber}`,
+        title: extractTitle(section),
+        description: extractDescription(section),
+        credits: extractCredits(section),
+        sections: []
       }
-      return active
-    }, []), (error, result) => {
-      console.log(`imported ${result.insertedCount} terms`)
+      courses.push(course)
+    }
+
+    course.sections.push({
+      crn: section.courseId,
+      name: section.courseSectionCode,
+      meets: extractMeets(section.courseSchedules),
+      instructors: formatInstructors(section.instructors),
+      attributes: formatAttributes(section.attributes)
     })
-  })
+
+    return courses
+
+  }, []);
+
 }
 
-function importSections (db, terms) {
-  const Courses = db.collection('courses')
-
-  terms.forEach(term => {
-    Courses.deleteMany({term}, (error, result) => {
-      if (error) {
-        console.error(error)
-      } else {
-        console.log(`deleted ${result.deletedCount} courses`)
-      }
-    })
-
-    let count = 0
-
-    subjects.forEach(subject => {
-      getCourseSections(term, subject)
-        .then(sections => {
-          Courses.insertMany(sections.reduce((courses, section) => {
-
-            if (!section.courseSchedules.length) return courses;
-
-            let course = courses.find(course => course.code === `${subject} ${section.courseNumber}`)
-
-            if (!course) {
-              course = {
-                id: term + subject + section.courseNumber,
-                term: term,
-                subject: subject,
-                number: section.courseNumber,
-                school: section.standardizedDivisionName,
-                department: section.traditionalStandardizedDeptName,
-                code: `${subject} ${section.courseNumber}`,
-                title: extractTitle(section),
-                description: extractDescription(section),
-                credits: extractCredits(section),
-                sections: []
-              }
-              courses.push(course)
-            }
-
-            course.sections.push({
-              crn: section.courseId,
-              name: section.courseSectionCode,
-              meets: extractMeets(section.courseSchedules),
-              instructors: formatInstructors(section.instructors),
-              attributes: formatAttributes(section.attributes)
-            })
-
-            return courses
-          }, []), (error, result) => {
-            console.log(`[${term}](${count++}/${subjects.length}) added ${error ? 0 : result.insertedCount} courses`)
-          })
-        })
-    })
-  })
-}
-
-function getCourseSections (term, subject) {
-  return get(`http://ws.miamioh.edu/courseSectionV2/${term}.json?campusCode=O&courseSubjectCode=${subject}`)
-    .then(response => response.data.courseSections || [])
+async function fetchSections(term) {
+  const res = await Promise.all(subjects.map(subject => get(`http://ws.miamioh.edu/courseSectionV2/${term.id}.json?campusCode=O&courseSubjectCode=${subject}`)));
+  return res.reduce((sections, r) => sections.concat(r.data.courseSections), []);
 }
 
 function extractDescription (section) {

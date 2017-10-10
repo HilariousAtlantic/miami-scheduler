@@ -84,16 +84,11 @@ export default class CoursesView extends Component {
             </div>
           </div>
           <ul className="course-list">
-            {this.state.courses.map(course => {
-              const selectCourse = () => {
-                this.selectCourse(course)
-              }
-              return (
-                <li key={course.id} onClick={selectCourse}>
-                  {course.code} - {course.title}
-                </li>
-              )
-            })}
+            {this.state.courses.map(course => (
+              <li key={course.id} onClick={() => this.selectCourse(course)}>
+                {course.code} - {course.title}
+              </li>
+            ))}
           </ul>
           <Link className="button button--primary" to={`/schedules?courses=${courseIds}`}>
             <span>Generate Schedules</span>
@@ -101,19 +96,17 @@ export default class CoursesView extends Component {
         </div>
         <div className="content">
           <ul className="selected-courses">
-            {this.state.selectedCourses.map(course => {
-              const deselectCourse = () => {
-                this.deselectCourse(course)
-              }
-              return (
-                <li key={course.id}>
-                  <button className="button button--default deselect-course" onClick={deselectCourse}>Remove</button>
-                  <span className="course-code">{course.code}</span>
-                  <span className="course-title">{course.title}</span>
-                  <p>{course.description}</p>
-                </li>
-              )
-            })}
+            {this.state.selectedCourses.map(course => (
+              <li key={course.id}>
+                <button 
+                  className="button button--default deselect-course" 
+                  onClick={() => this.deselectCourse(course)}
+                >Remove</button>
+                <span className="course-code">{course.code}</span>
+                <span className="course-title">{course.title}</span>
+                <p>{course.description}</p>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
