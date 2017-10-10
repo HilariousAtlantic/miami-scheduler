@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { debounce } from 'lodash'
 import { get } from 'axios'
 
+import { api_url } from '../../config';
 import './courses.scss'
 
 export default class CoursesView extends Component {
@@ -17,7 +18,7 @@ export default class CoursesView extends Component {
   }
 
   componentDidMount() {
-    get('http://localhost:8000/api/terms')
+    get(`${api_url}/terms`)
       .then(response => response.data)
       .then(terms => terms.sort((a, b) => b.id - a.id))
       .then(terms => {
@@ -37,7 +38,7 @@ export default class CoursesView extends Component {
     const subjects_query = subjects ? `&subjects=${subjects.join(',')}` : '';
     const numbers_query = numbers ? `&numbers=${numbers.join(',')}` : '';
     console.log(subjects, numbers);
-    get(`http://localhost:8000/api/courses?term=${selectedTerm}${subjects_query}${numbers_query}`)
+    get(`${api_url}/courses?term=${selectedTerm}${subjects_query}${numbers_query}`)
       .then(response => response.data)
       .then(courses => this.setState({courses}))
   }

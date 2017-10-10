@@ -3,6 +3,7 @@ import { debounce } from 'lodash'
 import { get } from 'axios'
 import download from 'downloadjs';
 
+import { api_url } from '../../config';
 import './schedules.scss'
 
 const Days = ['M', 'T', 'W', 'R', 'F']
@@ -85,12 +86,12 @@ export default class CoursesView extends Component {
 
   componentWillMount() {
     const query = this.props.location.search;
-    get(`http://localhost:8000/api/schedules${query}`)
+    get(`${api_url}/schedules${query}`)
       .then(res => {
         const {schedules, instructors, attributes} = res.data;
         this.setState({schedules, instructors, attributes, loading: false})
       })
-      get(`http://localhost:8000/api/slots${query}`)
+      get(`${api_url}/slots${query}`)
         .then(res => this.setState({slots: res.data.slots}))
   }
 
