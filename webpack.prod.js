@@ -1,6 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
 
+const config = require('./config');
+
 module.exports = {
   entry: [
     './app/index.js'
@@ -43,5 +45,13 @@ module.exports = {
         exclude: /node_modules/
       }
     ]
-  }
+  },
+
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        API_URL: JSON.stringify(config.api_url),
+      },
+    }),
+  ]
 }
