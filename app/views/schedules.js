@@ -75,11 +75,6 @@ function Meet({crn, code, name, start_time, end_time, hall, room, instructors, c
 
 export default class CoursesView extends Component {
 
-  constructor(props) {
-    super(props)
-    this.handleChange = this.handleChange.bind(this)
-  }
-
   state = {
     loading: true,
     schedules: [],
@@ -89,7 +84,6 @@ export default class CoursesView extends Component {
     currentScheduleIndex: 0,
     schedulesSort: 'early',
     lockedSections: [],
-    classTime: null
   }
 
   componentWillMount() {
@@ -134,7 +128,7 @@ export default class CoursesView extends Component {
 
     if (this.state.loading) return <span>Loading...</span>
 
-    const { currentScheduleIndex, schedulesSort, lockedSections, instructors, attributes, classTime } = this.state
+    const { currentScheduleIndex, schedulesSort, lockedSections, instructors, attributes } = this.state
     const schedules = this.state.schedules
       .filter(schedule => lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1))
       .sort(sorts[schedulesSort])
@@ -157,8 +151,8 @@ export default class CoursesView extends Component {
             <h3>Sort Schedules</h3>
             <RadioGroup
               name="classTime"
-              selectedValue={classTime}
-              onChange={this.handleChange}>
+              selectedValue={schedulesSort}
+              onChange={(e) => this.setState({ schedulesSort: e.target.value})}>
               <Radio
                 value="early"
                 hint="Schedules with earlier classes will show first">
