@@ -4,6 +4,7 @@ import { get } from 'axios'
 import download from 'downloadjs';
 
 import { RadioGroup, Radio } from '../components/radio-group/radio-group'
+import { CheckGroup, Check } from '../components/check-group/check-group'
 
 import { api_url } from '../../config';
 import './schedules.scss'
@@ -84,6 +85,8 @@ export default class CoursesView extends Component {
     currentScheduleIndex: 0,
     schedulesSort: 'early',
     lockedSections: [],
+    disabledInstructors: [],
+    disabledAttributes: [],
   }
 
   componentWillMount() {
@@ -170,17 +173,39 @@ export default class CoursesView extends Component {
               <OptionButton type="checkbox" text="Fade Section" hint="Full sections will appear faded in the calendar" />
             </OptionGroup>
             <h3>Instructors</h3>
-            <OptionGroup>
+            <CheckGroup
+              name="instructors"
+              values={Object.keys(instructors)}
+              onChange={values => {
+                this.setState({
+                  disabledInstructors: Object.keys(values).filter(value => values[value] == false)
+                })
+              }}>
               {Object.keys(instructors).map(instructor => 
-                <OptionButton text={instructor} hint={instructors[instructor] + ' Schedules'} checked />
+                <Check
+                  value={instructor}
+                  hint={instructors[instructor] + ' Schedules'}>
+                  {instructor}
+                </Check>
               )}
-            </OptionGroup> 
+            </CheckGroup>
             <h3>Attributes</h3>
-            <OptionGroup>
+            <CheckGroup
+              name="attributes"
+              values={Object.keys(attributes)}
+              onChange={values => {
+                this.setState({
+                  disabledAttributes: Object.keys(values).filter(value => values[value] == false)
+                })
+              }}>
               {Object.keys(attributes).map(attribute => 
-                <OptionButton text={attribute} hint={attributes[attribute] + ' Schedules'} checked />
+                <Check
+                  value={attribute}
+                  hint={attributes[attribute] + ' Schedules'}>
+                  {attribute}
+                </Check>
               )}
-            </OptionGroup>     
+            </CheckGroup>
           </div>
           <button className="button button--primary" onClick={this.downloadSchedule}>Export Schedule</button>
         </div>
