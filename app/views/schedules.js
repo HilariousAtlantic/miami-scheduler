@@ -3,6 +3,8 @@ import { debounce } from 'lodash'
 import { get } from 'axios'
 import download from 'downloadjs';
 
+import { RadioGroup, Radio } from '../components/radio-group/radio-group'
+
 import { api_url } from '../../config';
 import './schedules.scss'
 
@@ -73,6 +75,11 @@ function Meet({crn, code, name, start_time, end_time, hall, room, instructors, c
 
 export default class CoursesView extends Component {
 
+  constructor(props) {
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
+  }
+
   state = {
     loading: true,
     schedules: [],
@@ -81,7 +88,8 @@ export default class CoursesView extends Component {
     attributes: {},
     currentScheduleIndex: 0,
     schedulesSort: 'early',
-    lockedSections: []
+    lockedSections: [],
+    classTime: null
   }
 
   componentWillMount() {
@@ -116,11 +124,17 @@ export default class CoursesView extends Component {
       });
   }
 
+  handleChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value
+    })
+  }
+
   render() {
 
     if (this.state.loading) return <span>Loading...</span>
 
-    const { currentScheduleIndex, schedulesSort, lockedSections, instructors, attributes } = this.state
+    const { currentScheduleIndex, schedulesSort, lockedSections, instructors, attributes, classTime } = this.state
     const schedules = this.state.schedules
       .filter(schedule => lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1))
       .sort(sorts[schedulesSort])
@@ -141,10 +155,21 @@ export default class CoursesView extends Component {
           </div>
           <div className="schedule-filters">
             <h3>Sort Schedules</h3>
-            <OptionGroup>
-              <OptionButton type="radio" text="Early Classes" hint="Schedules with earlier classes will show first" checked />
-              <OptionButton type="radio" text="Later Classes" hint="Schedules with later classes will show first" />
-            </OptionGroup>
+            <RadioGroup
+              name="classTime"
+              selectedValue={classTime}
+              onChange={this.handleChange}>
+              <Radio
+                value="early"
+                hint="Schedules with earlier classes will show first">
+                Early Classes
+              </Radio>
+              <Radio
+                hint="Schedules with later classes will show first"
+                value="later">
+                Later Classes
+              </Radio>
+            </RadioGroup>
             <h3>Full Sections</h3>
             <OptionGroup>
               <OptionButton type="checkbox" text="Hide Schedule" hint="Schedules with a full section will not show" />
