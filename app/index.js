@@ -1,8 +1,8 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect, NavLink } from 'react-router-dom'
 
-import CoursesView from 'views/courses'
+import ScheduleGenerator from './views/schedule-generator'
 import SchedulesView from 'views/schedules'
 
 import './index.scss'
@@ -13,15 +13,12 @@ const app =
       <header>
         <a className="brand" href="/"><i className="fa fa-calendar"></i> Miami Scheduler</a>
         <nav>
-          <a className="active" href="/">Schedule Generator</a>
-          <a href="/courses">Course Catalog</a>
-          <a href="/reviews">Instructor Reviews</a>
+          <NavLink activeClassName="active" to="/">Schedule Generator</NavLink>
+          <NavLink activeClassName="active" to="/reviews">Instructor Reviews</NavLink>
         </nav> 
       </header>
       <Switch>
-        <Route exact path="/" component={CoursesView} />
-        <Route path="/schedules" component={SchedulesView} /> 
-        <Redirect to="/" />
+        <Route path="/" component={ScheduleGenerator} />
       </Switch>
     </div>
   </BrowserRouter>
