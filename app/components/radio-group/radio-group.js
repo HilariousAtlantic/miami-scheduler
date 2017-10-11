@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-import { object } from 'prop-types'
 
-export const Radio = ({...props, value, hint, children}, context) => {
-  const {name, selectedValue, onChange} = context.radioGroup
+export const Radio = ({...props, children, value, hint, name, selectedValue, onChange}) => {
   return (
     <div className='form-checkbox'>
       <label>
@@ -21,28 +19,18 @@ export const Radio = ({...props, value, hint, children}, context) => {
   )
 }
 
-Radio.contextTypes = {
-  radioGroup: object
-}
-
 export class RadioGroup extends React.Component {
-  getChildContext() {
-    const {name, selectedValue, onChange} = this.props
-    return {
-      radioGroup: { name, selectedValue, onChange }
-    }
+  renderChildren() {
+    const {children, name, onChange, selectedValue} = this.props
+    return React.Children.map(children, child =>
+      React.cloneElement(child, {name, selectedValue, onChange}))
   }
 
   render() {
-    const {children} = this.props
     return (
       <div className='radio-group'>
-        {children}
+        {this.renderChildren()}
       </div>
     )
   }
-}
-
-RadioGroup.childContextTypes = {
-  radioGroup: object
 }
