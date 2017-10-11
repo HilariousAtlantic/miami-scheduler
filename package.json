@@ -9,7 +9,7 @@
     "lint": "standard --fix",
     "import": "node server/import.js",
     "build": "webpack",
-    "dev": "webpack-dev-server",
+    "dev": "webpack-dev-server --config webpack.dev.js",
     "heroku-prebuild": "npm install --dev"
   },
   "author": "",
