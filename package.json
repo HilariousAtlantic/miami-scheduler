@@ -8,7 +8,7 @@
     "test": "standard",
     "lint": "standard --fix",
     "import": "node server/import.js",
-    "build": "webpack",
+    "build": "webpack --config webpack.prod.js",
     "dev": "webpack-dev-server --config webpack.dev.js",
     "heroku-prebuild": "npm install --dev"
   },
