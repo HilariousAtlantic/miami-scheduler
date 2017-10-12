@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom';
 import { debounce } from 'lodash'
 import { get } from 'axios'
 import download from 'downloadjs';
@@ -150,7 +151,7 @@ export default class CoursesView extends Component {
     return (
       <div className="view schedules-view">
         <div className="sidebar">  
-        <a href="/" className="change-courses"><i className="fa fa-arrow-left"></i>Change Courses</a>
+        <Link to="/" className="change-courses"><i className="fa fa-arrow-left"></i>Change Courses</Link>
           <div className="schedule-search">
             <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
               <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
