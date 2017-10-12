@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const { get } = require('axios')
+const { spawn } = require('child_process')
 
 const config = require('../config');
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 connectDatabase()
   .then(setupRoutes)
   .then(startServer)
+  .then(startDevServer)
   .catch(console.log)
 
 function connectDatabase() {
@@ -93,6 +95,24 @@ function startServer () {
   app.listen(config.port, () => {
     console.log(`server running at http://localhost:${config.port}`)
   });
+}
+
+function startDevServer() {
+  if (process.env.NODE_ENV != 'production') {
+    const devServer = spawn('npm', ['run', 'dev'])
+
+    devServer.stdout.on('data', data => {
+      console.log(String(data))
+    })
+
+    devServer.stderr.on('data', data => {
+      console.log(String(data))
+    })
+
+    devServer.on('close', code => {
+      console.log(`dev server stoppped code ${code}`)
+    })
+  }
 }
 
 function formatCourseResponse(course) {
