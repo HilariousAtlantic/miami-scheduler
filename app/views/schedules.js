@@ -131,10 +131,16 @@ export default class CoursesView extends Component {
 
     if (this.state.loading) return <span>Loading...</span>
 
-    const { currentScheduleIndex, schedulesSort, lockedSections, instructors, attributes } = this.state
+    const { currentScheduleIndex, schedulesSort, instructors, attributes, lockedSections } = this.state
     const schedules = this.state.schedules
-      .filter(schedule => lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1))
+      .filter(schedule => {
+        return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
+          this.state.disabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === -1) &&
+          this.state.disabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) === -1);
+      })
       .sort(sorts[schedulesSort])
+
+    if (!schedules.length) return <span>No schedules</span>
     
     const { crns, meets } = schedules[currentScheduleIndex]
 

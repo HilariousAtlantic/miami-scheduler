@@ -176,12 +176,16 @@ function getAttributes(courses) {
 
 function formatSchedule(schedule) {
   let crns = []
+  let instructors = {}
+  let attributes = {}
   let meets = {M: [], T: [], W: [], R: [], F: []}
   let meetCount = 0, meetTotal = 0
   for (let {course, section} of schedule) {
     let {code} = course
     let {crn, name} = section
     crns.push(crn)
+    section.instructors.forEach(({first_name, last_name}) => instructors[`${first_name} ${last_name}`] = true)
+    section.attributes.forEach(({name}) => attributes[name] = true)
     for (let {days, start_time, end_time, room, hall} of section.meets) {
       if (start_time) {
         meetCount++
@@ -195,5 +199,7 @@ function formatSchedule(schedule) {
       }
     }
   }
-  return {weight: meetTotal / meetCount, crns, meets}
+  instructors = Object.keys(instructors);
+  attributes = Object.keys(attributes);
+  return {weight: meetTotal / meetCount, crns, meets, instructors, attributes}
 }

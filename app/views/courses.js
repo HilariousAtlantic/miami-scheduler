@@ -25,7 +25,7 @@ export default class CoursesView extends Component {
               <input type="text" placeholder="Search Courses" onChange={e => this.searchCourses(e.target.value)} />
             </div>
             <div className="terms-dropdown">
-              <select onChange={this.props.onTermSelect}>
+              <select onChange={e => this.props.onTermSelect(e.target.value)}>
                 {terms.map(term => <option key={term.id} value={term.id}>{term.name}</option>)}
               </select>
               <i className="fa fa-chevron-down"></i>

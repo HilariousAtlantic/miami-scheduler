@@ -26,8 +26,8 @@ export default class ScheduleGenerator extends Component {
       });
   }
 
-  selectTerm = term => {
-    this.setState({selectedTerm: term, searchCourses: [], selectedCourses: []});
+  selectTerm = id => {
+    this.setState({selectedTerm: id, searchCourses: [], selectedCourses: []});
   }
 
   searchCourses = query => {
