@@ -178,7 +178,7 @@ export default class CoursesView extends Component {
               values={Object.keys(instructors)}
               onChange={values => {
                 this.setState({
-                  disabledInstructors: Object.keys(values).filter(value => values[value] == false)
+                  disabledInstructors: Object.keys(values).filter(value => !values[value])
                 })
               }}>
               {Object.keys(instructors).map(instructor => 
@@ -195,7 +195,7 @@ export default class CoursesView extends Component {
               values={Object.keys(attributes)}
               onChange={values => {
                 this.setState({
-                  disabledAttributes: Object.keys(values).filter(value => values[value] == false)
+                  disabledAttributes: Object.keys(values).filter(value => !values[value])
                 })
               }}>
               {Object.keys(attributes).map(attribute => 
