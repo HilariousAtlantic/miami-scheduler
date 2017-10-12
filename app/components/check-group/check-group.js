@@ -1,7 +1,16 @@
 import React, { Component } from 'react'
 import { bool, array, func } from 'prop-types'
 
-export const Check = ({...props, children, value, hint, name, onChange, values}) => {
+export const Check = ({
+  ...props,
+  children,
+  checked,
+  value,
+  hint,
+  name,
+  onChange,
+  values
+}) => {
   return (
     <div className='form-checkbox'>
       <label>
@@ -9,10 +18,14 @@ export const Check = ({...props, children, value, hint, name, onChange, values})
           type='checkbox'
           name={name}
           value={value}
-          checked={values[value]}
+          checked={checked}
           onChange={() => {
-            values[value] = !values[value]
-            onChange(values)
+            if (values) {
+              values[value] = !values[value]
+              onChange(values)
+            } else {
+              onChange()
+            }
           }} />
         <span>{children}</span>
       </label>
@@ -46,8 +59,11 @@ export class CheckGroup extends Component {
   renderChildren() {
     const {values} = this.state
     const {children, name, onChange, defaultValue} = this.props
-    return React.Children.map(children, child =>
-      React.cloneElement(child, {name, onChange, values}))
+    return React.Children.map(children, child => {
+      return React.cloneElement(child, {
+        name, onChange, values, checked: values[child.props.value]
+      })
+    })
   }
 
   render() {
