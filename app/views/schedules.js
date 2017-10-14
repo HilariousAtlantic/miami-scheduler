@@ -215,7 +215,7 @@ export default class CoursesView extends Component {
               )}
             </CheckGroup>
           </div>
-          <button className="button button--primary" onClick={this.downloadSchedule}>Export Schedule</button>
+          <button className="button button--primary" onClick={this.downloadSchedule}>Download Schedule</button>
         </div>
         <div className="content">
           {schedules.length ? 
