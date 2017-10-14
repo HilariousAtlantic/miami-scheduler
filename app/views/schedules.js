@@ -195,7 +195,7 @@ export default class CoursesView extends Component {
                 <Check
                   value={attribute}
                   text={attribute}
-                  hint={attributes[attribute] + ' Schedules'}
+                  hint={attributes[attribute] + ' Schedule' + (attributes[attribute] === 1 ? '' : 's')}
                 />
               )}
             </CheckGroup>

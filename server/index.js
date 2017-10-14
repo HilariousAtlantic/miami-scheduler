@@ -54,10 +54,10 @@ function setupRoutes (db) {
     db.collection('courses').find(
       {id: {$in: req.query.courses.split(',')}}
     ).toArray((error, courses) => {
-      res.json({
-        instructors: getInstructors(courses),
-        attributes: getAttributes(courses),
-        schedules: generateSchedules(courses)
+      const schedules = generateSchedules(courses);
+      res.json({schedules,
+        instructors: getInstructors(schedules),
+        attributes: getAttributes(schedules)
       })
     })
   })
@@ -170,25 +170,21 @@ function containsSameDay(meet1, meet2) {
   return false
 }
 
-function getInstructors(courses) {
+function getInstructors(schedules) {
   let instructors = {};
-  for (let course of courses) {
-    for (let section of course.sections) {
-      for (let {first_name, last_name} of section.instructors || []) {
-        instructors[first_name + ' ' + last_name] = instructors[first_name + ' ' + last_name] + 1 || 1
-      }
+  for (let schedule of schedules) {
+    for (let instructor of schedule.instructors) {
+      instructors[instructor] = instructors[instructor] + 1 || 1
     }
   }
   return instructors;
 }
 
-function getAttributes(courses) {
+function getAttributes(schedules) {
   let attributes = {};
-  for (let course of courses) {
-    for (let section of course.sections) {
-      for (let {name} of section.attributes || []) {
-        attributes[name] = attributes[name] + 1 || 1
-      }
+  for (let schedule of schedules) {
+    for (let attribute of schedule.attributes) {
+      attributes[attribute] = attributes[attribute] + 1 || 1
     }
   }
   return attributes;
