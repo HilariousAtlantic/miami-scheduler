@@ -1,15 +1,13 @@
 import React, { Component } from 'react'
-import { bool, array, func } from 'prop-types'
+import { bool, object, func } from 'prop-types'
 
 export const Check = ({
-  ...props,
-  children,
   checked,
   value,
+  text,
   hint,
   name,
-  onChange,
-  values
+  onChange
 }) => {
   return (
     <div className='form-checkbox'>
@@ -19,15 +17,9 @@ export const Check = ({
           name={name}
           value={value}
           checked={checked}
-          onChange={() => {
-            if (values) {
-              values[value] = !values[value]
-              onChange(values)
-            } else {
-              onChange()
-            }
-          }} />
-        <span>{children}</span>
+          onChange={() => onChange(value, !checked)}
+        />
+        <span>{text}</span>
       </label>
       {hint && <p className='note'>
         {hint}
@@ -37,39 +29,28 @@ export const Check = ({
 }
 
 export class CheckGroup extends Component {
-  constructor(props) {
-    super(props)
-    let values = {}
-    props.values.forEach(value => {
-      values[value] = this.props.defaultValue
-    })
-    this.state = {values}
-  }
-
-  static defaultProps =  {
-    defaultValue: true
-  }
 
   static propTypes = {
     defaultValue: bool,
-    values: array.isRequired,
+    values: object.isRequired,
     onChange: func.isRequired
   }
 
-  renderChildren() {
-    const {values} = this.state
-    const {children, name, onChange, defaultValue} = this.props
-    return React.Children.map(children, child => {
-      return React.cloneElement(child, {
-        name, onChange, values, checked: values[child.props.value]
-      })
-    })
+  static defaultProps = {
+    defaultValue: false
   }
 
   render() {
+    const { name, values, onChange, children, defaultValue } = this.props;
+    const checkboxes = children.map(child => React.cloneElement(child, {
+      name: name,
+      checked: values.hasOwnProperty(child.props.value) ? values[child.props.value] : defaultValue,
+      onChange: (value, checked) => onChange(Object.assign({}, values, {[value]: checked}))
+    }));
+
     return (
-      <div className='radio-group'>
-        {this.renderChildren()}
+      <div className='check-group'>
+        {checkboxes}
       </div>
     )
   }

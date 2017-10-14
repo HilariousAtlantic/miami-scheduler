@@ -18,28 +18,6 @@ const sorts = {
   later: (a, b) => b.weight - a.weight,
 }
 
-function OptionButton({text, hint, type = 'checkbox', checked = false}) {
-  return (
-    <div className="form-checkbox">
-      <label>
-        <input type={type} checked={checked} />
-        <span>{text}</span>
-      </label>
-      {hint && <p className="note">
-        {hint}
-      </p>}
-    </div>
-  )
-}
-
-function OptionGroup({children, onChange}) {
-  return (
-    <div className="radio-group">
-      {children}
-    </div>
-  )
-}
-
 function formatTime(minutes) {
   let h = Math.floor(minutes / 60);
   let m = minutes % 60;
@@ -86,8 +64,10 @@ export default class CoursesView extends Component {
     currentScheduleIndex: 0,
     schedulesSort: 'early',
     lockedSections: [],
-    disabledInstructors: [],
-    disabledAttributes: [],
+    instructorFilters: {},
+    attributeFilters: {},
+    filterFullSchedules: false,
+    fadeFullSections: false,
   }
 
   componentWillMount() {
@@ -97,8 +77,8 @@ export default class CoursesView extends Component {
         const {schedules, instructors, attributes} = res.data;
         this.setState({schedules, instructors, attributes, loading: false})
       })
-      get(`${api_url}/slots${query}`)
-        .then(res => this.setState({slots: res.data.slots}))
+    get(`${api_url}/slots${query}`)
+      .then(res => this.setState({slots: res.data.slots}))
   }
 
   toggleLock = crn => {
@@ -122,28 +102,29 @@ export default class CoursesView extends Component {
       });
   }
 
-  handleChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    })
-  }
-
   render() {
-
-    if (this.state.loading) return <span>Loading...</span>
-
-    const { currentScheduleIndex, schedulesSort, instructors, attributes, lockedSections } = this.state
+    const { 
+      currentScheduleIndex, 
+      schedulesSort, 
+      instructors, 
+      attributes, 
+      lockedSections,
+      instructorFilters,
+      attributeFilters,
+      filterFullSchedules,
+      fadeFullSections
+    } = this.state;
+    const disabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
+    const disabledAttributes = Object.keys(attributeFilters).filter(attribute => !attributeFilters[attribute]);
     const schedules = this.state.schedules
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
-          this.state.disabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === -1) &&
-          this.state.disabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) === -1);
+          disabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === -1) &&
+          disabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) === -1);
       })
       .sort(sorts[schedulesSort])
-
-    if (!schedules.length) return <span>No schedules</span>
     
-    const { crns, meets } = schedules[currentScheduleIndex]
+    const { crns, meets } = schedules[currentScheduleIndex] || {}
 
     const nextSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex + 1})
     const prevSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex - 1})
@@ -151,7 +132,10 @@ export default class CoursesView extends Component {
     return (
       <div className="view schedules-view">
         <div className="sidebar">  
-        <Link to="/" className="change-courses"><i className="fa fa-arrow-left"></i>Change Courses</Link>
+          <div className="schedule-options">
+            <Link to="/"><i className="fa fa-arrow-left"></i>Change Courses</Link>
+            <button className="button button--text">Reset Filters</button>
+          </div>
           <div className="schedule-search">
             <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
               <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
@@ -175,49 +159,52 @@ export default class CoursesView extends Component {
               </Radio>
             </RadioGroup>
             <h3>Full Sections</h3>
-            <OptionGroup>
-              <OptionButton type="checkbox" text="Hide Schedule" hint="Schedules with a full section will not show" />
-              <OptionButton type="checkbox" text="Fade Section" hint="Full sections will appear faded in the calendar" />
-            </OptionGroup>
+            <Check
+              checked={filterFullSchedules}
+              onChange={(_, checked) => this.setState({filterFullSchedules: checked})}
+              text="Hide Schedule"
+              hint="Schedules with a full section will not show"
+            />
+            <Check
+              checked={fadeFullSections}
+              onChange={(_, checked) => this.setState({fadeFullSections: checked})}
+              text="Fade Section"
+              hint="Full sections will appear faded in the calendar"
+            />
             <h3>Instructors</h3>
             <CheckGroup
               name="instructors"
-              values={Object.keys(instructors)}
-              onChange={values => {
-                this.setState({
-                  disabledInstructors: Object.keys(values).filter(value => !values[value])
-                })
-              }}>
+              values={this.state.instructorFilters}
+              defaultValue={true}
+              onChange={instructorFilters => this.setState({instructorFilters})}>
               {Object.keys(instructors).map(instructor => 
                 <Check
                   value={instructor}
-                  hint={instructors[instructor] + ' Schedules'}>
-                  {instructor}
-                </Check>
+                  text={instructor}
+                  hint={instructors[instructor] + ' Schedules'}
+                />
               )}
             </CheckGroup>
             <h3>Attributes</h3>
             <CheckGroup
               name="attributes"
-              values={Object.keys(attributes)}
-              onChange={values => {
-                this.setState({
-                  disabledAttributes: Object.keys(values).filter(value => !values[value])
-                })
-              }}>
+              values={this.state.attributeFilters}
+              defaultValue={true}
+              onChange={attributeFilters => this.setState({attributeFilters})}>
               {Object.keys(attributes).map(attribute => 
                 <Check
                   value={attribute}
-                  hint={attributes[attribute] + ' Schedules'}>
-                  {attribute}
-                </Check>
+                  text={attribute}
+                  hint={attributes[attribute] + ' Schedules'}
+                />
               )}
             </CheckGroup>
           </div>
           <button className="button button--primary" onClick={this.downloadSchedule}>Export Schedule</button>
         </div>
         <div className="content">
-          <div className="schedule-container">
+          {schedules.length ? 
+            <div className="schedule-container">
             <div className="schedule">
               <div className="schedule-header">
                 <span className="schedule-column"><i className="fa fa-clock-o"></i></span>
@@ -262,7 +249,24 @@ export default class CoursesView extends Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div> :
+          this.state.loading ? 
+            <div className="schedules-message">
+              <div className="spinner"></div>
+              <span>Generating Schedules</span>
+            </div>
+          : 
+            <div className="schedules-message">
+              <i className="fa fa-ban"></i>
+              <span>No Schedules</span>
+                {this.state.schedules.length ? 
+                  <button className="button button--default">Reset Filters</button>
+                :
+                  <Link to="/" className="button button--default">Change Courses</Link>
+                }
+            </div>
+            }
+          
         </div>
       </div>
     )

@@ -66,7 +66,6 @@ footer {
 .button {
   border: none;
   border-radius: 3px;
-  line-height: 2rem;
   text-align: center;
 
   &:hover {
@@ -96,6 +95,7 @@ footer {
     padding: 0 10px;
     box-shadow: 2px 2px 10px rgba(0,0,0,.05);
     border: 1px solid #ddd;
+    line-height: 2rem;
 
     &:hover {
       background: darken(#f5f5f5, 5%);
@@ -106,6 +106,16 @@ footer {
       background: darken(#f5f5f5, 10%);
     }
 
+  }
+
+  &--text {
+    padding: 0;
+    background: transparent;
+    color: #333;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
   
   

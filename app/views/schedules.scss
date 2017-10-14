@@ -17,16 +17,18 @@
 
 }
 
-.change-courses {
+.schedule-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
   font-size: .75rem;
   font-weight: bold;
-  margin-bottom: 10px;
 
   i {
     margin: 0;
     padding-right: 5px; 
   }
-
 }
 
 .schedule-search {
@@ -262,4 +264,37 @@
     display: none;
   }
 
+}
+
+.schedules-message {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ddd;
+
+  span {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+
+  i {
+    font-size: 5rem;
+  }
+
+  .spinner {
+    width: 5rem;
+    height: 5rem;
+    border: 5px solid #eee;
+    border-bottom: 5px solid #ccc;
+    border-radius: 50%;
+    animation: spinner 1s cubic-bezier(.17,.67,.83,.67) infinite;
+  }
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
 }
