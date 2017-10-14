@@ -92,6 +92,18 @@ export default class CoursesView extends Component {
     })
   }
 
+  resetFilters = () => {
+    this.setState({
+      lockedSections: [], 
+      instructorFilters: {}, 
+      attributeFilters: {}, 
+      currentScheduleIndex: 0,
+      filterFullSchedules: false,
+      fadeFullSections: false,
+      schedulesSort: 'early',
+    });
+  }
+
   downloadSchedule() {
     const schedule = document.querySelector('.schedule').cloneNode(true);
     schedule.className += ' exported';
@@ -137,7 +149,7 @@ export default class CoursesView extends Component {
         <div className="sidebar">  
           <div className="schedule-options">
             <Link to="/"><i className="fa fa-arrow-left"></i>Change Courses</Link>
-            <button className="button button--text">Reset Filters</button>
+            <button className="button button--text" onClick={this.resetFilters}>Reset Filters</button>
           </div>
           <div className="schedule-search">
             <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
@@ -264,7 +276,7 @@ export default class CoursesView extends Component {
               <i className="fa fa-ban"></i>
               <span>No Schedules</span>
                 {this.state.schedules.length ? 
-                  <button className="button button--default">Reset Filters</button>
+                  <button className="button button--default" onClick={this.resetFilters}>Reset Filters</button>
                 :
                   <Link to="/" className="button button--default">Change Courses</Link>
                 }
