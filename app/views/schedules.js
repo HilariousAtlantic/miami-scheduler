@@ -29,9 +29,10 @@ function formatTime(minutes) {
   return `${h}:${('0'+m).slice(-2)}`;
 }
 
-function Meet({crn, code, name, start_time, end_time, hall, room, instructors, color, locked, onClick, slots}) {
+function Meet({crn, code, name, start_time, end_time, hall, room, instructors, color, locked, onClick, slots, fade}) {
   const styles = {
     background: color,
+    opacity: fade ? .5 : 1,
     top: (start_time - 360)+'px',
     height: (end_time-start_time)+'px'
   }
@@ -112,7 +113,8 @@ export default class CoursesView extends Component {
       instructorFilters,
       attributeFilters,
       filterFullSchedules,
-      fadeFullSections
+      fadeFullSections,
+      slots
     } = this.state;
     const disabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
     const disabledAttributes = Object.keys(attributeFilters).filter(attribute => !attributeFilters[attribute]);
@@ -120,7 +122,8 @@ export default class CoursesView extends Component {
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
           disabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === -1) &&
-          disabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) === -1);
+          disabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) === -1) &&
+          (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
       })
       .sort(sorts[schedulesSort])
     
@@ -236,7 +239,8 @@ export default class CoursesView extends Component {
                 {Days.map(day =>
                   <div key={day} className="schedule-column">
                     {meets[day].map(meet => <Meet {...meet}
-                      slots={this.state.slots[meet.crn]}
+                      slots={slots[meet.crn]}
+                      fade={fadeFullSections && slots[meet.crn] && slots[meet.crn].rem <= 0}
                       color={Colors[crns.indexOf(meet.crn)]}
                       locked={lockedSections.includes(meet.crn)}
                       onClick={() => this.toggleLock(meet.crn)}
