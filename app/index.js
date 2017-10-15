@@ -20,6 +20,7 @@ const app =
       </header>
       <Switch>
         <Route exact path="/" component={ScheduleGenerator} />
+        <Route path="/schedules" component={ScheduleGenerator} />
         <Route path="/reviews" component={InstructorReviews} />
         <Route component={NotFound} />
       </Switch>
