@@ -6,7 +6,7 @@ export default class InstructorReviews extends Component {
 
   render() {
     return (
-      <div className="content">
+      <div className="view reviews-view">
         <i className="fa fa-calendar-times-o"></i>
         <span>Coming Soon</span>
       </div>
