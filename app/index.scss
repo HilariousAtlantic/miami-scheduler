@@ -19,11 +19,14 @@ header {
   padding: 0 20px;
 
   .brand {
+    display: flex;
+    align-items: center;
     font-size: 1.25rem;
+  }
 
-    i {
-      margin-right: 10px;
-    }
+  img {
+    height: 32px;
+    margin-right: 8px;
   }
   
   a {

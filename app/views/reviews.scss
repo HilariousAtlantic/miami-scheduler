@@ -1,0 +1,17 @@
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ddd;
+
+  i {
+    font-size: 5rem;
+  }
+  
+  span {
+    font-size: 3rem;
+  }
+}
+
