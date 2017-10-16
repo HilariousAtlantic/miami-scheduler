@@ -12,7 +12,7 @@ const app =
   <BrowserRouter>
     <div className="app">
       <header>
-        <a className="brand" href="/"><img src="/img/logo.png" />Miami Scheduler</a>
+        <a className="brand" href="/">Miami Scheduler</a>
         <nav>
           <NavLink exact activeClassName="active" to="/">Schedule Generator</NavLink>
           <NavLink activeClassName="active" to="/reviews">Instructor Reviews</NavLink>
