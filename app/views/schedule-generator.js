@@ -14,7 +14,9 @@ export default class ScheduleGenerator extends Component {
     selectedTerm: {},
     searchedCourses: [],
     selectedCourses: [],
-    generatedSchedules: []
+    generatedSchedules: [],
+    uniqueInstructors: {},
+    uniqueAttributes: {}
   }
 
   componentDidMount() {
@@ -58,8 +60,12 @@ export default class ScheduleGenerator extends Component {
     const courses = query['courses'] || this.state.selectedCourses.map(c => c.id).join(',');
     axios.get(`${api_url}/schedules?courses=${courses}`)
       .then(res => {
-        const { schedules } = res.data;
-        this.setState({generatedSchedules: schedules})
+        const { schedules, instructors, attributes } = res.data;
+        this.setState({
+          generatedSchedules: schedules,
+          uniqueInstructors: instructors,
+          uniqueAttributes: attributes
+        });
       });
   }
 
@@ -69,6 +75,8 @@ export default class ScheduleGenerator extends Component {
         <Route path="/schedules" render={() =>
           <SchedulesView
             generatedSchedules={this.state.generatedSchedules}
+            uniqueInstructors={this.state.uniqueInstructors}
+            uniqueAttributes={this.state.uniqueAttributes}
           />
         }/> 
         <Route render={() => 

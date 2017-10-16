@@ -104,6 +104,11 @@ export default class SchedulesView extends Component {
   }
 
   render() {
+    const {
+      generatedSchedules,
+      uniqueInstructors,
+      uniqueAttributes
+    } = this.props;
     const { 
       currentScheduleIndex, 
       schedulesSort, 
@@ -117,12 +122,12 @@ export default class SchedulesView extends Component {
       slots
     } = this.state;
     const disabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
-    const disabledAttributes = Object.keys(attributeFilters).filter(attribute => !attributeFilters[attribute]);
-    const schedules = this.props.generatedSchedules
+    const enabledAttributes = Object.keys(attributeFilters).filter(attribute => attributeFilters[attribute]);
+    const schedules = generatedSchedules
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
           disabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === -1) &&
-          disabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) === -1) &&
+          enabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) !== -1) &&
           (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
       })
       .sort(sorts[schedulesSort])
@@ -180,11 +185,11 @@ export default class SchedulesView extends Component {
               values={this.state.instructorFilters}
               defaultValue={true}
               onChange={instructorFilters => this.setState({instructorFilters})}>
-              {Object.keys(instructors).map(instructor => 
+              {Object.keys(uniqueInstructors).map(instructor => 
                 <Check
                   value={instructor}
                   text={instructor}
-                  hint={instructors[instructor] + ' Schedules'}
+                  hint={uniqueInstructors[instructor] + ' Schedules'}
                 />
               )}
             </CheckGroup>
@@ -192,13 +197,13 @@ export default class SchedulesView extends Component {
             <CheckGroup
               name="attributes"
               values={this.state.attributeFilters}
-              defaultValue={true}
+              defaultValue={false}
               onChange={attributeFilters => this.setState({attributeFilters})}>
-              {Object.keys(attributes).map(attribute => 
+              {Object.keys(uniqueAttributes).map(attribute => 
                 <Check
                   value={attribute}
                   text={attribute}
-                  hint={attributes[attribute] + ' Schedule' + (attributes[attribute] === 1 ? '' : 's')}
+                  hint={uniqueAttributes[attribute] + ' Schedule' + (uniqueAttributes[attribute] === 1 ? '' : 's')}
                 />
               )}
             </CheckGroup>
