@@ -16,7 +16,8 @@ export default class ScheduleGenerator extends Component {
     selectedCourses: [],
     generatedSchedules: [],
     uniqueInstructors: {},
-    uniqueAttributes: {}
+    uniqueAttributes: {},
+    slots: {}
   }
 
   componentDidMount() {
@@ -67,6 +68,11 @@ export default class ScheduleGenerator extends Component {
           uniqueAttributes: attributes
         });
       });
+    axios.get(`${api_url}/slots?courses=${courses}`)
+      .then(res => {
+        const { slots } = res.data;
+        this.setState({slots});
+      });
   }
 
   render() {
@@ -77,6 +83,7 @@ export default class ScheduleGenerator extends Component {
             generatedSchedules={this.state.generatedSchedules}
             uniqueInstructors={this.state.uniqueInstructors}
             uniqueAttributes={this.state.uniqueAttributes}
+            slots={this.state.slots}
           />
         }/> 
         <Route render={() => 

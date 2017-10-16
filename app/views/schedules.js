@@ -107,7 +107,8 @@ export default class SchedulesView extends Component {
     const {
       generatedSchedules,
       uniqueInstructors,
-      uniqueAttributes
+      uniqueAttributes,
+      slots
     } = this.props;
     const { 
       currentScheduleIndex, 
@@ -118,8 +119,7 @@ export default class SchedulesView extends Component {
       instructorFilters,
       attributeFilters,
       filterFullSchedules,
-      fadeFullSections,
-      slots
+      fadeFullSections
     } = this.state;
     const disabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
     const enabledAttributes = Object.keys(attributeFilters).filter(attribute => attributeFilters[attribute]);
