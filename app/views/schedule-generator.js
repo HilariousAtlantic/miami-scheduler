@@ -12,6 +12,7 @@ export default class ScheduleGenerator extends Component {
   state = {
     terms: [],
     selectedTerm: {},
+    searchQuery: '',
     searchedCourses: [],
     selectedCourses: [],
     generatedSchedules: [],
@@ -25,7 +26,9 @@ export default class ScheduleGenerator extends Component {
       .then(res => res.data)
       .then(terms => terms.sort((a, b) => b.id - a.id))
       .then(terms => {
-        this.setState({terms, selectedTerm: terms[0].id});
+        this.setState({terms}, () => {
+          this.selectTerm(terms[0].id);
+        });
       });
 
     if (this.props.location.search.length) {
@@ -34,10 +37,13 @@ export default class ScheduleGenerator extends Component {
   }
 
   selectTerm = id => {
-    this.setState({selectedTerm: id, searchCourses: [], selectedCourses: []});
+    this.setState({selectedTerm: id, searchCourses: [], selectedCourses: []}, () => {
+      this.searchCourses(this.state.searchQuery);
+    });
   }
 
   searchCourses = query => {
+    this.setState({searchQuery: query});
     const { selectedTerm } = this.state;
     const subjects = query.match(/([a-zA-z]{3})/g);
     const numbers = query.match(/(\d+)/g);
