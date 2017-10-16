@@ -184,7 +184,7 @@ export default class SchedulesView extends Component {
               name="instructors"
               values={this.state.instructorFilters}
               defaultValue={true}
-              onChange={instructorFilters => this.setState({instructorFilters})}>
+              onChange={instructorFilters => this.setState({instructorFilters, currentScheduleIndex: 0})}>
               {Object.keys(uniqueInstructors).map(instructor => 
                 <Check
                   value={instructor}
@@ -198,7 +198,7 @@ export default class SchedulesView extends Component {
               name="attributes"
               values={this.state.attributeFilters}
               defaultValue={false}
-              onChange={attributeFilters => this.setState({attributeFilters})}>
+              onChange={attributeFilters => this.setState({attributeFilters, currentScheduleIndex: 0})}>
               {Object.keys(uniqueAttributes).map(attribute => 
                 <Check
                   value={attribute}
