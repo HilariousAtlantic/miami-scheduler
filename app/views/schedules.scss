@@ -19,15 +19,34 @@
 
 .schedule-options {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  font-size: .75rem;
-  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
 
-  i {
-    margin: 0;
-    padding-right: 5px; 
+  button, a {
+    display: block;
+    flex: 1;
+    text-align: center;
+    background: #fff;
+    border: none;
+    color: #333;
+    line-height: 2rem;
+    padding: 0;
+    font-size: .75rem;
+
+    &:hover {
+      text-decoration: none;
+      background: darken(#ffffff, 5%);
+    }
+
+    &:active {
+      background: darken(#ffffff, 10%);
+    }
+  }
+
+  button {
+    border-left: 1px solid #ccc;
   }
 }
 

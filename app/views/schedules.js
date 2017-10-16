@@ -148,8 +148,8 @@ export default class CoursesView extends Component {
       <div className="view schedules-view">
         <div className="sidebar">  
           <div className="schedule-options">
-            <Link to="/"><i className="fa fa-arrow-left"></i>Change Courses</Link>
-            <button className="button button--text" onClick={this.resetFilters}>Reset Filters</button>
+            <Link to="/">Change Courses</Link>
+            <button onClick={this.resetFilters}>Reset Filters</button>
           </div>
           <div className="schedule-search">
             <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
