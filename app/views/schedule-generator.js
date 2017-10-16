@@ -24,6 +24,10 @@ export default class ScheduleGenerator extends Component {
       .then(terms => {
         this.setState({terms, selectedTerm: terms[0].id});
       });
+
+    if (this.props.location.search.length) {
+      this.generateSchedules();
+    }
   }
 
   selectTerm = id => {
@@ -50,7 +54,8 @@ export default class ScheduleGenerator extends Component {
   }
 
   generateSchedules = () => {
-    const courses = this.state.selectedCourses.map(c => c.id).join(',');
+    const query = parseQuery(this.props.location.search);
+    const courses = query['courses'] || this.state.selectedCourses.map(c => c.id).join(',');
     axios.get(`${api_url}/schedules?courses=${courses}`)
       .then(res => {
         const { schedules } = res.data;
@@ -61,7 +66,11 @@ export default class ScheduleGenerator extends Component {
   render() {
     return (
       <Switch>
-        <Route path="/schedules" component={SchedulesView} /> 
+        <Route path="/schedules" render={() =>
+          <SchedulesView
+            generatedSchedules={this.state.generatedSchedules}
+          />
+        }/> 
         <Route render={() => 
           <CoursesView
             terms={this.state.terms}
@@ -80,3 +89,11 @@ export default class ScheduleGenerator extends Component {
   }
 
 }
+
+function parseQuery(query) {
+  return query.slice(1).split('&').reduce((acc, param) => {
+    const [key, value] = param.split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+} 

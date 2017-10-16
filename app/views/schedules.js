@@ -54,11 +54,10 @@ function Meet({crn, code, name, start_time, end_time, hall, room, instructors, c
   )
 }
 
-export default class CoursesView extends Component {
+export default class SchedulesView extends Component {
 
   state = {
     loading: true,
-    schedules: [],
     slots: [],
     instructors: {},
     attributes: {},
@@ -69,17 +68,6 @@ export default class CoursesView extends Component {
     attributeFilters: {},
     filterFullSchedules: false,
     fadeFullSections: false,
-  }
-
-  componentWillMount() {
-    const query = this.props.location.search;
-    get(`${api_url}/schedules${query}`)
-      .then(res => {
-        const {schedules, instructors, attributes} = res.data;
-        this.setState({schedules, instructors, attributes, loading: false})
-      })
-    get(`${api_url}/slots${query}`)
-      .then(res => this.setState({slots: res.data.slots}))
   }
 
   toggleLock = crn => {
@@ -130,7 +118,7 @@ export default class CoursesView extends Component {
     } = this.state;
     const disabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
     const disabledAttributes = Object.keys(attributeFilters).filter(attribute => !attributeFilters[attribute]);
-    const schedules = this.state.schedules
+    const schedules = this.props.generatedSchedules
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
           disabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === -1) &&
