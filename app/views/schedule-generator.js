@@ -15,6 +15,7 @@ export default class ScheduleGenerator extends Component {
     searchQuery: '',
     searchedCourses: [],
     selectedCourses: [],
+    loadingSchedules: true,
     generatedSchedules: [],
     uniqueInstructors: {},
     uniqueAttributes: {},
@@ -65,13 +66,15 @@ export default class ScheduleGenerator extends Component {
   generateSchedules = () => {
     const query = parseQuery(this.props.location.search);
     const courses = query['courses'] || this.state.selectedCourses.map(c => c.id).join(',');
+    this.setState({loadingSchedules: true});
     axios.get(`${api_url}/schedules?courses=${courses}`)
       .then(res => {
         const { schedules, instructors, attributes } = res.data;
         this.setState({
           generatedSchedules: schedules,
           uniqueInstructors: instructors,
-          uniqueAttributes: attributes
+          uniqueAttributes: attributes,
+          loadingSchedules: false
         });
       });
     axios.get(`${api_url}/slots?courses=${courses}`)
@@ -86,6 +89,7 @@ export default class ScheduleGenerator extends Component {
       <Switch>
         <Route path="/schedules" render={() =>
           <SchedulesView
+            loadingSchedules={this.state.loadingSchedules}
             generatedSchedules={this.state.generatedSchedules}
             uniqueInstructors={this.state.uniqueInstructors}
             uniqueAttributes={this.state.uniqueAttributes}

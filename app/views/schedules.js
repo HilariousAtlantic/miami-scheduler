@@ -57,7 +57,6 @@ function Meet({crn, code, name, start_time, end_time, hall, room, instructors, c
 export default class SchedulesView extends Component {
 
   state = {
-    loading: true,
     slots: [],
     instructors: {},
     attributes: {},
@@ -105,6 +104,7 @@ export default class SchedulesView extends Component {
 
   render() {
     const {
+      loadingschedules,
       generatedSchedules,
       uniqueInstructors,
       uniqueAttributes,
@@ -259,7 +259,7 @@ export default class SchedulesView extends Component {
               </div>
             </div>
           </div> :
-          this.state.loading ? 
+          loadingschedules ?
             <div className="schedules-message">
               <div className="spinner"></div>
               <span>Generating Schedules</span>
@@ -268,7 +268,7 @@ export default class SchedulesView extends Component {
             <div className="schedules-message">
               <i className="fa fa-ban"></i>
               <span>No Schedules</span>
-                {this.state.schedules.length ? 
+                {generatedSchedules.length ? 
                   <button className="button button--default" onClick={this.resetFilters}>Reset Filters</button>
                 :
                   <Link to="/" className="button button--default">Change Courses</Link>
