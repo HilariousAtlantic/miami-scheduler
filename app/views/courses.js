@@ -43,16 +43,25 @@ export default class CoursesView extends Component {
           </Link>
         </div>
         <div className="content">
-          <ul className="selected-courses">
-            {selectedCourses.map(course => (
-              <li key={course.id}>
-                <button className="button button--default deselect-course" onClick={() => this.props.onCourseDeselect(course)}>Remove</button>
-                <span className="course-code">{course.code}</span>
-                <span className="course-title">{course.title}</span>
-                <p>{course.description}</p>
-              </li>
-            ))}
-          </ul>
+          {selectedCourses.length ? 
+            <ul className="selected-courses">
+              {selectedCourses.map(course => (
+                <li key={course.id}>
+                  <button className="button button--default deselect-course" onClick={() => this.props.onCourseDeselect(course)}>Remove</button>
+                  <span className="course-code">{course.code}</span>
+                  <span className="course-title">{course.title}</span>
+                  <p>{course.description}</p>
+                </li>
+              ))}
+            </ul>
+          :
+              <div className="courses-message">
+                <i className="fa fa-times"></i>
+                <span>No Courses Selected</span>
+                <p>Use the search bar to find the courses you would like to take</p>
+              </div>
+          }
+          
         </div>
       </div>
     )

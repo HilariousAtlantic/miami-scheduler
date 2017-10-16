@@ -134,3 +134,24 @@
     right: 20px;
   }
 }
+
+.courses-message {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+
+  i {
+    font-size: 5rem;
+  }
+
+  span {
+    font-size: 3rem;
+  }
+
+  p {
+    font-size: 1.5rem;
+  }
+}
