@@ -164,7 +164,7 @@ export default class SchedulesView extends Component {
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
         (!enabledInstructors.length || enabledInstructors.find(instructor => schedule.instructors.indexOf(instructor) !== -1)) &&
-        enabledClassLoads.every(day => schedule.meets[day].length >= Math.max(classLoads[day].min, -Infinity) && schedule.meets[day].length <= Math.min(classLoads[day].max, Infinity)) &&
+        enabledClassLoads.every(day => schedule.meets[day].length >= (classLoads[day].min || -Infinity) && schedule.meets[day].length <= (classLoads[day].max >= 0 ? classLoads[day].max : Infinity)) &&
         (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
       })
       .sort(sorts[schedulesSort])
