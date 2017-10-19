@@ -34,6 +34,12 @@ export default class ScheduleGenerator extends Component {
 
     if (this.props.location.search.length) {
       this.generateSchedules();
+      const query = parseQuery(this.props.location.search);
+      axios.get(`${api_url}/courses?id=${query['courses']}`)
+        .then(res => {
+          const courses = res.data;
+          this.setState({selectedCourses: this.state.selectedCourses.concat(courses)});
+        });
     }
   }
 
@@ -50,13 +56,17 @@ export default class ScheduleGenerator extends Component {
     const numbers = query.match(/(\d+)/g);
     const subjects_query = subjects ? `&subjects=${subjects.join(',')}` : '';
     const numbers_query = numbers ? `&numbers=${numbers.join(',')}` : '';
-    axios.get(`${api_url}/courses?term=${selectedTerm}${subjects_query}${numbers_query}`)
+    axios.get(`${api_url}/courses/search?term=${selectedTerm}${subjects_query}${numbers_query}`)
       .then(res => res.data)
       .then(courses => this.setState({searchedCourses: courses}));
   }
 
   selectCourse = course => {
-    this.setState({selectedCourses: [...this.state.selectedCourses, course]});
+    axios.get(`${api_url}/courses?id=${course.id}`)
+      .then(res => {
+        const courses = res.data;
+        this.setState({selectedCourses: this.state.selectedCourses.concat(courses)});
+      });
   }
 
   deselectCourse = course => {
@@ -89,6 +99,7 @@ export default class ScheduleGenerator extends Component {
       <Switch>
         <Route path="/schedules" render={() =>
           <SchedulesView
+            selectedCourses={this.state.selectedCourses}
             loadingSchedules={this.state.loadingSchedules}
             generatedSchedules={this.state.generatedSchedules}
             uniqueInstructors={this.state.uniqueInstructors}

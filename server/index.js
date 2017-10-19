@@ -36,6 +36,17 @@ function setupRoutes (db) {
   })
 
   app.get('/api/courses', (req, res) => {
+    const { id } = req.query;
+    db.collection('courses').find({id: {$in: id.split(',')}}).toArray((error, courses) => {
+      if (error) {
+        res.sendStatus(404)
+      } else {
+        res.json(courses.map(formatCourseResponse))
+      }
+    })
+  })
+
+  app.get('/api/courses/search', (req, res) => {
     const { term, subjects, numbers } = req.query;
     let query = { term };
     if (subjects || numbers) query['$and'] = [];
@@ -45,7 +56,7 @@ function setupRoutes (db) {
       if (error) {
         res.sendStatus(404)
       } else {
-        res.json(courses.map(formatCourseResponse))
+        res.json(courses.map(formatSearchedCourseResponse))
       }
     })
   })
@@ -116,6 +127,19 @@ function startDevServer() {
 }
 
 function formatCourseResponse(course) {
+  return {
+    id: course.id,
+    school: course.school,
+    department: course.department,
+    code: course.code,
+    title: course.title,
+    description: course.description,
+    credits: course.credits,
+    sections: course.sections
+  }
+}
+
+function formatSearchedCourseResponse(course) {
   return {
     id: course.id,
     school: course.school,

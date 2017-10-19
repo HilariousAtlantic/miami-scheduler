@@ -67,6 +67,16 @@ function ClassLoad({enabled, day, min, max, onChange}) {
   )
 }
 
+function getUniqueInstructors(course) {
+  const instructors = course.sections.reduce((instructors, section) => {
+    for (let {first_name, last_name} of section.instructors) {
+      instructors[`${first_name} ${last_name}`] = true;
+    }
+    return instructors;
+  }, {});
+  return Object.keys(instructors);
+}
+
 export default class SchedulesView extends Component {
 
   state = {
@@ -129,6 +139,7 @@ export default class SchedulesView extends Component {
 
   render() {
     const {
+      selectedCourses,
       loadingschedules,
       generatedSchedules,
       uniqueInstructors,
@@ -152,7 +163,7 @@ export default class SchedulesView extends Component {
     const schedules = generatedSchedules
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
-        enabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) !== -1) &&
+        (!enabledInstructors.length || enabledInstructors.find(instructor => schedule.instructors.indexOf(instructor) !== -1)) &&
         enabledClassLoads.every(day => schedule.meets[day].length >= Math.max(classLoads[day].min, -Infinity) && schedule.meets[day].length <= Math.min(classLoads[day].max, Infinity)) &&
         (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
       })
@@ -205,7 +216,7 @@ export default class SchedulesView extends Component {
               text="Fade Section"
               hint="Full sections will appear faded in the calendar"
             />
-            <h3>Class Load</h3>
+            <h3 className="filter-group-header loads">Class Load</h3>
             <div className="class-load-form">
               {Days.map(day => <ClassLoad key={day}
                 day={day}
@@ -213,20 +224,25 @@ export default class SchedulesView extends Component {
                 onChange={c => this.setState({classLoads: {...classLoads, [day]: c}, currentScheduleIndex: 0})} 
               />)}
             </div>
-            <h3>Instructors</h3>
-            <CheckGroup
-              name="instructors"
-              values={this.state.instructorFilters}
-              defaultValue={false}
-              onChange={instructorFilters => this.setState({instructorFilters, currentScheduleIndex: 0})}>
-              {Object.keys(uniqueInstructors).map(instructor => 
-                <Check key={instructor}
-                  value={instructor}
-                  text={instructor}
-                  hint={uniqueInstructors[instructor] + ' Schedules'}
-                />
-              )}
-            </CheckGroup>
+            <h3 className="filter-group-header instructors">Choose Instructors</h3>
+            {selectedCourses.map(course => !getUniqueInstructors(course).length ? null : (
+              <div className="instructor-group" key={course.code}>
+                <span className="course-code">{course.code}</span>
+                <CheckGroup
+                  name="instructors"
+                  values={this.state.instructorFilters}
+                  defaultValue={false}
+                  onChange={instructorFilters => this.setState({instructorFilters, currentScheduleIndex: 0})}>
+                  {getUniqueInstructors(course).filter(i => uniqueInstructors[i]).map(instructor =>
+                    <Check key={instructor}
+                      value={instructor}
+                      text={instructor}
+                      hint={uniqueInstructors[instructor] + ' Schedules'}
+                    />
+                  )}
+                </CheckGroup>
+              </div>
+            ))}
           </div>
           <button className="button button--primary" onClick={this.downloadSchedule}>Download Schedule</button>
         </div>

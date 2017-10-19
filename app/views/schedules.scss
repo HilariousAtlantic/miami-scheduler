@@ -128,6 +128,26 @@
 
 }
 
+.filter-group-header {
+
+  &.instructors, &.loads {
+    margin: 20px 0;
+  }
+  
+}
+
+.instructor-group {
+
+  .course-code {
+    color: #555;
+    font-weight: 600;
+  }
+
+  .form-checkbox:first-of-type {
+    margin-top: 5px;
+  }
+}
+
 .break-form {
   display: flex;
   align-items: center;
