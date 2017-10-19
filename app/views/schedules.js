@@ -147,12 +147,12 @@ export default class SchedulesView extends Component {
       fadeFullSections,
       classLoads
     } = this.state;
-    const enabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
+    const enabledInstructors = Object.keys(instructorFilters).filter(instructor => instructorFilters[instructor]);
     const enabledClassLoads = Object.keys(classLoads).filter(day => classLoads[day].enabled);
     const schedules = generatedSchedules
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
-        enabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === 1) &&
+        enabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) !== -1) &&
         enabledClassLoads.every(day => schedule.meets[day].length >= Math.max(classLoads[day].min, -Infinity) && schedule.meets[day].length <= Math.min(classLoads[day].max, Infinity)) &&
         (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
       })
@@ -217,7 +217,7 @@ export default class SchedulesView extends Component {
             <CheckGroup
               name="instructors"
               values={this.state.instructorFilters}
-              defaultValue={true}
+              defaultValue={false}
               onChange={instructorFilters => this.setState({instructorFilters, currentScheduleIndex: 0})}>
               {Object.keys(uniqueInstructors).map(instructor => 
                 <Check key={instructor}
