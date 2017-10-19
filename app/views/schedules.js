@@ -11,6 +11,13 @@ import { api_url } from '../../config';
 import './schedules.scss'
 
 const Days = ['M', 'T', 'W', 'R', 'F']
+const DayNames = {
+  M: 'Monday',
+  T: 'Tuesday',
+  W: 'Wednesday',
+  R: 'Thursday',
+  F: 'Friday'
+}
 const Colors = ['#0D47A1', '#B71C1C', '#1B5E20', '#E65100', '#4A148C', '#263238']
 
 const sorts = {
@@ -54,15 +61,29 @@ function Meet({crn, code, name, start_time, end_time, hall, room, instructors, c
   )
 }
 
-function ClassLoad({enabled, day, min, max, onChange}) {
-  const handleChange = debounce(c => onChange(Object.assign({enabled, min, max}, c)), 500);
+function ClassLoad({day, min = '', max = '', onChange}) {
+  const handleChange = c => onChange(Object.assign({min, max}, c));
   return (
     <div className="class-load">
-      <input className="toggle" type="checkbox" defaultChecked={enabled} onChange={e => handleChange({enabled: e.target.checked})} />
-      <span className="day">{day}</span>
-      <input className="load" type="number" min="0" placeholder="min" defaultValue={min} onChange={e => handleChange({min: parseInt(e.target.value)})} />
-      <span> - </span>
-      <input className="load" type="number" min="0" placeholder="max" defaultValue={max} onChange={e => handleChange({max: parseInt(e.target.value)})} />
+      <span className="class-load__header">{day}</span>
+      <div className="class-load__form">
+        <input 
+          type="number"
+          placeholder="min"
+          min="0"  
+          value={min} 
+          onChange={e => handleChange({min: parseInt(e.target.value)})} 
+        />
+        <span> - </span>
+        <input
+          type="number"
+          placeholder="max"
+          min="0"
+          value={max}
+          onChange={e => handleChange({max: parseInt(e.target.value)})}
+        />
+        <button onClick={() => handleChange({min: undefined, max: undefined})}>Reset</button>
+      </div>
     </div>
   )
 }
@@ -159,12 +180,11 @@ export default class SchedulesView extends Component {
       classLoads
     } = this.state;
     const enabledInstructors = Object.keys(instructorFilters).filter(instructor => instructorFilters[instructor]);
-    const enabledClassLoads = Object.keys(classLoads).filter(day => classLoads[day].enabled);
     const schedules = generatedSchedules
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
         (!enabledInstructors.length || enabledInstructors.find(instructor => schedule.instructors.indexOf(instructor) !== -1)) &&
-        enabledClassLoads.every(day => schedule.meets[day].length >= (classLoads[day].min || -Infinity) && schedule.meets[day].length <= (classLoads[day].max >= 0 ? classLoads[day].max : Infinity)) &&
+        Object.keys(classLoads).every(day => schedule.meets[day].length >= (classLoads[day].min || -Infinity) && schedule.meets[day].length <= (classLoads[day].max >= 0 ? classLoads[day].max : Infinity)) &&
         (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
       })
       .sort(sorts[schedulesSort])
@@ -186,63 +206,82 @@ export default class SchedulesView extends Component {
               <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} readOnly />
             <button onClick={nextSchedule}><i className="fa fa-chevron-right"></i></button>
           </div>
+
+
           <div className="schedule-filters">
-            <h3>Sort Schedules</h3>
-            <RadioGroup
-              name="classTime"
-              selectedValue={schedulesSort}
-              onChange={(e) => this.setState({ schedulesSort: e.target.value})}>
-              <Radio
-                value="early"
-                hint="Schedules with earlier classes will show first">
-                Early Classes
-              </Radio>
-              <Radio
-                hint="Schedules with later classes will show first"
-                value="later">
-                Later Classes
-              </Radio>
-            </RadioGroup>
-            <h3>Full Sections</h3>
-            <Check
-              checked={filterFullSchedules}
-              onChange={(_, checked) => this.setState({filterFullSchedules: checked})}
-              text="Hide Schedule"
-              hint="Schedules with a full section will not show"
-            />
-            <Check
-              checked={fadeFullSections}
-              onChange={(_, checked) => this.setState({fadeFullSections: checked})}
-              text="Fade Section"
-              hint="Full sections will appear faded in the calendar"
-            />
-            <h3 className="filter-group-header loads">Class Load</h3>
-            <div className="class-load-form">
-              {Days.map(day => <ClassLoad key={day}
-                day={day}
-                {...classLoads[day]}
-                onChange={c => this.setState({classLoads: {...classLoads, [day]: c}, currentScheduleIndex: 0})} 
-              />)}
+            <div className="filter-section">
+              <h3 className="filter-section__header">Sort Schedules</h3>
+              <RadioGroup
+                name="classTime"
+                selectedValue={schedulesSort}
+                onChange={(e) => this.setState({ schedulesSort: e.target.value})}>
+                <Radio
+                  value="early"
+                  hint="Schedules with earlier classes will show first">
+                  Early Classes
+                </Radio>
+                <Radio
+                  hint="Schedules with later classes will show first"
+                  value="later">
+                  Later Classes
+                </Radio>
+              </RadioGroup>
             </div>
-            <h3 className="filter-group-header instructors">Choose Instructors</h3>
-            {selectedCourses.map(course => !getUniqueInstructors(course).length ? null : (
-              <div className="instructor-group" key={course.code}>
-                <span className="course-code">{course.code}</span>
-                <CheckGroup
-                  name="instructors"
-                  values={this.state.instructorFilters}
-                  defaultValue={false}
-                  onChange={instructorFilters => this.setState({instructorFilters, currentScheduleIndex: 0})}>
-                  {getUniqueInstructors(course).filter(i => uniqueInstructors[i]).map(instructor =>
-                    <Check key={instructor}
-                      value={instructor}
-                      text={instructor}
-                      hint={uniqueInstructors[instructor] + ' Schedules'}
-                    />
-                  )}
-                </CheckGroup>
+
+
+            <div className="filter-section">
+              <h3 className="filter-section__header">Full Sections</h3>
+              <Check
+                checked={filterFullSchedules}
+                onChange={(_, checked) => this.setState({filterFullSchedules: checked})}
+                text="Hide Schedule"
+                hint="Schedules with a full section will not show"
+              />
+              <Check
+                checked={fadeFullSections}
+                onChange={(_, checked) => this.setState({fadeFullSections: checked})}
+                text="Fade Section"
+                hint="Full sections will appear faded in the calendar"
+              />
+            </div>
+            
+
+            <div className="filter-section">
+              <h3 className="filter-section__header">Class Load</h3>
+              <p className="filter-section__info">Schedules withs days that meet less than the minimum or more than the maximum will not show</p>
+              <div className="class-load-form">
+                {Days.map(day => <ClassLoad key={day}
+                  day={DayNames[day]}
+                  min={classLoads[day].min}
+                  max={classLoads[day].max}
+                  onChange={c => this.setState({classLoads: {...classLoads, [day]: c}, currentScheduleIndex: 0})}
+                />)}
               </div>
-            ))}
+            </div>
+            
+            <div className="filter-section">
+              <h3 className="filter-section__header instructors">Choose Instructors</h3>
+              <p className="filter-section__info">Only schedules with the selected instructors will show</p>
+              {selectedCourses.map(course => !getUniqueInstructors(course).length ? null : (
+                <div className="instructor-group" key={course.code}>
+                  <span className="course-code">{course.code}</span>
+                  <CheckGroup
+                    name="instructors"
+                    values={this.state.instructorFilters}
+                    defaultValue={false}
+                    onChange={instructorFilters => this.setState({instructorFilters, currentScheduleIndex: 0})}>
+                    {getUniqueInstructors(course).filter(i => uniqueInstructors[i]).map(instructor =>
+                      <Check key={instructor}
+                        value={instructor}
+                        text={instructor}
+                        hint={uniqueInstructors[instructor] + ' Schedules'}
+                      />
+                    )}
+                  </CheckGroup>
+                </div>
+              ))}
+            </div>
+
           </div>
           <button className="button button--primary" onClick={this.downloadSchedule}>Download Schedule</button>
         </div>
