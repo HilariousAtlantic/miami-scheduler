@@ -60,9 +60,9 @@ function ClassLoad({enabled, day, min, max, onChange}) {
     <div className="class-load">
       <input className="toggle" type="checkbox" defaultChecked={enabled} onChange={e => handleChange({enabled: e.target.checked})} />
       <span className="day">{day}</span>
-      <input className="load" type="number" placeholder="min" defaultValue={min} onChange={e => handleChange({min: parseInt(e.target.value)})} />
+      <input className="load" type="number" min="0" placeholder="min" defaultValue={min} onChange={e => handleChange({min: parseInt(e.target.value)})} />
       <span> - </span>
-      <input className="load" type="number" placeholder="max" defaultValue={max} onChange={e => handleChange({max: parseInt(e.target.value)})} />
+      <input className="load" type="number" min="0" placeholder="max" defaultValue={max} onChange={e => handleChange({max: parseInt(e.target.value)})} />
     </div>
   )
 }
