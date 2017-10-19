@@ -54,6 +54,19 @@ function Meet({crn, code, name, start_time, end_time, hall, room, instructors, c
   )
 }
 
+function ClassLoad({enabled, day, min, max, onChange}) {
+  const handleChange = debounce(c => onChange(Object.assign({enabled, min, max}, c)), 500);
+  return (
+    <div className="class-load">
+      <input className="toggle" type="checkbox" defaultChecked={enabled} onChange={e => handleChange({enabled: e.target.checked})} />
+      <span className="day">{day}</span>
+      <input className="load" type="number" placeholder="min" defaultValue={min} onChange={e => handleChange({min: parseInt(e.target.value)})} />
+      <span> - </span>
+      <input className="load" type="number" placeholder="max" defaultValue={max} onChange={e => handleChange({max: parseInt(e.target.value)})} />
+    </div>
+  )
+}
+
 export default class SchedulesView extends Component {
 
   state = {
@@ -64,9 +77,15 @@ export default class SchedulesView extends Component {
     schedulesSort: 'early',
     lockedSections: [],
     instructorFilters: {},
-    attributeFilters: {},
     filterFullSchedules: false,
     fadeFullSections: false,
+    classLoads: {
+      M: {},
+      T: {},
+      W: {},
+      R: {},
+      F: {}
+    }
   }
 
   toggleLock = crn => {
@@ -83,11 +102,17 @@ export default class SchedulesView extends Component {
     this.setState({
       lockedSections: [], 
       instructorFilters: {}, 
-      attributeFilters: {}, 
       currentScheduleIndex: 0,
       filterFullSchedules: false,
       fadeFullSections: false,
       schedulesSort: 'early',
+      classLoads: {
+        M: {},
+        T: {},
+        W: {},
+        R: {},
+        F: {}
+      }
     });
   }
 
@@ -119,16 +144,17 @@ export default class SchedulesView extends Component {
       instructorFilters,
       attributeFilters,
       filterFullSchedules,
-      fadeFullSections
+      fadeFullSections,
+      classLoads
     } = this.state;
-    const disabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
-    const enabledAttributes = Object.keys(attributeFilters).filter(attribute => attributeFilters[attribute]);
+    const enabledInstructors = Object.keys(instructorFilters).filter(instructor => !instructorFilters[instructor]);
+    const enabledClassLoads = Object.keys(classLoads).filter(day => classLoads[day].enabled);
     const schedules = generatedSchedules
       .filter(schedule => {
         return lockedSections.every(crn => schedule.crns.indexOf(crn) !== -1) &&
-          disabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === -1) &&
-          enabledAttributes.every(attribute => schedule.attributes.indexOf(attribute) !== -1) &&
-          (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
+        enabledInstructors.every(instructor => schedule.instructors.indexOf(instructor) === 1) &&
+        enabledClassLoads.every(day => schedule.meets[day].length >= Math.max(classLoads[day].min, -Infinity) && schedule.meets[day].length <= Math.min(classLoads[day].max, Infinity)) &&
+        (!filterFullSchedules || schedule.crns.every(crn => !slots[crn] || slots[crn].rem > 0));
       })
       .sort(sorts[schedulesSort])
     
@@ -146,7 +172,7 @@ export default class SchedulesView extends Component {
           </div>
           <div className="schedule-search">
             <button onClick={prevSchedule}><i className="fa fa-chevron-left"></i></button>
-              <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} />
+              <input type="text" value={`Schedule ${currentScheduleIndex + 1} of ${schedules.length}`} readOnly />
             <button onClick={nextSchedule}><i className="fa fa-chevron-right"></i></button>
           </div>
           <div className="schedule-filters">
@@ -179,6 +205,14 @@ export default class SchedulesView extends Component {
               text="Fade Section"
               hint="Full sections will appear faded in the calendar"
             />
+            <h3>Class Load</h3>
+            <div className="class-load-form">
+              {Days.map(day => <ClassLoad key={day}
+                day={day}
+                {...classLoads[day]}
+                onChange={c => this.setState({classLoads: {...classLoads, [day]: c}, currentScheduleIndex: 0})} 
+              />)}
+            </div>
             <h3>Instructors</h3>
             <CheckGroup
               name="instructors"
@@ -186,24 +220,10 @@ export default class SchedulesView extends Component {
               defaultValue={true}
               onChange={instructorFilters => this.setState({instructorFilters, currentScheduleIndex: 0})}>
               {Object.keys(uniqueInstructors).map(instructor => 
-                <Check
+                <Check key={instructor}
                   value={instructor}
                   text={instructor}
                   hint={uniqueInstructors[instructor] + ' Schedules'}
-                />
-              )}
-            </CheckGroup>
-            <h3>Attributes</h3>
-            <CheckGroup
-              name="attributes"
-              values={this.state.attributeFilters}
-              defaultValue={false}
-              onChange={attributeFilters => this.setState({attributeFilters, currentScheduleIndex: 0})}>
-              {Object.keys(uniqueAttributes).map(attribute => 
-                <Check
-                  value={attribute}
-                  text={attribute}
-                  hint={uniqueAttributes[attribute] + ' Schedule' + (uniqueAttributes[attribute] === 1 ? '' : 's')}
                 />
               )}
             </CheckGroup>
@@ -243,7 +263,7 @@ export default class SchedulesView extends Component {
                 </div>
                 {Days.map(day =>
                   <div key={day} className="schedule-column">
-                    {meets[day].map(meet => <Meet {...meet}
+                    {meets[day].map((meet, i) => <Meet key={meet.crn+i} {...meet}
                       slots={slots[meet.crn]}
                       fade={fadeFullSections && slots[meet.crn] && slots[meet.crn].rem <= 0}
                       color={Colors[crns.indexOf(meet.crn)]}

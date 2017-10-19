@@ -94,6 +94,40 @@
   margin: 10px 0;
 }
 
+.class-load-form {
+  margin-top: 10px;
+}
+
+.class-load {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .toggle {
+    margin-right: 5px;
+  }
+
+  .day {
+    font-weight: bold;
+    display: block;
+    width: 15px;
+    text-align: center;
+  }
+
+  .load {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    width: 50px;
+    line-height: 1.25rem;
+    text-align: center;
+  }
+
+  * + * {
+    margin-left: 5px;
+  }
+
+}
+
 .break-form {
   display: flex;
   align-items: center;
