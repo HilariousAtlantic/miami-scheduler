@@ -248,7 +248,7 @@ export default class SchedulesView extends Component {
 
             <div className="filter-section">
               <h3 className="filter-section__header">Class Load</h3>
-              <p className="filter-section__info">Schedules withs days that meet less than the minimum or more than the maximum will not show</p>
+              <p className="filter-section__info">Only schedules that meet within the ranges will show</p>
               <div className="class-load-form">
                 {Days.map(day => <ClassLoad key={day}
                   day={DayNames[day]}
@@ -260,7 +260,7 @@ export default class SchedulesView extends Component {
             </div>
             
             <div className="filter-section">
-              <h3 className="filter-section__header instructors">Choose Instructors</h3>
+              <h3 className="filter-section__header">Choose Instructors</h3>
               <p className="filter-section__info">Only schedules with the selected instructors will show</p>
               {selectedCourses.map(course => !getUniqueInstructors(course).length ? null : (
                 <div className="instructor-group" key={course.code}>

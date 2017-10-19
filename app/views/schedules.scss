@@ -153,23 +153,14 @@
 
   }
 
-  
-
-}
-
-.filter-group-header {
-
-  &.instructors, &.loads {
-    margin: 20px 0;
-  }
-  
 }
 
 .instructor-group {
 
   .course-code {
+    font-size: .75rem;
     color: #555;
-    font-weight: 600;
+    font-weight: 900;
   }
 
   .form-checkbox:first-of-type {
