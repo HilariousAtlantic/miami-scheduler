@@ -191,8 +191,8 @@ export default class SchedulesView extends Component {
     
     const { crns, meets } = schedules[currentScheduleIndex] || {}
 
-    const nextSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex + 1})
-    const prevSchedule = () => this.setState({currentScheduleIndex: currentScheduleIndex - 1})
+    const nextSchedule = () => this.setState({currentScheduleIndex: Math.min(currentScheduleIndex + 1, schedules.length - 1)})
+    const prevSchedule = () => this.setState({currentScheduleIndex: Math.max(currentScheduleIndex - 1, 0)})
 
     return (
       <div className="view schedules-view">
@@ -283,7 +283,7 @@ export default class SchedulesView extends Component {
             </div>
 
           </div>
-          <button className="button button--primary" onClick={this.downloadSchedule}>Download Schedule</button>
+          <button className="button button--primary" onClick={this.downloadSchedule}>Save Schedule</button>
         </div>
         <div className="content">
           {schedules.length ? 
