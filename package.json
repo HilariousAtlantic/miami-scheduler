@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/index.js",
-    "test": "standard",
-    "lint": "standard --fix",
+    "lint": "prettier --single-quote --trailing-comma es5 --jsx-bracket-same-line --write \"app/**/*.js\"",
     "import": "node server/import.js",
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack-dev-server --config webpack.dev.js",
@@ -39,6 +38,7 @@
     "css-loader": "0.28.4",
     "file-loader": "0.11.2",
     "node-sass": "4.5.3",
+    "prettier": "^1.7.4",
     "react-hot-loader": "3.0.0-beta.7",
     "sass-loader": "6.0.6",
     "standard": "10.0.2",

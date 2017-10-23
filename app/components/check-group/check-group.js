@@ -1,19 +1,12 @@
-import React, { Component } from 'react'
-import { bool, object, func } from 'prop-types'
+import React, { Component } from 'react';
+import { bool, object, func } from 'prop-types';
 
-export const Check = ({
-  checked,
-  value,
-  text,
-  hint,
-  name,
-  onChange
-}) => {
+export const Check = ({ checked, value, text, hint, name, onChange }) => {
   return (
-    <div className='form-checkbox'>
+    <div className="form-checkbox">
       <label>
         <input
-          type='checkbox'
+          type="checkbox"
           name={name}
           value={value}
           checked={checked}
@@ -21,37 +14,35 @@ export const Check = ({
         />
         <span>{text}</span>
       </label>
-      {hint && <p className='note'>
-        {hint}
-      </p>}
+      {hint && <p className="note">{hint}</p>}
     </div>
-  )
-}
+  );
+};
 
 export class CheckGroup extends Component {
-
   static propTypes = {
     defaultValue: bool,
     values: object.isRequired,
-    onChange: func.isRequired
-  }
+    onChange: func.isRequired,
+  };
 
   static defaultProps = {
-    defaultValue: false
-  }
+    defaultValue: false,
+  };
 
   render() {
     const { name, values, onChange, children, defaultValue } = this.props;
-    const checkboxes = children.map(child => React.cloneElement(child, {
-      name: name,
-      checked: values.hasOwnProperty(child.props.value) ? values[child.props.value] : defaultValue,
-      onChange: (value, checked) => onChange(Object.assign({}, values, {[value]: checked}))
-    }));
+    const checkboxes = children.map(child =>
+      React.cloneElement(child, {
+        name: name,
+        checked: values.hasOwnProperty(child.props.value)
+          ? values[child.props.value]
+          : defaultValue,
+        onChange: (value, checked) =>
+          onChange(Object.assign({}, values, { [value]: checked })),
+      })
+    );
 
-    return (
-      <div className='check-group'>
-        {checkboxes}
-      </div>
-    )
+    return <div className="check-group">{checkboxes}</div>;
   }
 }
