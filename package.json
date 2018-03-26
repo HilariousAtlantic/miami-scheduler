@@ -1,8 +1,9 @@
 {
-  "name": "miami-scheduler-web",
-  "version": "0.0.1",
-  "description": "Web application to help students create better schedules at Miami University",
+  "name": "miami-scheduler",
+  "version": "1.0.0",
+  "description": "Web application designed to help students find the perfect schedule at Miami University - Oxford.",
   "author": "Hilarious Atlantic",
+  "license": "MIT",
   "scripts": {
     "dev": "node server/index.js",
     "build": "next build",
@@ -19,6 +20,5 @@
   "devDependencies": {
     "prettier": "^1.11.1",
     "webpack": "^4.2.0"
-  },
-  "license": "MIT"
+  }
 }
