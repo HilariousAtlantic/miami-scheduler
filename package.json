@@ -4,7 +4,7 @@
   "description": "Web application to help students create better schedules at Miami University",
   "author": "Hilarious Atlantic",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node server/index.js",
     "build": "next build",
     "start": "next start"
   },
