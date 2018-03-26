@@ -1,27 +1,20 @@
-# miami-scheduler
-Website for scheduling courses at Miami University - Oxford. www.miamischeduler.com
+# miami-scheduler-web
 
-## Setup
+![Sample Images](static/img_sample.png)
 
-### API & development servers
+## Install
 ```
-git clone https://github.com/HilariousAtlantic/miami-scheduler.git
-cd miami-scheduler
-npm i
-npm start
+git clone https://github.com/HilariousAtlantic/miami-scheduler-web
+cd miami-scheduler-web
+npm install
 ```
 
-In a new terminal window:
+## Build
+```
+npm run build
+```
 
+## Serve
 ```
-npm run dev
-```
-
-### Database
-```
-brew install mongodb
-sudo mkdir -p /data/db
-sudo chown -R $(whoami) /data/db
-brew services start mongodb
-npm run import
+npm run start
 ```
