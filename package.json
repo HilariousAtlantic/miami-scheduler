@@ -1,54 +1,22 @@
 {
-  "name": "miami-scheduler",
-  "version": "1.0.0",
-  "description": "Website for scheduling courses at Miami University - Oxford.",
-  "main": "index.js",
+  "name": "miami-scheduler-web",
+  "version": "0.0.1",
+  "description": "Web application to help students create better schedules at Miami University",
+  "author": "Hilarious Atlantic",
   "scripts": {
-    "start": "node server/index.js",
-    "lint": "prettier --single-quote --trailing-comma es5 --jsx-bracket-same-line --write \"app/**/*.js\"",
-    "import": "node server/import.js",
-    "build": "webpack --config webpack.prod.js",
-    "dev": "webpack-dev-server --config webpack.dev.js",
-    "heroku-prebuild": "npm install --dev"
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "axios": "^0.16.2",
-    "body-parser": "1.17.2",
-    "cors": "^2.8.4",
-    "downloadjs": "^1.4.7",
-    "express": "4.15.3",
-    "lodash": "^4.17.4",
-    "mongodb": "^2.2.30",
-    "morgan": "1.8.2",
-    "primer-css": "9.1.0",
-    "react": "15.6.1",
-    "react-dom": "15.6.1",
-    "react-hot-loader": "3.0.0-beta.7",
-    "react-router": "^4.1.2",
-    "react-router-dom": "^4.1.2"
+    "axios": "^0.17.1",
+    "next": "^4.2.3",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "styled-components": "^2.4.0"
   },
   "devDependencies": {
-    "babel-core": "6.25.0",
-    "babel-loader": "7.1.0",
-    "babel-preset-es2015": "6.24.1",
-    "babel-preset-react": "6.24.1",
-    "babel-preset-stage-2": "6.24.1",
-    "css-loader": "0.28.4",
-    "file-loader": "0.11.2",
-    "node-sass": "4.5.3",
-    "prettier": "^1.7.4",
-    "react-hot-loader": "3.0.0-beta.7",
-    "sass-loader": "6.0.6",
-    "standard": "10.0.2",
-    "style-loader": "0.18.2",
-    "webpack": "3.0.0",
-    "webpack-dev-middleware": "1.11.0",
-    "webpack-dev-server": "2.5.0",
-    "webpack-hot-middleware": "2.18.1"
+    "prettier": "^1.10.2"
   },
-  "engines": {
-    "node": "8.6.0"
-  }
+  "license": "MIT"
 }
