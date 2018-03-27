@@ -20,7 +20,7 @@ async function start() {
 
     server.get('*', (req, res) => handle(req, res));
 
-    server.use('/api', require('./api'));
+    server.use('/api', require('./api')(db));
 
     server.listen(3000, err => {
       if (err) throw err;
