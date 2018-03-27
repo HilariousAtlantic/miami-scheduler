@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { StoreConsumer } from '../store';
 
 const TermSelectorWrapper = styled.div`
+  grid-area: term-selector;
   position: relative;
 
   i {

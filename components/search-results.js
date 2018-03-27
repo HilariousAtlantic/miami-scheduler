@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { StoreConsumer } from '../store';
 
 const SearchResultsWrapper = styled.div`
-  flex: 1;
+  grid-area: search-results;
   display: flex;
 `;
 

@@ -15,7 +15,7 @@ const colors = [
 ];
 
 const SelectedCoursesWrapper = styled.div`
-  flex: 1;
+  grid-area: selected-courses;
 `;
 
 const List = styled.ul``;

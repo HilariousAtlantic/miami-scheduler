@@ -5,6 +5,7 @@ import { debounce } from 'lodash';
 import { StoreConsumer } from '../store';
 
 const CourseSearchWrapper = styled.div`
+  grid-area: course-search;
   position: relative;
 
   i {
