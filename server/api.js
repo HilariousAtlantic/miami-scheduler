@@ -6,5 +6,5 @@ exports.default = function(db) {
     const { q } = req.query;
   });
 
-  module.exports = router;
+  return router;
 };
