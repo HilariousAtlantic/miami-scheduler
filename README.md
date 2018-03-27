@@ -25,7 +25,7 @@ DATABASE_PASSWORD=
 ```
 Create the database tables and import the data
 ```
-npm run database
+npm run create
 npm run import
 ```
 

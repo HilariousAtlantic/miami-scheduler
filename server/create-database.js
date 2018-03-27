@@ -26,6 +26,7 @@ async function createTables(db) {
     DROP TABLE IF EXISTS courses;
     CREATE TABLE courses (
       id serial primary key,
+      term varchar(8) not null,
       code varchar(16) not null,
       subject varchar(8) not null,
       number varchar(8) not null,

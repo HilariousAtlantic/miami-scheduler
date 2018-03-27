@@ -1,6 +1,6 @@
-const massive = require('massive');
-
 require('dotenv').config();
+
+const massive = require('massive');
 
 module.exports = {
   async connectDatabase() {

@@ -1,8 +1,8 @@
+require('dotenv').config();
+
 const express = require('express');
 const next = require('next');
 const { connectDatabase } = require('./database');
-
-require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });

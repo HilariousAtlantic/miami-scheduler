@@ -57,6 +57,7 @@ function extractCourses(sections) {
     }`;
     courses[code] = {
       code,
+      term: section.academicTerm,
       subject: section.courseSubjectCode,
       number: section.courseNumber,
       title: extractTitle(section),
