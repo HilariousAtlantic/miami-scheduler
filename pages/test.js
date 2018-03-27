@@ -9,10 +9,35 @@ import {
   SelectedCoursesContainer
 } from '../components';
 
+const ScheduleGeneratorWrapper = styled.div``;
+
+const Navbar = styled.header`
+  width: 90%;
+  max-width: 800px;
+  margin: 32px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Brand = styled.h1`
+  font-weight: 400;
+  font-size: 24px;
+`;
+
+const Links = styled.nav`
+  font-size: 14px;
+
+  a {
+    color: #4a4a4a;
+    text-decoration: none;
+  }
+`;
+
 const CourseSelection = styled.div`
   width: 90%;
   max-width: 800px;
-  margin: 20px auto;
+  margin: 16px auto;
   display: grid;
   grid-gap: 8px;
   grid-template-columns: auto 200px;
@@ -32,12 +57,21 @@ const ScheduleGenerator = withStore(
 
     render() {
       return (
-        <CourseSelection>
-          <CourseSearchContainer />
-          <TermSelectorContainer />
-          <SearchResultsContainer />
-          <SelectedCoursesContainer />
-        </CourseSelection>
+        <ScheduleGeneratorWrapper>
+          <Navbar>
+            <Brand>Miami Scheduler</Brand>
+            <Links>
+              <a href="/feedback">Send Feedback</a>
+            </Links>
+          </Navbar>
+
+          <CourseSelection>
+            <CourseSearchContainer />
+            <TermSelectorContainer />
+            <SearchResultsContainer />
+            <SelectedCoursesContainer />
+          </CourseSelection>
+        </ScheduleGeneratorWrapper>
       );
     }
   }
