@@ -6,15 +6,25 @@
 ```
 git clone https://github.com/HilariousAtlantic/miami-scheduler
 cd miami-scheduler
-npm install
+npm i
 ```
 
-## Build
+## Setup database
+Create the Postgres database
 ```
-npm run build
+createuser --createdb miami_scheduler
+createdb -U miami_scheduler miami_scheduler
+```
+Create a `.env` file in the root with the following:
+```bash
+DATABASE_HOST=127.0.0.1
+DATABASE_PORT=5432
+DATABASE_NAME=miami_schedueler
+DATABASE_USER=miami_schedueler
+DATABASE_PASSWORD=
 ```
 
-## Serve
+## Run
 ```
-npm start
+npm run dev
 ```
