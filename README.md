@@ -23,6 +23,11 @@ DATABASE_NAME=miami_schedueler
 DATABASE_USER=miami_schedueler
 DATABASE_PASSWORD=
 ```
+Create the database tables and import the data
+```
+npm run database
+npm run import
+```
 
 ## Run
 ```
