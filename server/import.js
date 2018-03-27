@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 const { get } = require('axios');
-const config = require('../config');
+
+require('dotenv').config();
 
 const subjects = require('./subjects.json');
 
