@@ -65,7 +65,10 @@ export function SelectedCoursesContainer() {
       {(state, actions) => (
         <SelectedCourses
           courses={state.selectedCourses.map(code => state.coursesByCode[code])}
-          onSelectCourse={code => actions.deselectCourse(code)}
+          onSelectCourse={code => {
+            actions.deselectCourse(code);
+            actions.generateSchedules();
+          }}
         />
       )}
     </StoreConsumer>

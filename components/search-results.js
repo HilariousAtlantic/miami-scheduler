@@ -5,7 +5,6 @@ import { StoreConsumer } from '../store';
 
 const SearchResultsWrapper = styled.div`
   grid-area: search-results;
-  display: flex;
 `;
 
 const List = styled.ul`
@@ -13,7 +12,6 @@ const List = styled.ul`
   background: #ffffff;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
   font-size: 12px;
-  overflow-y: scroll;
 `;
 
 const ListItem = styled.li`
@@ -30,7 +28,7 @@ function SearchResults({ searchResults, onSelectCourse, onSearchCourses }) {
   return (
     <SearchResultsWrapper>
       <List>
-        {searchResults.map(course => (
+        {searchResults.slice(0, 5).map(course => (
           <ListItem key={course.code} onClick={() => onSelectCourse(course)}>
             {course.subject} {course.number} - {course.title}
           </ListItem>
@@ -46,9 +44,10 @@ export function SearchResultsContainer() {
       {(state, actions) => (
         <SearchResults
           searchResults={state.searchedCourses}
-          onSelectCourse={course => {
-            actions.fetchSections(course.code);
+          onSelectCourse={async course => {
+            await actions.fetchSections(course.code);
             actions.selectCourse(course.code);
+            actions.generateSchedules();
           }}
         />
       )}

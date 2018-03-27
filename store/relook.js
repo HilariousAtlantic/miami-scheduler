@@ -43,6 +43,7 @@ export function createStore(initialState, actions) {
           } else {
             console.error('action must return an object or function');
           }
+          return;
         }.bind(this)
       };
     }, {});
