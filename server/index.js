@@ -1,13 +1,12 @@
 const express = require('express');
 const next = require('next');
+const { connectDatabase } = require('./database');
 
 require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-
-const { connectDatabase } = require('./database');
 
 start();
 
@@ -18,9 +17,9 @@ async function start() {
     const server = express();
     const db = await connectDatabase();
 
-    server.get('*', (req, res) => handle(req, res));
-
     server.use('/api', require('./api')(db));
+
+    server.get('*', (req, res) => handle(req, res));
 
     server.listen(3000, err => {
       if (err) throw err;

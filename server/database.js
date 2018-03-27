@@ -2,7 +2,7 @@ const massive = require('massive');
 
 require('dotenv').config();
 
-exports.default = {
+module.exports = {
   async connectDatabase() {
     return await massive({
       host: process.env.DATABASE_HOST,
