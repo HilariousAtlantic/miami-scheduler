@@ -21,5 +21,22 @@ module.exports = function(db) {
     res.json({ courses });
   });
 
+  router.get('/courses', async (req, res) => {
+    const { code, term, subject, number } = req.query;
+
+    const plan = {};
+    if (code) plan.code = code.toUpperCase().split(',');
+    if (term) plan.term = term.split(',');
+    if (subject) plan.subject = subject.toUpperCase().split(',');
+    if (number) plan.number = number.split(',');
+
+    const courses = await db.courses.find(plan, {
+      fields: ['code', 'subject', 'number', 'title'],
+      limit: 50
+    });
+
+    res.json({ courses });
+  });
+
   return router;
 };
