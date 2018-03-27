@@ -7,12 +7,15 @@
   "scripts": {
     "dev": "node server/index.js",
     "build": "next build",
+    "database": "node server/create-database.js",
+    "import": "node server/import-courses.js",
     "start": "next start"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
+    "massive": "^4.7.1",
     "next": "^5.1.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
