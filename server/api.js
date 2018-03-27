@@ -2,6 +2,11 @@ module.exports = function(db) {
   var express = require('express');
   var router = express.Router();
 
+  router.get('/terms', async (req, res) => {
+    const terms = await db.terms.find();
+    res.json({ terms });
+  });
+
   router.get('/search', async (req, res) => {
     const { term, query } = req.query;
     const courses = await db.courses.search(
