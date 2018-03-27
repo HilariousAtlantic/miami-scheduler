@@ -15,8 +15,46 @@ export default {
   },
   async searchCourses(term, query) {
     const { data } = await axios.get(`/api/search?term=${term}&query=${query}`);
-    return {
-      searchedCourses: data.courses
+    return function(state) {
+      return {
+        searchedCourses: data.courses,
+        coursesByCode: data.courses.reduce((acc, course) => {
+          return { ...acc, [course.code]: course };
+        }, state.coursesByCode)
+      };
+    };
+  },
+  async fetchSections(code) {
+    const { data } = await axios.get(`/api/courses/${code}`);
+    return function({ coursesByCode }) {
+      return {
+        coursesByCode: {
+          ...coursesByCode,
+          [code]: data.course
+        }
+      };
+    };
+  },
+  selectCourse(code) {
+    return function({ selectedCourses }) {
+      if (selectedCourses.includes(code)) {
+        return { selectedCourses };
+      } else if (selectedCourses.length < 8) {
+        return {
+          selectedCourses: [...selectedCourses, code]
+        };
+      }
+    };
+  },
+  deselectCourse(code) {
+    return function({ selectedCourses }) {
+      if (selectedCourses.includes(code)) {
+        return {
+          selectedCourses: selectedCourses.filter(c => c !== code)
+        };
+      } else {
+        return { selectedCourses };
+      }
     };
   }
 };

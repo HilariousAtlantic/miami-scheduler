@@ -1,3 +1,6 @@
 export default {
-  terms: []
+  terms: [],
+  searchedCourses: [],
+  selectedCourses: [],
+  coursesByCode: {}
 };

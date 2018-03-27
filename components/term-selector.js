@@ -5,7 +5,6 @@ import { StoreConsumer } from '../store';
 
 const TermSelectorWrapper = styled.div`
   position: relative;
-  width: 200px;
 
   i {
     position: absolute;
@@ -19,6 +18,7 @@ const TermSelectorWrapper = styled.div`
 
 const Select = styled.select`
   width: 100%;
+  height: 48px;
   font-size: 0.75rem;
   font-weight: 500;
   padding: 16px;

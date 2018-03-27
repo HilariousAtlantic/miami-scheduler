@@ -6,7 +6,6 @@ import { StoreConsumer } from '../store';
 
 const CourseSearchWrapper = styled.div`
   position: relative;
-  width: 500px;
 
   i {
     position: absolute;
@@ -18,6 +17,8 @@ const CourseSearchWrapper = styled.div`
 
 const Input = styled.input`
   width: 100%;
+  height: 48px;
+  box-sizing: border-box;
   font-size: 0.875rem;
   padding: 16px;
   padding-left: 48px;
@@ -42,6 +43,7 @@ function CourseSearch({ onSearchCourses }) {
   return (
     <CourseSearchWrapper>
       <Input
+        placeholder="Search Courses"
         onChange={event => {
           event.persist();
           handleSearchCourses(event);
