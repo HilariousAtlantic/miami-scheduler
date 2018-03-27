@@ -1,7 +1,5 @@
-const massive = require('massive');
 const axios = require('axios');
-
-require('dotenv').config();
+const { connectDatabase } = require('./database');
 
 const subjects = require('./subjects.json');
 
@@ -18,17 +16,6 @@ async function run() {
     console.error('Error during import.');
     console.log(error);
   }
-}
-
-async function connectDatabase() {
-  const db = await massive({
-    host: process.env.DATABASE_HOST,
-    port: process.env.DATABASE_PORT,
-    database: process.env.DATABASE_NAME,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD
-  });
-  return db.reload();
 }
 
 async function clearDatabase(db) {

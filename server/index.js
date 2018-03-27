@@ -7,6 +7,8 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+const { connectDatabase } = require('./database');
+
 start();
 
 async function start() {
@@ -14,8 +16,11 @@ async function start() {
 
   try {
     const server = express();
+    const db = await connectDatabase();
 
     server.get('*', (req, res) => handle(req, res));
+
+    server.use('/api', require('./api'));
 
     server.listen(3000, err => {
       if (err) throw err;
