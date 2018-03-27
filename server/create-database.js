@@ -31,7 +31,8 @@ async function createTables(db) {
       subject varchar(8) not null,
       number varchar(8) not null,
       title varchar(256) not null,
-      description text not null
+      description text not null,
+      searchables text not null
     );
   `);
 }

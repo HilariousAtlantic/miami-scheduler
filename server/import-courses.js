@@ -55,13 +55,16 @@ function extractCourses(sections) {
     const code = `${section.academicTerm}${section.courseSubjectCode}${
       section.courseNumber
     }`;
+
+    if (courses[code] || !section.courseSchedules.length) continue;
     courses[code] = {
       code,
       term: section.academicTerm,
       subject: section.courseSubjectCode,
       number: section.courseNumber,
       title: extractTitle(section),
-      description: extractDescription(section)
+      description: extractDescription(section),
+      searchables: extractSearchables(section)
     };
   }
   return Object.values(courses);
@@ -95,4 +98,11 @@ function extractTitle(section) {
   } else {
     return section.courseTitle;
   }
+}
+
+function extractSearchables(section) {
+  return [
+    `${section.courseSubjectCode}${section.courseNumber}`,
+    `${section.courseSubjectCode}${section.courseNumber.slice(0, 3)}`
+  ].join(' ');
 }

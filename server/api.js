@@ -3,13 +3,20 @@ module.exports = function(db) {
   var router = express.Router();
 
   router.get('/search', async (req, res) => {
-    const { term, q } = req.query;
-    const courses = await db.courses
-      .search({
-        term: q,
-        fields: ['subject', 'number', 'title', 'description']
-      })
-      .then(courses => courses.filter(course => course.term === term));
+    const { term, query } = req.query;
+    const courses = await db.courses.search(
+      {
+        term: `'${query}'`,
+        fields: ['subject', 'number', 'title', 'searchables'],
+        where: {
+          term
+        }
+      },
+      {
+        fields: ['code', 'subject', 'number', 'title'],
+        limit: 50
+      }
+    );
 
     res.json({ courses });
   });
