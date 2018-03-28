@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { transparentize, darken } from 'polished';
 
 import { StoreConsumer } from '../store';
 
@@ -17,13 +18,12 @@ const colors = [
 
 const GeneratedSchedulesWrapper = styled.div`
   grid-area: generated-schedules;
-  padding: 32px;
 `;
 
 const ScheduleGrid = styled.div`
   display: grid;
-  grid-auto-rows: 75vh;
-  grid-gap: 8px;
+  grid-auto-rows: 80vh;
+  grid-gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
 `;
 
@@ -36,11 +36,15 @@ const ScheduleWrapper = styled.div`
 
 const ScheduleHeader = styled.div`
   display: flex;
-  justify-content: space-around;
   padding: 16px 0;
   background: #37474f;
   color: #fff;
   font-size: 12px;
+  text-align: center;
+
+  span {
+    flex: 1;
+  }
 `;
 
 const ScheduleCalendar = styled.div`
@@ -51,23 +55,42 @@ const ScheduleCalendar = styled.div`
 const ScheduleMeet = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(20% - 2px);
+  width: calc(20% - 4px);
   position: absolute;
   color: #fff;
   font-size: 10px;
+  font-weight: 500;
   padding: 4px;
   box-sizing: border-box;
 
   span + span {
-    margin-top: 4px;
+    margin-top: 2px;
+  }
+
+  .slots {
+    font-weight: 400;
+    position: absolute;
+    top: 4px;
+    right: 4px;
   }
 
   ${props => `
     top: ${props.start * 100}%;
     height: ${props.length * 100}%;
-    background: ${props.color || '#4a4a4a'};
-    left: calc(${props.column * 20}% + 1px);
+    border-left: 4px solid ${props.color};
+    color: ${darken(0.2, props.color)};
+    background: ${transparentize(0.8, props.color)};
+    left: ${props.column * 20}%;
   `};
+`;
+
+const CourseNumbers = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a4a4a;
 `;
 
 function toTime(minutes) {
@@ -88,7 +111,7 @@ function Schedule({ courses, crns }) {
           ...acc,
           ...meet.days.map(day => (
             <ScheduleMeet
-              color={colors[i]}
+              color={colors[i] || '#4a4a4a'}
               column={days.indexOf(day)}
               start={(meet.start_time - schedule_start) / schedule_length}
               length={(meet.end_time - meet.start_time) / schedule_length}
@@ -100,6 +123,10 @@ function Schedule({ courses, crns }) {
                 {toTime(meet.start_time)} - {toTime(meet.end_time)}{' '}
                 {meet.location}
               </span>
+              <span>{course.instructor}</span>
+              <div className="slots">
+                <span>{course.slots} Seats</span>
+              </div>
             </ScheduleMeet>
           ))
         ],
@@ -111,8 +138,17 @@ function Schedule({ courses, crns }) {
 
   return (
     <ScheduleWrapper>
-      <ScheduleHeader>{days.map(day => <span>{day}</span>)}</ScheduleHeader>
-      <ScheduleCalendar>{meets}</ScheduleCalendar>
+      <ScheduleHeader>
+        <span>Monday</span>
+        <span>Tuesday</span>
+        <span>Wednesday</span>
+        <span>Thursday</span>
+        <span>Friday</span>
+      </ScheduleHeader>
+      <ScheduleCalendar>
+        {meets}
+        <CourseNumbers>{crns.join(', ')}</CourseNumbers>
+      </ScheduleCalendar>
     </ScheduleWrapper>
   );
 }

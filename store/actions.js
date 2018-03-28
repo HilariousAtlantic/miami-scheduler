@@ -10,7 +10,9 @@ export default {
   },
   selectTerm(termId) {
     return {
-      selectedTerm: termId
+      selectedTerm: termId,
+      selectedCourses: [],
+      generatedSchedules: []
     };
   },
   async searchCourses(term, query) {

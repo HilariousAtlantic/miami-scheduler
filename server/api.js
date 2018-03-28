@@ -66,23 +66,31 @@ module.exports = function(db) {
           course.number
         }`
       );
-      course.sections = data.courseSections.map(courseSection => ({
-        crn: courseSection.courseId,
-        name: courseSection.courseSectionCode,
-        slots: parseInt(courseSection.enrollmentCountAvailable),
-        credits: [
-          ...new Set([
-            parseInt(courseSection.creditHoursLow),
-            parseInt(courseSection.creditHoursHigh)
-          ])
-        ],
-        meets: courseSection.courseSchedules.map(courseSchedule => ({
-          days: courseSchedule.days.split(''),
-          start_time: toMinutes(courseSchedule.startTime),
-          end_time: toMinutes(courseSchedule.endTime),
-          location: `${courseSchedule.buildingCode} ${courseSchedule.room}`
-        }))
-      }));
+      course.sections = data.courseSections.map(courseSection => {
+        const instructor = courseSection.instructors.find(i =>
+          Boolean(i.primaryInstructor)
+        );
+        return {
+          crn: courseSection.courseId,
+          name: courseSection.courseSectionCode,
+          slots: parseInt(courseSection.enrollmentCountAvailable),
+          instructor: instructor
+            ? `${instructor.namePrefix} ${instructor.nameLast}`
+            : 'TBA',
+          credits: [
+            ...new Set([
+              parseInt(courseSection.creditHoursLow),
+              parseInt(courseSection.creditHoursHigh)
+            ])
+          ],
+          meets: courseSection.courseSchedules.map(courseSchedule => ({
+            days: courseSchedule.days.split(''),
+            start_time: toMinutes(courseSchedule.startTime),
+            end_time: toMinutes(courseSchedule.endTime),
+            location: `${courseSchedule.buildingCode} ${courseSchedule.room}`
+          }))
+        };
+      });
       res.json({ course });
     } catch (e) {
       console.log(e.stack);

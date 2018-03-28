@@ -10,18 +10,22 @@ import {
   SelectedCoursesContainer
 } from '../components';
 
-const ScheduleGeneratorWrapper = styled.div``;
+const ScheduleGeneratorWrapper = styled.div`
+  width: 90%;
+  max-width: 960px;
+  margin: 32px auto;
+`;
 
 const Navbar = styled.header`
-  width: 90%;
-  max-width: 800px;
-  margin: 32px auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 32px;
 `;
 
-const Brand = styled.h1`
+const Brand = styled.a`
+  color: #4a4a4a;
+  text-decoration: none;
   font-weight: 400;
   font-size: 24px;
 `;
@@ -32,13 +36,19 @@ const Links = styled.nav`
   a {
     color: #4a4a4a;
     text-decoration: none;
+    padding: 8px 0;
+
+    &.active {
+      border-bottom: 2px solid rgb(183, 28, 28);
+    }
+  }
+
+  a + a {
+    margin-left: 16px;
   }
 `;
 
 const CourseSelection = styled.div`
-  width: 90%;
-  max-width: 800px;
-  margin: 16px auto;
   display: grid;
   grid-gap: 8px;
   grid-template-columns: auto 200px;
@@ -62,6 +72,9 @@ const ScheduleGenerator = withStore(
           <Navbar>
             <Brand>Miami Scheduler</Brand>
             <Links>
+              <a href="/" className="active">
+                Schedule Generator
+              </a>
               <a href="/feedback">Send Feedback</a>
             </Links>
           </Navbar>
