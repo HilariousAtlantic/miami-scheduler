@@ -26,7 +26,7 @@ module.exports = function(db) {
         }
       },
       {
-        fields: ['code', 'subject', 'number', 'title'],
+        fields: ['code', 'subject', 'number', 'title', 'description'],
         limit: 50
       }
     );
@@ -84,7 +84,7 @@ module.exports = function(db) {
             ])
           ],
           meets: courseSection.courseSchedules.map(courseSchedule => ({
-            days: (courseSchedule.days || '').split(''),
+            days: courseSchedule.days ? courseSchedule.days.split('') : [],
             start_time: toMinutes(courseSchedule.startTime),
             end_time: toMinutes(courseSchedule.endTime),
             location: `${courseSchedule.buildingCode} ${courseSchedule.room}`

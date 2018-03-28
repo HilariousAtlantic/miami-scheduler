@@ -5,6 +5,7 @@ import { StoreConsumer } from '../store';
 
 const SearchResultsWrapper = styled.div`
   grid-area: search-results;
+  display: flex;
 `;
 
 const List = styled.ul`
@@ -12,6 +13,7 @@ const List = styled.ul`
   background: #ffffff;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
   font-size: 12px;
+  overflow-y: scroll;
 `;
 
 const ListItem = styled.li`
@@ -20,7 +22,16 @@ const ListItem = styled.li`
   padding: 16px;
 
   &:hover {
-    background: #f5f5f5f5;
+    background: #f5f5f5;
+  }
+
+  span {
+    font-weight: 500;
+  }
+
+  p {
+    color: #6a6a6a;
+    line-height: 1.6;
   }
 `;
 
@@ -28,9 +39,12 @@ function SearchResults({ searchResults, onSelectCourse, onSearchCourses }) {
   return (
     <SearchResultsWrapper>
       <List>
-        {searchResults.slice(0, 5).map(course => (
+        {searchResults.map(course => (
           <ListItem key={course.code} onClick={() => onSelectCourse(course)}>
-            {course.subject} {course.number} - {course.title}
+            <span>
+              {course.subject} {course.number} - {course.title}
+            </span>
+            <p>{course.description}</p>
           </ListItem>
         ))}
       </List>
@@ -48,12 +62,10 @@ export function SearchResultsContainer() {
               !state.selectedCourses.includes(course.code) &&
               !state.loadingCourses.includes(course.code)
           )}
-          onSelectCourse={course => {
-            setTimeout(async () => {
-              actions.selectCourse(course);
-              await actions.fetchSections(course.code);
-              actions.generateSchedules();
-            });
+          onSelectCourse={async course => {
+            actions.selectCourse(course);
+            await actions.fetchSections(course.code);
+            actions.generateSchedules();
           }}
         />
       )}

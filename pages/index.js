@@ -20,6 +20,7 @@ const Navbar = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 64px;
 `;
 
 const Brand = styled.a`
@@ -47,16 +48,23 @@ const Links = styled.nav`
   }
 `;
 
+const SectionHeader = styled.h2`
+  font-size: 18px;
+  font-weight: 500;
+  padding-bottom: 8px;
+  border-bottom: 4px solid #4a4a4a;
+`;
+
 const CourseSelection = styled.div`
   display: grid;
-  margin: 64px 0;
+  margin-bottom: 64px;
   grid-gap: 8px;
   grid-template-columns: auto 240px;
-  grid-template-rows: 32px 48px 240px;
+  grid-template-rows: 48px 480px auto;
   grid-template-areas:
-    'selected-courses selected-courses'
     'course-search term-selector'
-    'search-results search-results';
+    'search-results search-results'
+    'selected-courses selected-courses';
 `;
 
 const ScheduleGenerator = withStore(
@@ -78,12 +86,14 @@ const ScheduleGenerator = withStore(
               <a href="/feedback">Send Feedback</a>
             </Links>
           </Navbar>
+          <SectionHeader>Select Courses</SectionHeader>
           <CourseSelection>
             <CourseSearchContainer />
             <TermSelectorContainer />
             <SearchResultsContainer />
             <SelectedCoursesContainer />
           </CourseSelection>
+          <SectionHeader>Browse Schedules</SectionHeader>
           <GeneratedSchedulesContainer />
         </ScheduleGeneratorWrapper>
       );

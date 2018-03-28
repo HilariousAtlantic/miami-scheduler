@@ -20,14 +20,9 @@ const GeneratedSchedulesWrapper = styled.div`
   grid-area: generated-schedules;
 `;
 
-const ScheduleGrid = styled.div`
-  display: grid;
-  grid-auto-rows: 85vh;
-  grid-gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-`;
-
 const ScheduleWrapper = styled.div`
+  height: 85vh;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -64,6 +59,10 @@ const ScheduleMeet = styled.div`
   padding: 4px;
   box-sizing: border-box;
 
+  .course-name {
+    font-weight: 900;
+  }
+
   span + span {
     margin-top: 2px;
   }
@@ -95,6 +94,69 @@ const ScheduleFooter = styled.div`
   padding: 16px;
 `;
 
+const SchedulerBrowserWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+`;
+
+const ButtonGroup = styled.div`
+  button + button {
+    margin-left: 8px;
+  }
+`;
+
+const Button = styled.button`
+  background: #fff;
+  border: none;
+  color: #4a4a4a;
+  padding: 8px 24px;
+  font-size: 14px;
+  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+
+  ${props =>
+    props.primary &&
+    `
+    background: #388E3C;
+    color: #fff;
+  `};
+`;
+
+const Label = styled.span`
+  background: #fff;
+  color: #4a4a4a;
+  padding: 8px 32px;
+  font-size: 14px;
+  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+  margin: 0 8px;
+`;
+
+function SchedulerBrowser(props) {
+  return (
+    <StoreConsumer>
+      {(state, actions) => (
+        <SchedulerBrowserWrapper>
+          <ButtonGroup>
+            <Button primary>Download Schedule</Button>
+            <Button>Filters</Button>
+          </ButtonGroup>
+          <div>
+            <Button onClick={() => actions.prevSchedule()}>
+              <i className="fa fa-long-arrow-alt-left" />
+            </Button>
+            <Label>
+              {state.currentSchedule + 1} of {state.generatedSchedules.length}
+            </Label>
+            <Button onClick={() => actions.nextSchedule()}>
+              <i className="fa fa-long-arrow-alt-right" />
+            </Button>
+          </div>
+        </SchedulerBrowserWrapper>
+      )}
+    </StoreConsumer>
+  );
+}
+
 function toTime(minutes) {
   const h = Math.floor((minutes / 60) % 12);
   const m = Math.floor(minutes % 60);
@@ -113,12 +175,13 @@ function Schedule({ courses, crns }) {
           ...acc,
           ...meet.days.map(day => (
             <ScheduleMeet
+              key={course.crn + day}
               color={colors[i] || '#4a4a4a'}
               column={days.indexOf(day)}
               start={(meet.start_time - schedule_start) / schedule_length}
               length={(meet.end_time - meet.start_time) / schedule_length}
             >
-              <span>
+              <span className="course-name">
                 {course.subject} {course.number} {course.name}
               </span>
               <span>
@@ -168,34 +231,52 @@ function Schedule({ courses, crns }) {
   );
 }
 
-function GeneratedSchedules({ schedules }) {
+function GeneratedSchedules({ schedule }) {
   return (
     <GeneratedSchedulesWrapper>
-      <ScheduleGrid>
-        {schedules.map(schedule => <Schedule {...schedule} />)}
-      </ScheduleGrid>
+      <SchedulerBrowser />
+      <Schedule {...schedule} />
     </GeneratedSchedulesWrapper>
   );
 }
 
 export function GeneratedSchedulesContainer() {
+  const getSchedule = state =>
+    state.generatedSchedules[state.currentSchedule].reduce(
+      ({ crns, courses, start_time, end_time }, { code, crn }) => {
+        const course = state.coursesByCode[code];
+        const section = state.sectionsByCrn[crn];
+
+        return {
+          crns: [...crns, crn],
+          courses: [
+            ...courses,
+            {
+              ...course,
+              ...section
+            }
+          ],
+          start_time: Math.min(
+            start_time,
+            ...section.meets.map(meet => meet.start_time)
+          ),
+          end_time: Math.max(
+            end_time,
+            ...section.meets.map(meet => meet.end_time)
+          )
+        };
+      },
+      { crns: [], courses: [], start_time: 1440, end_time: 0 }
+    );
   return (
     <StoreConsumer>
-      {(state, actions) => (
-        <GeneratedSchedules
-          schedules={state.generatedSchedules.map(schedule => {
-            return {
-              crns: schedule.map(s => s.crn),
-              courses: schedule.map(s => {
-                return {
-                  ...state.coursesByCode[s.code],
-                  ...state.sectionsByCrn[s.crn]
-                };
-              })
-            };
-          })}
-        />
-      )}
+      {(state, actions) => {
+        return (
+          state.generatedSchedules.length > 0 && (
+            <GeneratedSchedules schedule={getSchedule(state)} />
+          )
+        );
+      }}
     </StoreConsumer>
   );
 }

@@ -80,7 +80,14 @@ export default {
   generateSchedules() {
     return function({ coursesByCode, selectedCourses }) {
       if (selectedCourses.length) {
-        const courses = selectedCourses.map(code => coursesByCode[code]);
+        const courses = selectedCourses
+          .map(code => coursesByCode[code])
+          .filter(course => {
+            if (!course.sections) {
+              console.log('MESSED UP', course.code);
+            }
+            return course.sections;
+          });
         return {
           generatedSchedules: generateSchedules(courses)
         };
@@ -89,6 +96,23 @@ export default {
           generatedSchedules: []
         };
       }
+    };
+  },
+  prevSchedule() {
+    return function({ generatedSchedules, currentSchedule }) {
+      return {
+        currentSchedule: Math.max(currentSchedule - 1, 0)
+      };
+    };
+  },
+  nextSchedule() {
+    return function({ generatedSchedules, currentSchedule }) {
+      return {
+        currentSchedule: Math.min(
+          currentSchedule + 1,
+          generatedSchedules.length - 1
+        )
+      };
     };
   }
 };

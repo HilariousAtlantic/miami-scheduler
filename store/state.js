@@ -5,5 +5,6 @@ export default {
   selectedCourses: [],
   coursesByCode: {},
   sectionsByCrn: {},
-  generatedSchedules: []
+  generatedSchedules: [],
+  currentSchedule: 0
 };

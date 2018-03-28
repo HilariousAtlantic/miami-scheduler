@@ -15,37 +15,27 @@ const colors = [
 
 const SelectedCoursesWrapper = styled.div`
   grid-area: selected-courses;
-  overflow-x: scroll;
 `;
 
 const List = styled.ul`
-  white-space: nowrap;
-  overflow-x: scroll;
-
-  ::-webkit-scrollbar {
-    display: none;
-    width: 0px;
-    background: transparent;
-  }
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 40px;
+  grid-gap: 8px;
 `;
 
 const ListItem = styled.li`
-  display: inline-flex;
-  width: 88px;
-  height: 32px;
-  box-sizing: border-box;
+  display: flex;
+  list-style: none;
   align-items: center;
   justify-content: space-between;
   color: #fff;
   background: ${props => props.color || '#4a4a4a'};
-  padding: 8px;
+  padding: 16px;
   font-size: 12px;
   font-weight: 500;
   opacity: ${props => (props.loading ? 0.5 : 1)};
-
-  + li {
-    margin-left: 8px;
-  }
+  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
 `;
 
 function SelectedCourses({ courses, onSelectCourse }) {
@@ -62,10 +52,10 @@ function SelectedCourses({ courses, onSelectCourse }) {
               {course.subject} {course.number}
             </span>
             {course.loading ? (
-              <i className="fa fa-close fa-spin" />
+              <i className="fa fa-times fa-spin" />
             ) : (
               <i
-                className="fa fa-close"
+                className="fa fa-times"
                 onClick={() => onSelectCourse(course.code)}
               />
             )}
