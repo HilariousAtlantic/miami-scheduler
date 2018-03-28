@@ -14,24 +14,32 @@ export default {
     };
   },
   async searchCourses(term, query) {
+    if (!query) {
+      return {
+        searchedCourses: []
+      };
+    }
     const { data } = await axios.get(`/api/search?term=${term}&query=${query}`);
-    return function(state) {
+    return function({ coursesByCode }) {
       return {
         searchedCourses: data.courses,
         coursesByCode: data.courses.reduce((acc, course) => {
           return { ...acc, [course.code]: course };
-        }, state.coursesByCode)
+        }, coursesByCode)
       };
     };
   },
   async fetchSections(code) {
     const { data } = await axios.get(`/api/courses/${code}`);
-    return function({ coursesByCode }) {
+    return function({ coursesByCode, sectionsByCrn }) {
       return {
         coursesByCode: {
           ...coursesByCode,
           [code]: data.course
-        }
+        },
+        sectionsByCrn: data.course.sections.reduce((acc, section) => {
+          return { ...acc, [section.crn]: section };
+        }, sectionsByCrn)
       };
     };
   },
@@ -59,8 +67,8 @@ export default {
   },
   generateSchedules() {
     return function({ coursesByCode, selectedCourses }) {
-      const courses = selectedCourses.map(code => coursesByCode[code]);
-      if (courses.length) {
+      if (selectedCourses.length) {
+        const courses = selectedCourses.map(code => coursesByCode[code]);
         return {
           generatedSchedules: generateSchedules(courses)
         };
@@ -77,13 +85,18 @@ function generateSchedules(
   courses,
   schedules = [],
   currentSchedule = [],
-  currentValidator = []
+  currentValidator = {}
 ) {
   const course = courses[0];
   for (let section of course.sections) {
-    const schedule = [...currentSchedule, section];
-    const validator = [...currentValidator];
-    if (!addSection(schedule, validator, section)) continue;
+    const validator = { ...currentValidator };
+    if (isConflictingSection(section, validator)) continue;
+
+    const schedule = [
+      ...currentSchedule,
+      { code: course.code, crn: section.crn }
+    ];
+
     if (courses.length > 1) {
       generateSchedules(courses.slice(1), schedules, schedule, validator);
     } else {
@@ -93,16 +106,16 @@ function generateSchedules(
   return schedules;
 }
 
-function addSection(schedule, validator, section) {
+function isConflictingSection(section, validator) {
   for (let meet of section.meets) {
     for (let day of meet.days) {
       for (let time = meet.start_time; time <= meet.end_time; time += 5) {
         if (validator[day + time]) {
-          return false;
+          return true;
         }
         validator[day + time] = true;
       }
     }
   }
-  return true;
+  return false;
 }

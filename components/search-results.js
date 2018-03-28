@@ -43,7 +43,9 @@ export function SearchResultsContainer() {
     <StoreConsumer>
       {(state, actions) => (
         <SearchResults
-          searchResults={state.searchedCourses}
+          searchResults={state.searchedCourses.filter(
+            course => !state.selectedCourses.includes(course.code)
+          )}
           onSelectCourse={async course => {
             await actions.fetchSections(course.code);
             actions.selectCourse(course.code);

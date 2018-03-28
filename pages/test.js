@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { StoreProvider, withStore } from '../store';
 import {
+  GeneratedSchedulesContainer,
   TermSelectorContainer,
   CourseSearchContainer,
   SearchResultsContainer,
@@ -41,7 +42,7 @@ const CourseSelection = styled.div`
   display: grid;
   grid-gap: 8px;
   grid-template-columns: auto 200px;
-  grid-template-rows: 32px 48px 320px;
+  grid-template-rows: 32px 48px 240px;
   grid-template-areas:
     'selected-courses selected-courses'
     'course-search term-selector'
@@ -64,13 +65,13 @@ const ScheduleGenerator = withStore(
               <a href="/feedback">Send Feedback</a>
             </Links>
           </Navbar>
-
           <CourseSelection>
             <CourseSearchContainer />
             <TermSelectorContainer />
             <SearchResultsContainer />
             <SelectedCoursesContainer />
           </CourseSelection>
+          <GeneratedSchedulesContainer />
         </ScheduleGeneratorWrapper>
       );
     }

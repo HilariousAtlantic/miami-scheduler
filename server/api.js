@@ -77,7 +77,7 @@ module.exports = function(db) {
           ])
         ],
         meets: courseSection.courseSchedules.map(courseSchedule => ({
-          days: courseSchedule.days,
+          days: courseSchedule.days.split(''),
           start_time: toMinutes(courseSchedule.startTime),
           end_time: toMinutes(courseSchedule.endTime),
           location: `${courseSchedule.buildingCode} ${courseSchedule.room}`

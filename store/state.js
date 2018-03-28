@@ -3,5 +3,6 @@ export default {
   searchedCourses: [],
   selectedCourses: [],
   coursesByCode: {},
+  sectionsByCrn: {},
   generatedSchedules: []
 };
