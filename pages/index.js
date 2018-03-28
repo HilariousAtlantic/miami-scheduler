@@ -20,7 +20,6 @@ const Navbar = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 32px;
 `;
 
 const Brand = styled.a`
@@ -50,8 +49,9 @@ const Links = styled.nav`
 
 const CourseSelection = styled.div`
   display: grid;
+  margin: 64px 0;
   grid-gap: 8px;
-  grid-template-columns: auto 200px;
+  grid-template-columns: auto 240px;
   grid-template-rows: 32px 48px 240px;
   grid-template-areas:
     'selected-courses selected-courses'
