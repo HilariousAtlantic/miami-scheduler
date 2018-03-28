@@ -44,12 +44,16 @@ export function SearchResultsContainer() {
       {(state, actions) => (
         <SearchResults
           searchResults={state.searchedCourses.filter(
-            course => !state.selectedCourses.includes(course.code)
+            course =>
+              !state.selectedCourses.includes(course.code) &&
+              !state.loadingCourses.includes(course.code)
           )}
-          onSelectCourse={async course => {
-            await actions.fetchSections(course.code);
-            actions.selectCourse(course.code);
-            actions.generateSchedules();
+          onSelectCourse={course => {
+            setTimeout(async () => {
+              actions.selectCourse(course);
+              await actions.fetchSections(course.code);
+              actions.generateSchedules();
+            });
           }}
         />
       )}

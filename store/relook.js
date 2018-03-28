@@ -30,20 +30,21 @@ export function createStore(initialState, actions) {
           if (result.then) {
             result = await result;
           }
-          if (typeof result === 'object') {
-            this.setState(() => {
-              logger(result);
-              return result;
-            });
-          } else if (typeof result === 'function') {
-            this.setState(state => {
-              logger(result(state));
-              return result(state);
-            });
-          } else {
-            console.error('action must return an object or function');
-          }
-          return;
+          return new Promise((resolve, reject) => {
+            if (typeof result === 'object') {
+              this.setState(() => {
+                logger(result);
+                return result;
+              }, resolve);
+            } else if (typeof result === 'function') {
+              this.setState(state => {
+                logger(result(state));
+                return result(state);
+              }, resolve);
+            } else {
+              reject('action must return an object or function');
+            }
+          });
         }.bind(this)
       };
     }, {});

@@ -32,6 +32,7 @@ const ListItem = styled.li`
   font-size: 12px;
   font-weight: 500;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+  opacity: ${props => (props.loading ? 0.5 : 1)};
 
   + li {
     margin-left: 8px;
@@ -43,14 +44,22 @@ function SelectedCourses({ courses, onSelectCourse }) {
     <SelectedCoursesWrapper>
       <List>
         {courses.map((course, i) => (
-          <ListItem key={course.code} color={colors[i]}>
+          <ListItem
+            key={course.code}
+            color={colors[i]}
+            loading={course.loading}
+          >
             <span>
               {course.subject} {course.number}
             </span>
-            <i
-              className="fa fa-close"
-              onClick={() => onSelectCourse(course.code)}
-            />
+            {course.loading ? (
+              <i className="fa fa-close fa-spin" />
+            ) : (
+              <i
+                className="fa fa-close"
+                onClick={() => onSelectCourse(course.code)}
+              />
+            )}
           </ListItem>
         ))}
       </List>
@@ -63,7 +72,13 @@ export function SelectedCoursesContainer() {
     <StoreConsumer>
       {(state, actions) => (
         <SelectedCourses
-          courses={state.selectedCourses.map(code => state.coursesByCode[code])}
+          courses={[
+            ...state.selectedCourses.map(code => state.coursesByCode[code]),
+            ...state.loadingCourses.map(code => ({
+              ...state.coursesByCode[code],
+              loading: true
+            }))
+          ]}
           onSelectCourse={code => {
             actions.deselectCourse(code);
             actions.generateSchedules();

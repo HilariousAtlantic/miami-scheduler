@@ -22,7 +22,7 @@ const GeneratedSchedulesWrapper = styled.div`
 
 const ScheduleGrid = styled.div`
   display: grid;
-  grid-auto-rows: 80vh;
+  grid-auto-rows: 85vh;
   grid-gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
 `;
@@ -50,6 +50,7 @@ const ScheduleHeader = styled.div`
 const ScheduleCalendar = styled.div`
   flex: 1;
   position: relative;
+  overflow-y: scroll;
 `;
 
 const ScheduleMeet = styled.div`
@@ -84,13 +85,14 @@ const ScheduleMeet = styled.div`
   `};
 `;
 
-const CourseNumbers = styled.div`
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
+const ScheduleFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
   font-size: 12px;
   font-weight: 500;
   color: #4a4a4a;
+  background: #f5f5f5;
+  padding: 16px;
 `;
 
 function toTime(minutes) {
@@ -100,8 +102,8 @@ function toTime(minutes) {
 }
 
 function Schedule({ courses, crns }) {
-  const schedule_start = 420;
-  const schedule_end = 1200;
+  const schedule_start = 450;
+  const schedule_end = 1170;
   const schedule_length = schedule_end - schedule_start;
   const meets = courses.reduce(
     (acc, course, i) => [
@@ -136,6 +138,18 @@ function Schedule({ courses, crns }) {
     []
   );
 
+  const credits = [
+    ...new Set(
+      courses.reduce(
+        ([totalLow, totalHigh], course) => [
+          totalLow + course.credits[0],
+          totalHigh + (course.credits[1] || course.credits[0])
+        ],
+        [0, 0]
+      )
+    )
+  ];
+
   return (
     <ScheduleWrapper>
       <ScheduleHeader>
@@ -145,10 +159,11 @@ function Schedule({ courses, crns }) {
         <span>Thursday</span>
         <span>Friday</span>
       </ScheduleHeader>
-      <ScheduleCalendar>
-        {meets}
-        <CourseNumbers>{crns.join(', ')}</CourseNumbers>
-      </ScheduleCalendar>
+      <ScheduleCalendar>{meets}</ScheduleCalendar>
+      <ScheduleFooter>
+        <span>{crns.join(', ')}</span>
+        <span>{credits.join('-')} Credits</span>
+      </ScheduleFooter>
     </ScheduleWrapper>
   );
 }

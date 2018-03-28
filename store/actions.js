@@ -33,8 +33,15 @@ export default {
   },
   async fetchSections(code) {
     const { data } = await axios.get(`/api/courses/${code}`);
-    return function({ coursesByCode, sectionsByCrn }) {
+    return function({
+      coursesByCode,
+      sectionsByCrn,
+      selectedCourses,
+      loadingCourses
+    }) {
       return {
+        selectedCourses: [...selectedCourses, code],
+        loadingCourses: loadingCourses.filter(c => c !== code),
         coursesByCode: {
           ...coursesByCode,
           [code]: data.course
@@ -45,13 +52,16 @@ export default {
       };
     };
   },
-  selectCourse(code) {
-    return function({ selectedCourses }) {
-      if (selectedCourses.includes(code)) {
-        return { selectedCourses };
-      } else if (selectedCourses.length < 8) {
+  selectCourse(course) {
+    return function({ loadingCourses, selectedCourses }) {
+      if (
+        loadingCourses.includes(course.code) ||
+        selectedCourses.includes(course.code)
+      ) {
+        return {};
+      } else if (loadingCourses.length + selectedCourses.length < 8) {
         return {
-          selectedCourses: [...selectedCourses, code]
+          loadingCourses: [...loadingCourses, course.code]
         };
       }
     };
