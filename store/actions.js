@@ -59,7 +59,7 @@ export default {
         selectedCourses.includes(course.code)
       ) {
         return {};
-      } else if (loadingCourses.length + selectedCourses.length < 8) {
+      } else {
         return {
           loadingCourses: [...loadingCourses, course.code]
         };

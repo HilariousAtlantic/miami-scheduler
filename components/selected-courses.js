@@ -15,9 +15,19 @@ const colors = [
 
 const SelectedCoursesWrapper = styled.div`
   grid-area: selected-courses;
+  overflow-x: scroll;
 `;
 
-const List = styled.ul``;
+const List = styled.ul`
+  white-space: nowrap;
+  overflow-x: scroll;
+
+  ::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    background: transparent;
+  }
+`;
 
 const ListItem = styled.li`
   display: inline-flex;
@@ -31,7 +41,6 @@ const ListItem = styled.li`
   padding: 8px;
   font-size: 12px;
   font-weight: 500;
-  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
   opacity: ${props => (props.loading ? 0.5 : 1)};
 
   + li {
