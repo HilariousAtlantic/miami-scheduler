@@ -55,7 +55,7 @@ const ScheduleMeet = styled.div`
   position: absolute;
   color: #fff;
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 400;
   padding: 4px;
   box-sizing: border-box;
 
@@ -68,7 +68,6 @@ const ScheduleMeet = styled.div`
   }
 
   .slots {
-    font-weight: 400;
     position: absolute;
     top: 4px;
     right: 4px;
@@ -93,69 +92,6 @@ const ScheduleFooter = styled.div`
   background: #f5f5f5;
   padding: 16px;
 `;
-
-const SchedulerBrowserWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 16px 0;
-`;
-
-const ButtonGroup = styled.div`
-  button + button {
-    margin-left: 8px;
-  }
-`;
-
-const Button = styled.button`
-  background: #fff;
-  border: none;
-  color: #4a4a4a;
-  padding: 8px 24px;
-  font-size: 14px;
-  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
-
-  ${props =>
-    props.primary &&
-    `
-    background: #388E3C;
-    color: #fff;
-  `};
-`;
-
-const Label = styled.span`
-  background: #fff;
-  color: #4a4a4a;
-  padding: 8px 32px;
-  font-size: 14px;
-  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
-  margin: 0 8px;
-`;
-
-function SchedulerBrowser(props) {
-  return (
-    <StoreConsumer>
-      {(state, actions) => (
-        <SchedulerBrowserWrapper>
-          <ButtonGroup>
-            <Button primary>Download Schedule</Button>
-            <Button>Filters</Button>
-          </ButtonGroup>
-          <div>
-            <Button onClick={() => actions.prevSchedule()}>
-              <i className="fa fa-long-arrow-alt-left" />
-            </Button>
-            <Label>
-              {state.currentSchedule + 1} of {state.generatedSchedules.length}
-            </Label>
-            <Button onClick={() => actions.nextSchedule()}>
-              <i className="fa fa-long-arrow-alt-right" />
-            </Button>
-          </div>
-        </SchedulerBrowserWrapper>
-      )}
-    </StoreConsumer>
-  );
-}
 
 function toTime(minutes) {
   const h = Math.floor((minutes / 60) % 12);
@@ -234,7 +170,6 @@ function Schedule({ courses, crns }) {
 function GeneratedSchedules({ schedule }) {
   return (
     <GeneratedSchedulesWrapper>
-      <SchedulerBrowser />
       <Schedule {...schedule} />
     </GeneratedSchedulesWrapper>
   );

@@ -70,7 +70,8 @@ export default {
     return function({ selectedCourses }) {
       if (selectedCourses.includes(code)) {
         return {
-          selectedCourses: selectedCourses.filter(c => c !== code)
+          selectedCourses: selectedCourses.filter(c => c !== code),
+          currentSchedule: 0
         };
       } else {
         return { selectedCourses };

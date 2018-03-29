@@ -44,7 +44,6 @@ function SearchResults({ searchResults, onSelectCourse, onSearchCourses }) {
             <span>
               {course.subject} {course.number} - {course.title}
             </span>
-            <p>{course.description}</p>
           </ListItem>
         ))}
       </List>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 
 import { StoreProvider, withStore } from '../store';
@@ -6,6 +6,8 @@ import {
   GeneratedSchedulesContainer,
   TermSelectorContainer,
   CourseSearchContainer,
+  ScheduleBrowser,
+  ScheduleFiltersContainer,
   SearchResultsContainer,
   SelectedCoursesContainer
 } from '../components';
@@ -48,19 +50,12 @@ const Links = styled.nav`
   }
 `;
 
-const SectionHeader = styled.h2`
-  font-size: 18px;
-  font-weight: 500;
-  padding-bottom: 8px;
-  border-bottom: 4px solid #4a4a4a;
-`;
-
 const CourseSelection = styled.div`
   display: grid;
   margin-bottom: 64px;
   grid-gap: 8px;
   grid-template-columns: auto 240px;
-  grid-template-rows: 48px 480px auto;
+  grid-template-rows: 48px 320px auto;
   grid-template-areas:
     'course-search term-selector'
     'search-results search-results'
@@ -75,6 +70,10 @@ const ScheduleGenerator = withStore(
     }
 
     render() {
+      const { state } = this.props.store;
+
+      const showScheduleSection = state.generatedSchedules.length > 0;
+
       return (
         <ScheduleGeneratorWrapper>
           <Navbar>
@@ -86,15 +85,19 @@ const ScheduleGenerator = withStore(
               <a href="/feedback">Send Feedback</a>
             </Links>
           </Navbar>
-          <SectionHeader>Select Courses</SectionHeader>
           <CourseSelection>
             <CourseSearchContainer />
             <TermSelectorContainer />
             <SearchResultsContainer />
             <SelectedCoursesContainer />
           </CourseSelection>
-          <SectionHeader>Browse Schedules</SectionHeader>
-          <GeneratedSchedulesContainer />
+          {showScheduleSection && (
+            <Fragment>
+              <ScheduleBrowser />
+              {state.showFilters && <ScheduleFiltersContainer />}
+              <GeneratedSchedulesContainer />
+            </Fragment>
+          )}
         </ScheduleGeneratorWrapper>
       );
     }
