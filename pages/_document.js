@@ -25,9 +25,11 @@ export default class extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,600,700,800,900"
           />
-          <link
-            rel="stylesheet"
-            href="https://use.fontawesome.com/releases/v5.0.9/css/all.css"
+          <script
+            defer
+            src="https://use.fontawesome.com/releases/v5.0.9/js/all.js"
+            integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl"
+            crossorigin="anonymous"
           />
           <link rel="stylesheet" href="/static/style.css" />
           {this.props.styleTags}

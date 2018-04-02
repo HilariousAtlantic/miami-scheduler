@@ -2,51 +2,49 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import { StoreConsumer } from '../store';
-import { Selector } from './selector';
-import { TimeInput, NumberInput } from './input';
+import { InlineSelector } from './selector';
+import { TimeInput, NumberInput, Checkbox } from './input';
 import { DayPicker, IconButton } from './button';
 
 const ScheduleFiltersWrapper = styled.div`
-  margin: 16px 0;
-
-  td {
-    padding: 16px;
-  }
+  grid-area: schedule-filters;
 `;
 
 const FilterWrapper = styled.div`
   display: flex;
   font-size: 12px;
-  margin-bottom: 8px;
+  align-items: center;
 
   > * + * {
     margin-left: 8px;
   }
 `;
 
-const FilterSection = styled.section`
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
+const FilterList = styled.div`
+  padding: 16px;
   background: #fff;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
 
-  > * + * {
-    margin-left: 8px;
+  ${FilterWrapper} + ${FilterWrapper} {
+    margin-top: 16px;
   }
 `;
 
-const FilterSelectorWrapper = styled.div`
-  border-bottom: 2px solid #4a4a4a;
+const FilterOptions = styled.div`
+  button + button {
+    margin-left: 8px;
+  }
 `;
 
 function FilterTypeSelector(props) {
   return (
-    <Selector
+    <InlineSelector
       {...props}
       options={[
-        { value: 'filter_typ', name: 'Filter Type' },
+        { value: 'filter_type', name: 'Filter Type' },
         { value: 'class_time', name: 'Class Time' },
+        { value: 'break_time', name: 'Break Time' },
         { value: 'class_load', name: 'Class Load' }
       ]}
     />
@@ -55,76 +53,75 @@ function FilterTypeSelector(props) {
 
 function TimeOperatorSelector(props) {
   return (
-    <FilterSelectorWrapper>
-      <Selector
-        {...props}
-        options={[
-          { value: 'start_before', name: 'start before' },
-          { value: 'start_at', name: 'start at' },
-          { value: 'start_after', name: 'start after' },
-          { value: 'finish_before', name: 'finish before' },
-          { value: 'finish_at', name: 'finish at' },
-          { value: 'finish_after', name: 'finish after' }
-        ]}
-      />
-    </FilterSelectorWrapper>
+    <InlineSelector
+      {...props}
+      options={[
+        { value: 'start_before', name: 'start before' },
+        { value: 'start_at', name: 'start at' },
+        { value: 'start_after', name: 'start after' },
+        { value: 'finish_before', name: 'finish before' },
+        { value: 'finish_at', name: 'finish at' },
+        { value: 'finish_after', name: 'finish after' }
+      ]}
+    />
   );
 }
 
 function AmountOperatorSelector(props) {
   return (
-    <FilterSelectorWrapper>
-      <Selector
-        options={[
-          { value: 'less_than', name: 'less than' },
-          { value: 'at_most', name: 'at most' },
-          { value: 'exactly', name: 'exactly' },
-          { value: 'at least', name: 'at least' },
-          { value: 'more than', name: 'more than' }
-        ]}
-      />
-    </FilterSelectorWrapper>
+    <InlineSelector
+      options={[
+        { value: 'less_than', name: 'less than' },
+        { value: 'at_most', name: 'at most' },
+        { value: 'exactly', name: 'exactly' },
+        { value: 'at least', name: 'at least' },
+        { value: 'more than', name: 'more than' }
+      ]}
+    />
   );
 }
 
 function ScheduleFilters(props) {
   return (
     <ScheduleFiltersWrapper>
-      <FilterWrapper>
-        <IconButton leftIcon="trash" danger raised />
-        <FilterSection>
-          <FilterTypeSelector selectedOption="class_time" />
-        </FilterSection>
-        <FilterSection>
+      <FilterList>
+        <FilterWrapper>
+          <IconButton leftIcon="trash" danger />
           <span>I want to</span>
           <TimeOperatorSelector />
           <TimeInput placeholder="10:00 AM" />
           <span>on</span>
           <DayPicker selectedDays={['M', 'W', 'F']} />
-        </FilterSection>
-      </FilterWrapper>
-      <FilterWrapper>
-        <IconButton leftIcon="trash" danger raised />
-        <FilterSection>
-          <FilterTypeSelector selectedOption="class_load" />
-        </FilterSection>
-        <FilterSection>
+        </FilterWrapper>
+        <FilterWrapper>
+          <IconButton leftIcon="trash" danger />
           <span>I want</span>
           <AmountOperatorSelector />
           <NumberInput placeholder="3" />
           <span>classes on</span>
-          <DayPicker selectedDays={['T', 'R']} />
-        </FilterSection>
-      </FilterWrapper>
-      <FilterWrapper>
-        <IconButton leftIcon="trash" danger raised />
-        <FilterSection>
-          <FilterTypeSelector />
-        </FilterSection>
-      </FilterWrapper>
-      <IconButton leftIcon="plus" raised>
-        Add Filter
-      </IconButton>
+          <DayPicker selectedDays={['M', 'W', 'F']} />
+        </FilterWrapper>
+        <FilterWrapper>
+          <IconButton leftIcon="trash" danger />
+          <span>I want a break from</span>
+          <TimeInput placeholder="10:00 AM" />
+          <span>until</span>
+          <TimeInput placeholder="12:00 PM" />
+          <span>on</span>
+          <DayPicker selectedDays={['M', 'W', 'F']} />
+        </FilterWrapper>
+      </FilterList>
+      <FilterOptions>
+        <IconButton leftIcon="plus" large raised>
+          Class Time Filter
+        </IconButton>
+        <IconButton leftIcon="plus" large raised>
+          Class Load Filter
+        </IconButton>
+        <IconButton leftIcon="plus" large raised>
+          Break Time Filter
+        </IconButton>
+      </FilterOptions>
     </ScheduleFiltersWrapper>
   );
 }

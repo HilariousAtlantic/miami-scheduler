@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { generateSchedules } from './generator';
+
 export default {
   async fetchTerms() {
     const { data } = await axios.get('/api/terms');
@@ -81,14 +83,7 @@ export default {
   generateSchedules() {
     return function({ coursesByCode, selectedCourses }) {
       if (selectedCourses.length) {
-        const courses = selectedCourses
-          .map(code => coursesByCode[code])
-          .filter(course => {
-            if (!course.sections) {
-              console.log('MESSED UP', course.code);
-            }
-            return course.sections;
-          });
+        const courses = selectedCourses.map(code => coursesByCode[code]);
         return {
           generatedSchedules: generateSchedules(courses)
         };
@@ -99,49 +94,55 @@ export default {
       }
     };
   },
+  toggleFilters() {
+    return function({ showFilters }) {
+      return {
+        showFilters: !showFilters
+      };
+    };
+  },
+  showDetailedSchedules() {
+    return function({ currentSchedule, schedulesPerPage }) {
+      if (schedulesPerPage === 3) {
+        return {
+          schedulesPerPage: 1,
+          currentSchedule: currentSchedule * 3
+        };
+      } else {
+        return {};
+      }
+    };
+  },
+  showCompactSchedules() {
+    return function({ currentSchedule, schedulesPerPage }) {
+      if (schedulesPerPage === 1) {
+        return {
+          schedulesPerPage: 3,
+          currentSchedule: Math.floor(currentSchedule / 3)
+        };
+      } else {
+        return {};
+      }
+    };
+  },
   prevSchedule() {
-    return function({ generatedSchedules, currentSchedule }) {
+    return function({ currentSchedule }) {
       return {
         currentSchedule: Math.max(currentSchedule - 1, 0)
       };
     };
   },
   nextSchedule() {
-    return function({ generatedSchedules, currentSchedule }) {
+    return function({ currentSchedule, generatedSchedules, schedulesPerPage }) {
       return {
         currentSchedule: Math.min(
           currentSchedule + 1,
-          generatedSchedules.length - 1
+          Math.ceil(generatedSchedules.length / schedulesPerPage) - 1
         )
       };
     };
   }
 };
-
-function generateSchedules(
-  courses,
-  schedules = [],
-  currentSchedule = [],
-  currentValidator = {}
-) {
-  const course = courses[0];
-  for (let section of course.sections) {
-    const validator = { ...currentValidator };
-    if (isConflictingSection(section, validator)) continue;
-
-    const schedule = [
-      ...currentSchedule,
-      { code: course.code, crn: section.crn }
-    ];
-
-    if (courses.length > 1) {
-      generateSchedules(courses.slice(1), schedules, schedule, validator);
-    } else {
-      schedules.push(schedule);
-    }
-  }
-  return schedules;
-}
 
 function isConflictingSection(section, validator) {
   for (let meet of section.meets) {

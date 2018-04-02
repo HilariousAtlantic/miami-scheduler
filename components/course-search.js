@@ -8,7 +8,7 @@ const CourseSearchWrapper = styled.div`
   grid-area: course-search;
   position: relative;
 
-  i {
+  .fa-search {
     position: absolute;
     pointer-events: none;
     top: 16px;

@@ -24,26 +24,23 @@ export function createStore(initialState, actions) {
     actions = Object.keys(actions).reduce((acc, key) => {
       return {
         ...acc,
-        [key]: async function() {
-          const logger = createActionLogger(key);
-          let result = actions[key].apply(this, Array.from(arguments));
-          if (result.then) {
-            result = await result;
-          }
-          return new Promise((resolve, reject) => {
-            if (typeof result === 'object') {
-              this.setState(() => {
-                logger(result);
-                return result;
-              }, resolve);
-            } else if (typeof result === 'function') {
-              this.setState(state => {
-                logger(result(state));
-                return result(state);
-              }, resolve);
-            } else {
-              reject('action must return an object or function');
+        [key]: function() {
+          const logAction = createActionLogger(key);
+          return new Promise(async (resolve, reject) => {
+            let result = actions[key].apply(this, [...arguments]);
+            if (result.then) {
+              result = await result;
             }
+            this.setState(
+              state => {
+                if (typeof result === 'function') {
+                  result = result(state);
+                }
+                logAction(result);
+                return result;
+              },
+              () => resolve(this.state)
+            );
           });
         }.bind(this)
       };

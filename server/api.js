@@ -44,7 +44,7 @@ module.exports = function(db) {
     if (number) plan.number = number.split(',');
 
     const courses = await db.courses.find(plan, {
-      fields: ['code', 'subject', 'number', 'title'],
+      fields: ['code', 'subject', 'number', 'title', 'description'],
       limit: 50
     });
 
@@ -56,7 +56,10 @@ module.exports = function(db) {
       const { code } = req.params;
       const course = await db.courses.find(
         { code },
-        { fields: ['code', 'term', 'subject', 'number', 'title'], single: true }
+        {
+          fields: ['code', 'term', 'subject', 'number', 'title', 'description'],
+          single: true
+        }
       );
 
       const { data } = await axios.get(

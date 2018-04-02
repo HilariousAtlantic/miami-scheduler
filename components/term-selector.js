@@ -7,7 +7,7 @@ const TermSelectorWrapper = styled.div`
   grid-area: term-selector;
   position: relative;
 
-  i {
+  .fa-chevron-down {
     position: absolute;
     pointer-events: none;
     font-size: 0.75rem;

@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import { transparentize, darken } from 'polished';
 
 import { StoreConsumer } from '../store';
+import { IconButton } from './button';
 
 const days = ['M', 'T', 'W', 'R', 'F'];
+const days_detailed = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 const colors = [
   '#0D47A1',
@@ -17,16 +19,25 @@ const colors = [
 ];
 
 const GeneratedSchedulesWrapper = styled.div`
-  grid-area: generated-schedules;
+  margin: 16px auto;
+  min-width: 960px;
+  max-width: 1280px;
 `;
 
 const ScheduleWrapper = styled.div`
-  height: 85vh;
+  height: 720px;
+  min-width: 360px;
+  max-width: 960px;
+  flex: 1;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background: #ffffff;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+
+  + div {
+    margin-left: 16px;
+  }
 `;
 
 const ScheduleHeader = styled.div`
@@ -48,16 +59,30 @@ const ScheduleCalendar = styled.div`
   overflow-y: scroll;
 `;
 
+const ScheduleFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a4a4a;
+  background: #f5f5f5;
+  padding: 16px;
+
+  i {
+    margin-right: 4px;
+  }
+`;
+
 const ScheduleMeet = styled.div`
   display: flex;
   flex-direction: column;
   width: calc(20% - 4px);
   position: absolute;
+  box-sizing: border-box;
   color: #fff;
+  padding: 4px;
   font-size: 10px;
   font-weight: 400;
-  padding: 4px;
-  box-sizing: border-box;
 
   .course-name {
     font-weight: 900;
@@ -83,14 +108,9 @@ const ScheduleMeet = styled.div`
   `};
 `;
 
-const ScheduleFooter = styled.div`
+const ScheduleList = styled.div`
   display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 500;
-  color: #4a4a4a;
-  background: #f5f5f5;
-  padding: 16px;
+  justify-content: center;
 `;
 
 function toTime(minutes) {
@@ -99,9 +119,9 @@ function toTime(minutes) {
   return `${h || 12}:${('00' + m).slice(-2)}`;
 }
 
-function Schedule({ courses, crns }) {
+export function Schedule({ courses, crns, detailed }) {
   const schedule_start = 450;
-  const schedule_end = 1170;
+  const schedule_end = 1230;
   const schedule_length = schedule_end - schedule_start;
   const meets = courses.reduce(
     (acc, course, i) => [
@@ -122,12 +142,14 @@ function Schedule({ courses, crns }) {
               </span>
               <span>
                 {toTime(meet.start_time)} - {toTime(meet.end_time)}{' '}
-                {meet.location}
+                {detailed && meet.location}
               </span>
-              <span>{course.instructor}</span>
-              <div className="slots">
-                <span>{course.slots} Seats</span>
-              </div>
+              {detailed && <span>{course.instructor}</span>}
+              {detailed && (
+                <div className="slots">
+                  <span>{course.slots} Seats</span>
+                </div>
+              )}
             </ScheduleMeet>
           ))
         ],
@@ -137,79 +159,72 @@ function Schedule({ courses, crns }) {
     []
   );
 
-  const credits = [
-    ...new Set(
-      courses.reduce(
-        ([totalLow, totalHigh], course) => [
-          totalLow + course.credits[0],
-          totalHigh + (course.credits[1] || course.credits[0])
-        ],
-        [0, 0]
-      )
-    )
-  ];
-
   return (
-    <ScheduleWrapper>
+    <ScheduleWrapper detailed={detailed}>
       <ScheduleHeader>
-        <span>Monday</span>
-        <span>Tuesday</span>
-        <span>Wednesday</span>
-        <span>Thursday</span>
-        <span>Friday</span>
+        {(detailed ? days_detailed : days).map(day => <span>{day}</span>)}
       </ScheduleHeader>
       <ScheduleCalendar>{meets}</ScheduleCalendar>
       <ScheduleFooter>
+        <span>
+          <i className="fa fa-download" /> {detailed && 'Download as image'}
+        </span>
         <span>{crns.join(', ')}</span>
-        <span>{credits.join('-')} Credits</span>
       </ScheduleFooter>
     </ScheduleWrapper>
   );
 }
 
-function GeneratedSchedules({ schedule }) {
-  return (
-    <GeneratedSchedulesWrapper>
-      <Schedule {...schedule} />
-    </GeneratedSchedulesWrapper>
-  );
+function getSchedules(state) {
+  const index = state.currentSchedule * state.schedulesPerPage;
+  return state.generatedSchedules
+    .slice(index, index + state.schedulesPerPage)
+    .map(schedule =>
+      schedule.reduce(
+        ({ crns, courses, start_time, end_time }, { code, crn }) => {
+          const course = state.coursesByCode[code];
+          const section = state.sectionsByCrn[crn];
+
+          return {
+            crns: [...crns, crn],
+            courses: [
+              ...courses,
+              {
+                ...course,
+                ...section
+              }
+            ],
+            start_time: Math.min(
+              start_time,
+              ...section.meets.map(meet => meet.start_time)
+            ),
+            end_time: Math.max(
+              end_time,
+              ...section.meets.map(meet => meet.end_time)
+            )
+          };
+        },
+        { crns: [], courses: [], start_time: 1440, end_time: 0 }
+      )
+    );
 }
 
 export function GeneratedSchedulesContainer() {
-  const getSchedule = state =>
-    state.generatedSchedules[state.currentSchedule].reduce(
-      ({ crns, courses, start_time, end_time }, { code, crn }) => {
-        const course = state.coursesByCode[code];
-        const section = state.sectionsByCrn[crn];
-
-        return {
-          crns: [...crns, crn],
-          courses: [
-            ...courses,
-            {
-              ...course,
-              ...section
-            }
-          ],
-          start_time: Math.min(
-            start_time,
-            ...section.meets.map(meet => meet.start_time)
-          ),
-          end_time: Math.max(
-            end_time,
-            ...section.meets.map(meet => meet.end_time)
-          )
-        };
-      },
-      { crns: [], courses: [], start_time: 1440, end_time: 0 }
-    );
   return (
     <StoreConsumer>
       {(state, actions) => {
         return (
-          state.generatedSchedules.length > 0 && (
-            <GeneratedSchedules schedule={getSchedule(state)} />
-          )
+          <GeneratedSchedulesWrapper>
+            <ScheduleList>
+              {getSchedules(state).map(schedule => (
+                <Schedule
+                  key={schedule.crns.join(',')}
+                  {...schedule}
+                  detailed={state.schedulesPerPage === 1}
+                />
+              ))}
+            </ScheduleList>
+          </GeneratedSchedulesWrapper>
         );
       }}
     </StoreConsumer>
