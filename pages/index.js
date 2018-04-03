@@ -71,6 +71,10 @@ const FilterSection = styled.section`
   width: 90%;
   max-width: 960px;
   margin: 64px auto;
+
+  > div {
+    text-align: center;
+  }
 `;
 
 const ScheduleSection = styled.section`
@@ -146,7 +150,7 @@ const ScheduleGenerator = withStore(
             <Fragment>
               <FilterSection>
                 <SectionHeader>2. Customize Filters</SectionHeader>
-                <ScheduleFiltersContainer />
+                <div>Coming Very Soon</div>
               </FilterSection>
               <ScheduleSection>
                 <SectionHeader>3. Browse Schedules</SectionHeader>
