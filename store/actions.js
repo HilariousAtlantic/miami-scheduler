@@ -67,7 +67,7 @@ export function searchCourses(getState, setState) {
   };
 }
 
-export function selectCourse(getState, setState) {
+export function selectCourse(getState, setState, getActions) {
   return async function(code) {
     const { loadingCourses, selectedCourses } = getState();
     if (loadingCourses.concat(selectedCourses).includes(code)) {
@@ -80,8 +80,15 @@ export function selectCourse(getState, setState) {
       };
     });
 
+    const { fetchCourse } = getActions();
+    fetchCourse(code);
+  };
+}
+
+export function fetchCourse(getState, setState, getActions) {
+  return async function(code) {
     const { data } = await axios.get(`/api/courses/${code}`);
-    setState(state => {
+    await setState(state => {
       return {
         selectedCourses: state.selectedCourses.concat(code),
         loadingCourses: state.loadingCourses.filter(c => c !== code),
@@ -94,12 +101,15 @@ export function selectCourse(getState, setState) {
         }, state.sectionsByCrn)
       };
     });
+
+    const { generateSchedules } = getActions();
+    generateSchedules();
   };
 }
 
-export function deselectCourse(getState, setState) {
-  return function(code) {
-    setState(({ selectedCourses }) => {
+export function deselectCourse(getState, setState, getActions) {
+  return async function(code) {
+    await setState(({ selectedCourses }) => {
       if (selectedCourses.includes(code)) {
         return {
           selectedCourses: selectedCourses.filter(c => c !== code),
@@ -109,6 +119,9 @@ export function deselectCourse(getState, setState) {
         return { selectedCourses };
       }
     });
+
+    const { generateSchedules } = getActions();
+    generateSchedules();
   };
 }
 

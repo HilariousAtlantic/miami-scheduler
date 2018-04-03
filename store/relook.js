@@ -20,13 +20,16 @@ function createActions(actionCreators) {
       [key]: actionCreators[key](
         () => this.state,
         update =>
-          this.setState(state => {
-            if (typeof update === 'function') {
-              update = update(state);
-            }
-            logAction(key, update);
-            return update;
-          })
+          new Promise((resolve, reject) => {
+            this.setState(state => {
+              if (typeof update === 'function') {
+                update = update(state);
+              }
+              logAction(key, update);
+              return update;
+            }, resolve);
+          }),
+        () => this.actions
       )
     };
   }, {});
