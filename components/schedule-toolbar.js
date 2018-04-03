@@ -29,7 +29,7 @@ const BrowserButton = styled.button`
   border: none;
   outline: none;
   color: #4a4a4a;
-  font-size: 14px;
+  font-size: 12px;
   padding: 16px 32px;
   cursor: pointer;
 
@@ -47,7 +47,7 @@ const BrowserLabel = styled.label`
   width: 80px;
   padding: 16px 0;
   background: #ffffff;
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
 `;
 
