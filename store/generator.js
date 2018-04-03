@@ -61,7 +61,7 @@ function isValidSchedule(sections) {
   return true;
 }
 
-export function generateSchedules(state) {
+export function getSchedules(state) {
   return new Promise((resolve, reject) => {
     if (!state.selectedCourses.length) resolve([]);
     getValidSchedules(state, schedules => resolve(schedules));

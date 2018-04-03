@@ -78,10 +78,7 @@ export function SelectedCoursesContainer() {
               loading: true
             }))
           ]}
-          onSelectCourse={code => {
-            actions.deselectCourse(code);
-            actions.generateSchedules();
-          }}
+          onSelectCourse={code => actions.deselectCourse(code)}
         />
       )}
     </StoreConsumer>

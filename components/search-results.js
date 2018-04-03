@@ -120,9 +120,7 @@ export function SearchResultsContainer() {
               !state.selectedCourses.includes(course.code) &&
               !state.loadingCourses.includes(course.code)
           )}
-          onSelectCourse={async course => {
-            actions.selectCourse(course.code);
-          }}
+          onSelectCourse={async course => actions.selectCourse(course.code)}
         />
       )}
     </StoreConsumer>
