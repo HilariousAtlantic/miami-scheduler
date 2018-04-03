@@ -131,9 +131,9 @@ export function Schedule({ courses, crns, detailed }) {
       ...course.meets.reduce(
         (acc, meet) => [
           ...acc,
-          ...meet.days.map(day => (
+          ...meet.days.map((day, j) => (
             <ScheduleMeet
-              key={course.crn + day}
+              key={course.crn + day + j}
               color={colors[i] || '#4a4a4a'}
               column={days.indexOf(day)}
               start={(meet.start_time - schedule_start) / schedule_length}
@@ -164,7 +164,9 @@ export function Schedule({ courses, crns, detailed }) {
   return (
     <ScheduleWrapper detailed={detailed}>
       <ScheduleHeader>
-        {(detailed ? days_detailed : days).map(day => <span>{day}</span>)}
+        {(detailed ? days_detailed : days).map(day => (
+          <span key={day}>{day}</span>
+        ))}
       </ScheduleHeader>
       <ScheduleCalendar>{meets}</ScheduleCalendar>
       <ScheduleFooter>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { debounce } from 'lodash';
 
 import { StoreConsumer } from '../store';
 import { InlineSelector } from './selector';
@@ -38,35 +39,57 @@ const FilterOptions = styled.div`
 `;
 
 const filterComponents = {
-  class_time: ({ operator, time, days }, onDelete) => (
-    <FilterWrapper>
+  class_time: (id, { operator, time, days }, onUpdate, onDelete) => (
+    <FilterWrapper key={id}>
       <IconButton leftIcon="trash" danger onClick={onDelete} />
       <span>I want to</span>
-      <TimeOperatorSelector selectedOption={operator} />
-      <TimeInput placeholder="10:00 AM" defaultValue={time} />
+      <TimeOperatorSelector
+        selectedOption={operator}
+        onSelectOption={operator => onUpdate({ operator })}
+      />
+      <TimeInput
+        placeholder="10:00 AM"
+        defaultValue={time}
+        onChange={event => onUpdate({ time: event.target.value })}
+      />
       <span>on</span>
-      <DayPicker selectedDays={days} />
+      <DayPicker selectedDays={days} onChange={days => onUpdate({ days })} />
     </FilterWrapper>
   ),
-  class_load: ({ operator, amount, days }, onDelete) => (
-    <FilterWrapper>
+  class_load: (id, { operator, amount, days }, onUpdate, onDelete) => (
+    <FilterWrapper key={id}>
       <IconButton leftIcon="trash" danger onClick={onDelete} />
       <span>I want</span>
-      <AmountOperatorSelector selectedOption={operator} />
-      <NumberInput placeholder="3" defaultValue={amount} />
+      <AmountOperatorSelector
+        selectedOption={operator}
+        onSelectOption={operator => onUpdate({ operator })}
+      />
+      <NumberInput
+        placeholder="3"
+        defaultValue={amount || 0}
+        onChange={event => onUpdate({ amount: parseInt(event.target.value) })}
+      />
       <span>classes on</span>
-      <DayPicker selectedDays={days} />
+      <DayPicker selectedDays={days} onChange={days => onUpdate({ days })} />
     </FilterWrapper>
   ),
-  break_time: ({ from, until, days }, onDelete) => (
-    <FilterWrapper>
+  break_time: (id, { from, until, days }, onUpdate, onDelete) => (
+    <FilterWrapper key={id}>
       <IconButton leftIcon="trash" danger onClick={onDelete} />
       <span>I want a break from</span>
-      <TimeInput placeholder="10:00 AM" defaultValue={from} />
+      <TimeInput
+        placeholder="10:00 AM"
+        defaultValue={from}
+        onChange={event => onUpdate({ from: event.target.value })}
+      />
       <span>until</span>
-      <TimeInput placeholder="12:00 PM" defaultValue={until} />
+      <TimeInput
+        placeholder="12:00 PM"
+        defaultValue={until}
+        onChange={event => onUpdate({ until: event.target.value })}
+      />
       <span>on</span>
-      <DayPicker selectedDays={days} />
+      <DayPicker selectedDays={days} onChange={days => onUpdate({ days })} />
     </FilterWrapper>
   )
 };
@@ -104,6 +127,7 @@ function TimeOperatorSelector(props) {
 function AmountOperatorSelector(props) {
   return (
     <InlineSelector
+      {...props}
       options={[
         { value: 'less_than', name: 'less than' },
         { value: 'at_most', name: 'at most' },
@@ -115,12 +139,22 @@ function AmountOperatorSelector(props) {
   );
 }
 
-function ScheduleFilters({ filters, onCreateFilter, onDeleteFilter }) {
+function ScheduleFilters({
+  filters,
+  onCreateFilter,
+  onUpdateFilter,
+  onDeleteFilter
+}) {
   return (
     <ScheduleFiltersWrapper>
       <FilterList>
         {filters.map(({ id, type, ...filter }) =>
-          filterComponents[type](filter, () => onDeleteFilter(id))
+          filterComponents[type](
+            id,
+            filter,
+            update => onUpdateFilter(id, update),
+            () => onDeleteFilter(id)
+          )
         )}
       </FilterList>
       <FilterOptions>
@@ -160,6 +194,7 @@ export function ScheduleFiltersContainer() {
         <ScheduleFilters
           filters={state.scheduleFilters}
           onCreateFilter={type => actions.createFilter(type)}
+          onUpdateFilter={(id, update) => actions.updateFilter(id, update)}
           onDeleteFilter={id => actions.deleteFilter(id)}
         />
       )}

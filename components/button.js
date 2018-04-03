@@ -75,6 +75,7 @@ export function DayPicker({ selectedDays, onChange }) {
     <DayPickerWrapper>
       {['M', 'T', 'W', 'R', 'F'].map(day => (
         <DayButton
+          key={day}
           onClick={() => onChange(toggleDay(day, selectedDays))}
           selected={selectedDays.includes(day)}
         >

@@ -128,6 +128,15 @@ export default {
       };
     };
   },
+  updateFilter(id, update) {
+    return function({ scheduleFilters }) {
+      return {
+        scheduleFilters: scheduleFilters.map(
+          filter => (filter.id === id ? { ...filter, ...update } : filter)
+        )
+      };
+    };
+  },
   deleteFilter(id) {
     return function({ scheduleFilters }) {
       return {
