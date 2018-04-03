@@ -1,20 +1,31 @@
-function getValidSchedules(
-  { selectedCourses, coursesByCode, sectionsByCrn },
-  onGenerateSchedules
-) {
+function getValidSchedules(getState, onStatus, onFinished) {
+  const { selectedCourses, coursesByCode, sectionsByCrn } = getState();
   const courses = selectedCourses.map(code => coursesByCode[code]);
+
+  const totalSchedules = courses.reduce(
+    (total, course) => total * course.sections.length,
+    1
+  );
 
   const schedules = [];
   const indices = new Array(courses.length).fill(0);
 
+  let scheduleCount = 0;
+
   const generate = () => {
+    const { generatingSchedules } = getState();
+    if (generatingSchedules !== selectedCourses.join('')) {
+      return;
+    }
     let done = false;
-    for (let j = 0; j < 10; j++) {
+    for (let j = 0; j < 50; j++) {
       const schedule = indices.map((sectionIndex, courseIndex) => {
         const { code, sections } = courses[courseIndex];
         const { crn } = sections[sectionIndex];
         return { code, crn };
       });
+
+      scheduleCount++;
 
       if (isValidSchedule(schedule.map(s => sectionsByCrn[s.crn]))) {
         schedules.push(schedule);
@@ -35,9 +46,10 @@ function getValidSchedules(
       }
     }
     if (!done) {
+      onStatus(Math.floor(scheduleCount / totalSchedules * 100));
       requestAnimationFrame(generate);
     } else {
-      onGenerateSchedules(schedules);
+      onFinished(schedules);
     }
   };
 
@@ -61,9 +73,19 @@ function isValidSchedule(sections) {
   return true;
 }
 
-export function getSchedules(state) {
-  return new Promise((resolve, reject) => {
-    if (!state.selectedCourses.length) resolve([]);
-    getValidSchedules(state, schedules => resolve(schedules));
-  });
+export function getSchedules(getState, setState) {
+  const { selectedCourses } = getState();
+  if (!selectedCourses.length) return;
+  getValidSchedules(
+    getState,
+    status =>
+      setState({
+        generationStatus: status
+      }),
+    generatedSchedules =>
+      setState({
+        generatedSchedules,
+        generatingSchedules: null
+      })
+  );
 }

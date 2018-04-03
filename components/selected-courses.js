@@ -36,6 +36,10 @@ const ListItem = styled.li`
   font-weight: 500;
   opacity: ${props => (props.loading ? 0.5 : 1)};
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+
+  i {
+    cursor: pointer;
+  }
 `;
 
 function SelectedCourses({ courses, onSelectCourse }) {

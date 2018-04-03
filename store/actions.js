@@ -127,25 +127,11 @@ export function deselectCourse(getState, setState, getActions) {
 
 export function generateSchedules(getState, setState) {
   return async function() {
-    const currentState = getState();
-    const id = currentState.selectedCourses.join('');
+    const { selectedCourses } = getState();
     setState({
-      generatingSchedules: {
-        ...currentState.generatingSchedules,
-        [id]: true
-      }
+      generatingSchedules: selectedCourses.join('')
     });
-
-    const generatedSchedules = await generateSchedules(currentState);
-    setState(({ generatingSchedules }) => {
-      return {
-        generatedSchedules,
-        generatingSchedules: {
-          ...generatingSchedules,
-          [id]: false
-        }
-      };
-    });
+    getSchedules(getState, setState);
   };
 }
 

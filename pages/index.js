@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { StoreProvider, withStore } from '../store';
 import {
@@ -51,6 +51,22 @@ const CourseSelector = styled.div`
     'selected-courses selected-courses';
 `;
 
+const GenerationSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 960px;
+  margin: 64px auto;
+  text-align: center;
+
+  span {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 64px;
+    color: #4a4a4a;
+  }
+`;
+
 const FilterSection = styled.section`
   width: 90%;
   max-width: 960px;
@@ -65,6 +81,32 @@ const ScheduleSection = styled.section`
   flex-direction: column;
 `;
 
+const GenerationStatusWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 32px;
+  background: #ffffff;
+  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+`;
+
+const ProgressBar = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: ${props => props.status}%;
+  background: rgb(183, 28, 28);
+  transition: width 200ms linear;
+`;
+
+function GenerationStatus({ status }) {
+  return (
+    <GenerationStatusWrapper>
+      <ProgressBar status={status} />
+    </GenerationStatusWrapper>
+  );
+}
+
 const ScheduleGenerator = withStore(
   class extends Component {
     componentWillMount() {
@@ -74,12 +116,11 @@ const ScheduleGenerator = withStore(
 
     render() {
       const { state } = this.props.store;
-      const showGenerationLoader =
-        state.generatingSchedules[
-          state.loadingCourses.concat(state.selectedCourses).join('')
-        ];
+      console.log(state);
+      const showGenerationSection =
+        state.generatingSchedules === state.selectedCourses.join('');
       const showScheduleSection =
-        !showGenerationLoader && state.generatedSchedules.length > 0;
+        !showGenerationSection && state.generatedSchedules.length > 0;
 
       return (
         <ScheduleGeneratorWrapper>
@@ -94,7 +135,12 @@ const ScheduleGenerator = withStore(
             </CourseSelector>
           </CourseSection>
 
-          {showGenerationLoader && <span>Generating Schedules</span>}
+          {showGenerationSection && (
+            <GenerationSection>
+              <GenerationStatus status={state.generationStatus} />
+              <span>Generating Schedules ({state.generationStatus}%)</span>
+            </GenerationSection>
+          )}
 
           {showScheduleSection && (
             <Fragment>
