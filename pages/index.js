@@ -39,6 +39,7 @@ const Links = styled.nav`
     color: #2a2a2a;
     text-decoration: none;
     padding: 8px 0;
+    cursor: pointer;
 
     &.active {
       border-bottom: 2px solid rgb(183, 28, 28);
@@ -62,6 +63,7 @@ const DonateButton = styled.button`
   font-weight: 900;
   margin-left: 32px;
   font-size: 12px;
+  cursor: pointer;
 
   &:hover {
     background: #3d95ce;
@@ -82,14 +84,19 @@ const DonateButton = styled.button`
 const SectionHeader = styled.h2`
   display: flex;
   align-items: center;
-  margin: 0;
-  margin-bottom: 16px;
-  font-size: 18px;
-  font-weight: 500;
+  margin: 32px 0;
+  font-size: 24px;
+  font-weight: 300;
   color: #4a4a4a;
+  text-align: center;
 
-  > span {
-    margin-right: 8px;
+  &:before, &:after {
+    content: "";
+    display: block
+    height: 1px;
+    flex: 1;
+    border-bottom: 2px solid #4a4a4a;
+    margin: 0 16px;
   }
 `;
 
@@ -138,17 +145,6 @@ const VenmoIcon = (
   />
 );
 
-function NumberIcon({ children }) {
-  return (
-    <span className="fa-2x fa-layers fa-fw">
-      <i className="fas fa-circle" />
-      <span className="fa-layers-text fa-inverse" data-fa-transform="shrink-10">
-        {children}
-      </span>
-    </span>
-  );
-}
-
 const ScheduleGenerator = withStore(
   class extends Component {
     componentWillMount() {
@@ -177,10 +173,7 @@ const ScheduleGenerator = withStore(
           </Navbar>
 
           <CourseSection>
-            <SectionHeader>
-              <NumberIcon>1</NumberIcon>
-              Select Courses
-            </SectionHeader>
+            <SectionHeader>1. Select Courses</SectionHeader>
             <CourseSelector>
               <CourseSearchContainer />
               <TermSelectorContainer />
@@ -192,17 +185,11 @@ const ScheduleGenerator = withStore(
           {showScheduleSection && (
             <Fragment>
               <FilterSection>
-                <SectionHeader>
-                  <NumberIcon>2</NumberIcon>
-                  Customize Filters
-                </SectionHeader>
+                <SectionHeader>2. Customize Filters</SectionHeader>
                 <ScheduleFiltersContainer />
               </FilterSection>
               <ScheduleSection>
-                <SectionHeader>
-                  <NumberIcon>3</NumberIcon>
-                  Browse Schedules
-                </SectionHeader>
+                <SectionHeader>3. Browse Schedules</SectionHeader>
                 <ScheduleToolbarContainer />
                 <ScheduleListContainer />
               </ScheduleSection>

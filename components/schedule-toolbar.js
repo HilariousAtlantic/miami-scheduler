@@ -13,6 +13,7 @@ const ScheduleToolbarWrapper = styled.div`
   grid-area: schedule-toolbar;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 16px;
 `;
 
 const ScheduleOptions = styled.div`

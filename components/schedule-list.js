@@ -107,7 +107,6 @@ const ScheduleMeet = styled.div`
 `;
 
 const ScheduleListWrapper = styled.div`
-  margin: 8px 0;
   display: flex;
   justify-content: center;
 `;
