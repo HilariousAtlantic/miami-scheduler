@@ -13,29 +13,32 @@ function logAction(key, update) {
   );
 }
 
+function createActions(actionCreators) {
+  return Object.keys(actionCreators).reduce((actions, key) => {
+    return {
+      ...actions,
+      [key]: actionCreators[key](
+        () => this.state,
+        update =>
+          this.setState(state => {
+            if (typeof update === 'function') {
+              update = update(state);
+            }
+            logAction(key, update);
+            return update;
+          })
+      )
+    };
+  }, {});
+}
+
 export function createStore(initialState, actionCreators) {
   const { Provider, Consumer } = React.createContext();
 
   class StoreProvider extends Component {
     state = initialState;
 
-    actions = Object.keys(actionCreators).reduce((acc, key) => {
-      return {
-        ...acc,
-        [key]: actionCreators[key](
-          () => this.state,
-          update => {
-            this.setState(state => {
-              if (typeof update === 'function') {
-                update = update(state);
-              }
-              logAction(key, update);
-              return update;
-            });
-          }
-        )
-      };
-    }, {});
+    actions = createActions.call(this, actionCreators);
 
     render() {
       const store = { state: this.state, actions: this.actions };
