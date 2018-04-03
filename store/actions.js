@@ -129,7 +129,8 @@ export function generateSchedules(getState, setState) {
   return async function() {
     const { selectedCourses } = getState();
     setState({
-      generatingSchedules: selectedCourses.join('')
+      generatingSchedules: selectedCourses.join(''),
+      generationStatus: 0
     });
     getSchedules(getState, setState);
   };
