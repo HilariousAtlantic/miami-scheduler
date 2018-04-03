@@ -104,17 +104,10 @@ export default {
     };
   },
   generateSchedules() {
-    return function({ coursesByCode, selectedCourses }) {
-      if (selectedCourses.length) {
-        const courses = selectedCourses.map(code => coursesByCode[code]);
-        return {
-          generatedSchedules: generateSchedules(courses)
-        };
-      } else {
-        return {
-          generatedSchedules: []
-        };
-      }
+    return function(state) {
+      return {
+        generatedSchedules: generateSchedules(state)
+      };
     };
   },
   createFilter(type) {
@@ -187,17 +180,3 @@ export default {
     };
   }
 };
-
-function isConflictingSection(section, validator) {
-  for (let meet of section.meets) {
-    for (let day of meet.days) {
-      for (let time = meet.start_time; time <= meet.end_time; time += 5) {
-        if (validator[day + time]) {
-          return true;
-        }
-        validator[day + time] = true;
-      }
-    }
-  }
-  return false;
-}

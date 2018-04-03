@@ -25,7 +25,7 @@ const colors = [
 
 const ScheduleWrapper = styled.div`
   height: 720px;
-  min-width: 360px;
+  min-width: 400px;
   max-width: 960px;
   flex: 1;
   box-sizing: border-box;
@@ -108,9 +108,7 @@ const ScheduleMeet = styled.div`
 `;
 
 const ScheduleListWrapper = styled.div`
-  margin: 16px auto;
-  min-width: 960px;
-  max-width: 1280px;
+  margin: 16px 0;
   display: flex;
   justify-content: center;
 `;
@@ -213,13 +211,13 @@ function getSchedules(state) {
     );
 }
 
-function ScheduleList({ schedules, detailed }) {
+function ScheduleList({ schedules, view }) {
   return (
     <ScheduleListWrapper>
       {schedules.map(schedule => (
         <Schedule
           key={schedule.crns.join(',')}
-          detailed={detailed}
+          detailed={view === 'detailed'}
           {...schedule}
         />
       ))}
@@ -234,7 +232,7 @@ export function ScheduleListContainer() {
         return (
           <ScheduleList
             schedules={getSchedules(state)}
-            detailed={state.schedulesPerPage === 1}
+            view={state.scheduleView}
           />
         );
       }}
