@@ -35,11 +35,11 @@ export const Button = styled.button`
   font-size: 12px;
   outline: none;
 
-  svg + span {
+  i + span {
     margin-left: 16px;
   }
 
-  span + svg {
+  span + i {
     margin-left: 16px;
   }
 

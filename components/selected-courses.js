@@ -51,7 +51,9 @@ function SelectedCourses({ courses, onSelectCourse }) {
             <span>
               {course.subject} {course.number}
             </span>
-            {!course.loading && (
+            {course.loading ? (
+              <i className="fa fa-spinner fa-spin" />
+            ) : (
               <i
                 className="fa fa-times"
                 onClick={() => onSelectCourse(course.code)}
