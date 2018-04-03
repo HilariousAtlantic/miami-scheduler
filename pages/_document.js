@@ -32,6 +32,11 @@ export default class extends Document {
             crossorigin="anonymous"
           />
           <link rel="stylesheet" href="/static/style.css" />
+          <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-93847501-1"
+          />
+          <script src="/static/analytics.js" />
           {this.props.styleTags}
         </Head>
         <body>
