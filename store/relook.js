@@ -15,34 +15,22 @@ function createActionLogger(key) {
   };
 }
 
-export function createStore(initialState, actions) {
+export function createStore(initialState, actionCreators) {
   const { Provider, Consumer } = React.createContext();
 
   class StoreProvider extends Component {
     state = initialState;
 
-    actions = Object.keys(actions).reduce((acc, key) => {
+    actions = Object.keys(actionCreators).reduce((acc, key) => {
       return {
         ...acc,
-        [key]: function() {
-          const logAction = createActionLogger(key);
-          return new Promise(async (resolve, reject) => {
-            let result = actions[key].apply(this, [...arguments]);
-            if (result.then) {
-              result = await result;
-            }
+        [key]: actionCreators[key](
+          () => this.state,
+          update =>
             this.setState(
-              state => {
-                if (typeof result === 'function') {
-                  result = result(state);
-                }
-                logAction(result);
-                return result;
-              },
-              () => resolve(this.state)
-            );
-          });
-        }.bind(this)
+              state => (typeof update === 'function' ? update(state) : update)
+            )
+        )
       };
     }, {});
 
