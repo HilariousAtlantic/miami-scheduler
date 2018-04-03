@@ -37,6 +37,40 @@ const FilterOptions = styled.div`
   }
 `;
 
+const filterComponents = {
+  class_time: ({ operator, time, days }, onDelete) => (
+    <FilterWrapper>
+      <IconButton leftIcon="trash" danger onClick={onDelete} />
+      <span>I want to</span>
+      <TimeOperatorSelector selectedOption={operator} />
+      <TimeInput placeholder="10:00 AM" defaultValue={time} />
+      <span>on</span>
+      <DayPicker selectedDays={days} />
+    </FilterWrapper>
+  ),
+  class_load: ({ operator, amount, days }, onDelete) => (
+    <FilterWrapper>
+      <IconButton leftIcon="trash" danger onClick={onDelete} />
+      <span>I want</span>
+      <AmountOperatorSelector selectedOption={operator} />
+      <NumberInput placeholder="3" defaultValue={amount} />
+      <span>classes on</span>
+      <DayPicker selectedDays={days} />
+    </FilterWrapper>
+  ),
+  break_time: ({ from, until, days }, onDelete) => (
+    <FilterWrapper>
+      <IconButton leftIcon="trash" danger onClick={onDelete} />
+      <span>I want a break from</span>
+      <TimeInput placeholder="10:00 AM" defaultValue={from} />
+      <span>until</span>
+      <TimeInput placeholder="12:00 PM" defaultValue={until} />
+      <span>on</span>
+      <DayPicker selectedDays={days} />
+    </FilterWrapper>
+  )
+};
+
 function FilterTypeSelector(props) {
   return (
     <InlineSelector
@@ -81,44 +115,37 @@ function AmountOperatorSelector(props) {
   );
 }
 
-function ScheduleFilters(props) {
+function ScheduleFilters({ filters, onCreateFilter, onDeleteFilter }) {
   return (
     <ScheduleFiltersWrapper>
       <FilterList>
-        <FilterWrapper>
-          <IconButton leftIcon="trash" danger />
-          <span>I want to</span>
-          <TimeOperatorSelector />
-          <TimeInput placeholder="10:00 AM" />
-          <span>on</span>
-          <DayPicker selectedDays={['M', 'W', 'F']} />
-        </FilterWrapper>
-        <FilterWrapper>
-          <IconButton leftIcon="trash" danger />
-          <span>I want</span>
-          <AmountOperatorSelector />
-          <NumberInput placeholder="3" />
-          <span>classes on</span>
-          <DayPicker selectedDays={['M', 'W', 'F']} />
-        </FilterWrapper>
-        <FilterWrapper>
-          <IconButton leftIcon="trash" danger />
-          <span>I want a break from</span>
-          <TimeInput placeholder="10:00 AM" />
-          <span>until</span>
-          <TimeInput placeholder="12:00 PM" />
-          <span>on</span>
-          <DayPicker selectedDays={['M', 'W', 'F']} />
-        </FilterWrapper>
+        {filters.map(({ id, type, ...filter }) =>
+          filterComponents[type](filter, () => onDeleteFilter(id))
+        )}
       </FilterList>
       <FilterOptions>
-        <IconButton leftIcon="plus" large raised>
+        <IconButton
+          leftIcon="plus"
+          large
+          raised
+          onClick={() => onCreateFilter('class_time')}
+        >
           Class Time Filter
         </IconButton>
-        <IconButton leftIcon="plus" large raised>
+        <IconButton
+          leftIcon="plus"
+          large
+          raised
+          onClick={() => onCreateFilter('class_load')}
+        >
           Class Load Filter
         </IconButton>
-        <IconButton leftIcon="plus" large raised>
+        <IconButton
+          leftIcon="plus"
+          large
+          raised
+          onClick={() => onCreateFilter('break_time')}
+        >
           Break Time Filter
         </IconButton>
       </FilterOptions>
@@ -128,6 +155,14 @@ function ScheduleFilters(props) {
 
 export function ScheduleFiltersContainer() {
   return (
-    <StoreConsumer>{(state, actions) => <ScheduleFilters />}</StoreConsumer>
+    <StoreConsumer>
+      {(state, actions) => (
+        <ScheduleFilters
+          filters={state.scheduleFilters}
+          onCreateFilter={type => actions.createFilter(type)}
+          onDeleteFilter={id => actions.deleteFilter(id)}
+        />
+      )}
+    </StoreConsumer>
   );
 }

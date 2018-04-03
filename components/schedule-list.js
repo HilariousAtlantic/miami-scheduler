@@ -8,6 +8,11 @@ import { IconButton } from './button';
 const days = ['M', 'T', 'W', 'R', 'F'];
 const days_detailed = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
+const schedulesPerPage = {
+  detailed: 1,
+  compact: 3
+};
+
 const colors = [
   '#0D47A1',
   '#B71C1C',
@@ -17,12 +22,6 @@ const colors = [
   '#006064',
   '#263238'
 ];
-
-const GeneratedSchedulesWrapper = styled.div`
-  margin: 16px auto;
-  min-width: 960px;
-  max-width: 1280px;
-`;
 
 const ScheduleWrapper = styled.div`
   height: 720px;
@@ -108,7 +107,10 @@ const ScheduleMeet = styled.div`
   `};
 `;
 
-const ScheduleList = styled.div`
+const ScheduleListWrapper = styled.div`
+  margin: 16px auto;
+  min-width: 960px;
+  max-width: 1280px;
   display: flex;
   justify-content: center;
 `;
@@ -176,9 +178,9 @@ export function Schedule({ courses, crns, detailed }) {
 }
 
 function getSchedules(state) {
-  const index = state.currentSchedule * state.schedulesPerPage;
+  const index = state.currentSchedule * schedulesPerPage[state.scheduleView];
   return state.generatedSchedules
-    .slice(index, index + state.schedulesPerPage)
+    .slice(index, index + schedulesPerPage[state.scheduleView])
     .map(schedule =>
       schedule.reduce(
         ({ crns, courses, start_time, end_time }, { code, crn }) => {
@@ -209,22 +211,29 @@ function getSchedules(state) {
     );
 }
 
-export function GeneratedSchedulesContainer() {
+function ScheduleList({ schedules, detailed }) {
+  return (
+    <ScheduleListWrapper>
+      {schedules.map(schedule => (
+        <Schedule
+          key={schedule.crns.join(',')}
+          detailed={detailed}
+          {...schedule}
+        />
+      ))}
+    </ScheduleListWrapper>
+  );
+}
+
+export function ScheduleListContainer() {
   return (
     <StoreConsumer>
       {(state, actions) => {
         return (
-          <GeneratedSchedulesWrapper>
-            <ScheduleList>
-              {getSchedules(state).map(schedule => (
-                <Schedule
-                  key={schedule.crns.join(',')}
-                  {...schedule}
-                  detailed={state.schedulesPerPage === 1}
-                />
-              ))}
-            </ScheduleList>
-          </GeneratedSchedulesWrapper>
+          <ScheduleList
+            schedules={getSchedules(state)}
+            detailed={state.schedulesPerPage === 1}
+          />
         );
       }}
     </StoreConsumer>

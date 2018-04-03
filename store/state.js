@@ -7,9 +7,15 @@ export default {
   sectionsByCrn: {},
   generatedSchedules: [],
   currentSchedule: 0,
-  schedulesPerPage: 1,
-  showFilters: false,
-  hideFullSchedules: false,
-  fadeFullSections: false,
-  filters: []
+  scheduleView: 'detailed',
+  scheduleSort: 'start_time_asc',
+  scheduleFilters: [
+    {
+      id: 1,
+      type: 'class_time',
+      operator: 'start_after',
+      time: '10:00 AM',
+      days: ['M', 'W', 'F']
+    }
+  ]
 };

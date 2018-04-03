@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { StoreProvider, withStore } from '../store';
 import {
-  GeneratedSchedulesContainer,
+  ScheduleListContainer,
   TermSelectorContainer,
   CourseSearchContainer,
   ScheduleFiltersContainer,
@@ -204,7 +204,7 @@ const ScheduleGenerator = withStore(
                   Browse Schedules
                 </SectionHeader>
                 <ScheduleToolbarContainer />
-                <GeneratedSchedulesContainer />
+                <ScheduleListContainer />
               </ScheduleSection>
             </Fragment>
           )}

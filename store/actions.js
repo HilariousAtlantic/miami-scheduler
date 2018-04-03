@@ -2,6 +2,29 @@ import axios from 'axios';
 
 import { generateSchedules } from './generator';
 
+const schedulesPerPage = {
+  detailed: 1,
+  compact: 3
+};
+
+const filterDefauls = {
+  class_time: {
+    operator: 'start_after',
+    time: '10:00 AM',
+    days: ['M', 'W', 'F']
+  },
+  class_load: {
+    operator: 'at_most',
+    amount: 3,
+    days: ['M', 'W', 'F']
+  },
+  break_time: {
+    from: '11:00 AM',
+    until: '12:00 PM',
+    days: ['M', 'W', 'F']
+  }
+};
+
 export default {
   async fetchTerms() {
     const { data } = await axios.get('/api/terms');
@@ -94,31 +117,41 @@ export default {
       }
     };
   },
-  toggleFilters() {
-    return function({ showFilters }) {
+  createFilter(type) {
+    return function({ scheduleFilters }) {
+      const id = Math.max(...scheduleFilters.map(filter => filter.id)) + 1;
       return {
-        showFilters: !showFilters
+        scheduleFilters: [
+          ...scheduleFilters,
+          { id, type, ...filterDefauls[type] }
+        ]
       };
     };
   },
-  showDetailedSchedules() {
-    return function({ currentSchedule, schedulesPerPage }) {
-      if (schedulesPerPage === 3) {
+  deleteFilter(id) {
+    return function({ scheduleFilters }) {
+      return {
+        scheduleFilters: scheduleFilters.filter(filter => filter.id !== id)
+      };
+    };
+  },
+  selectScheduleView(view) {
+    return function({ scheduleView }) {
+      if (scheduleView !== view) {
         return {
-          schedulesPerPage: 1,
-          currentSchedule: currentSchedule * 3
+          scheduleView: view,
+          currentSchedule: 0
         };
       } else {
         return {};
       }
     };
   },
-  showCompactSchedules() {
-    return function({ currentSchedule, schedulesPerPage }) {
-      if (schedulesPerPage === 1) {
+  selectScheduleSort(sort) {
+    return function({ scheduleSort }) {
+      if (scheduleSort !== sort) {
         return {
-          schedulesPerPage: 3,
-          currentSchedule: Math.floor(currentSchedule / 3)
+          scheduleSort: sort
         };
       } else {
         return {};
@@ -133,11 +166,13 @@ export default {
     };
   },
   nextSchedule() {
-    return function({ currentSchedule, generatedSchedules, schedulesPerPage }) {
+    return function({ currentSchedule, generatedSchedules, scheduleView }) {
       return {
         currentSchedule: Math.min(
           currentSchedule + 1,
-          Math.ceil(generatedSchedules.length / schedulesPerPage) - 1
+          Math.ceil(
+            generatedSchedules.length / schedulesPerPage[scheduleView]
+          ) - 1
         )
       };
     };

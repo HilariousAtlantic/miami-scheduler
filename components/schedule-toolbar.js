@@ -5,6 +5,11 @@ import { StoreConsumer } from '../store';
 import { IconButton } from './button';
 import { Selector } from './selector';
 
+const schedulesPerPage = {
+  detailed: 1,
+  compact: 3
+};
+
 const ScheduleToolbarWrapper = styled.div`
   grid-area: schedule-toolbar;
   display: flex;
@@ -51,12 +56,22 @@ const BrowserLabel = styled.label`
   text-align: center;
 `;
 
-function ScheduleToolbar({ browserText, onPrevSchedule, onNextSchedule }) {
+function ScheduleToolbar({
+  browserText,
+  scheduleView,
+  scheduleSort,
+  onSelectView,
+  onSelectSort,
+  onPrevSchedule,
+  onNextSchedule
+}) {
   return (
     <ScheduleToolbarWrapper>
       <ScheduleOptions>
         <Selector
           label="View"
+          selectedOption={scheduleView}
+          onSelectOption={onSelectView}
           options={[
             { name: 'Detailed', value: 'detailed' },
             { name: 'Compact', value: 'compact' }
@@ -64,6 +79,8 @@ function ScheduleToolbar({ browserText, onPrevSchedule, onNextSchedule }) {
         />
         <Selector
           label="Sort"
+          selectedOption={scheduleSort}
+          onSelectOption={onSelectSort}
           options={[
             { name: 'Early Start', value: 'start_time_asc' },
             { name: 'Late Start', value: 'start_time_desc' },
@@ -89,7 +106,7 @@ export function ScheduleToolbarContainer() {
   const text = state => {
     const page = state.currentSchedule + 1;
     const pages = Math.ceil(
-      state.generatedSchedules.length / state.schedulesPerPage
+      state.generatedSchedules.length / schedulesPerPage[state.scheduleView]
     );
     return `${page} of ${pages}`;
   };
@@ -99,6 +116,10 @@ export function ScheduleToolbarContainer() {
       {(state, actions) => (
         <ScheduleToolbar
           browserText={text(state)}
+          scheduleView={state.scheduleView}
+          scheduleSort={state.scheduleSort}
+          onSelectView={view => actions.selectScheduleView(view)}
+          onSelectSort={sort => actions.selectScheduleSort(sort)}
           onPrevSchedule={() => actions.prevSchedule()}
           onNextSchedule={() => actions.nextSchedule()}
         />
