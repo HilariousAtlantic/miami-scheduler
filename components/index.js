@@ -1,4 +1,5 @@
 export * from './course-search';
+export * from './navbar';
 export * from './schedule-filters';
 export * from './schedule-list';
 export * from './schedule-toolbar';
