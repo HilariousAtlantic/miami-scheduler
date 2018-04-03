@@ -61,9 +61,11 @@ class SearchResults extends Component {
   };
 
   componentWillReceiveProps({ searchResults }) {
-    this.setState({
-      expandedCourse: searchResults[0]
-    });
+    if (!this.state.expandedCourse) {
+      this.setState({
+        expandedCourse: searchResults[0]
+      });
+    }
   }
 
   handleFocus = course => {
