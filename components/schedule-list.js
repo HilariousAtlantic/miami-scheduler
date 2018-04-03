@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { transparentize, darken } from 'polished';
 
 import { StoreConsumer } from '../store';
-import { IconButton } from './button';
 
 const days = ['M', 'T', 'W', 'R', 'F'];
 const days_detailed = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -67,7 +66,7 @@ const ScheduleFooter = styled.div`
   background: #f5f5f5;
   padding: 16px;
 
-  i {
+  .fa-download {
     margin-right: 4px;
   }
 `;
@@ -108,7 +107,7 @@ const ScheduleMeet = styled.div`
 `;
 
 const ScheduleListWrapper = styled.div`
-  margin: 16px 0;
+  margin: 8px 0;
   display: flex;
   justify-content: center;
 `;

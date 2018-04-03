@@ -9,8 +9,8 @@ const SelectorWrapper = styled.div`
   select {
     font-size: 12px;
     font-weight: 500;
-    padding: 16px;
-    padding-top: 17px;
+    padding: 12px;
+    padding-top: 13px;
     padding-right: 40px;
     color: #4a4a4a;
     background: inherit;
@@ -26,7 +26,7 @@ const SelectorWrapper = styled.div`
     pointer-events: none;
     font-size: 0.8rem;
     line-height: 1rem;
-    top: 16px;
+    top: 13px;
     right: 16px;
   }
 
@@ -36,7 +36,7 @@ const SelectorWrapper = styled.div`
 const Label = styled.label`
   background: #f5f5f5;
   color: #4a4a4a;
-  padding: 16px;
+  padding: 12px 24px;
   font-size: 12px;
   font-weight: 500;
 `;

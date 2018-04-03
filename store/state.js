@@ -6,9 +6,11 @@ export default {
   coursesByCode: {},
   sectionsByCrn: {},
   generatedSchedules: [],
+  filteredSchedules: [],
   currentSchedule: 0,
   scheduleView: 'detailed',
   scheduleSort: 'start_time_asc',
+  filtersChanged: false,
   scheduleFilters: [
     {
       id: 1,

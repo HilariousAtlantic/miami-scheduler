@@ -117,7 +117,8 @@ export default {
         scheduleFilters: [
           ...scheduleFilters,
           { id, type, ...filterDefauls[type] }
-        ]
+        ],
+        filtersChanged: true
       };
     };
   },
@@ -126,14 +127,24 @@ export default {
       return {
         scheduleFilters: scheduleFilters.map(
           filter => (filter.id === id ? { ...filter, ...update } : filter)
-        )
+        ),
+        filtersChanged: true
       };
     };
   },
   deleteFilter(id) {
     return function({ scheduleFilters }) {
       return {
-        scheduleFilters: scheduleFilters.filter(filter => filter.id !== id)
+        scheduleFilters: scheduleFilters.filter(filter => filter.id !== id),
+        filtersChanged: true
+      };
+    };
+  },
+  applyFilters() {
+    return function(state) {
+      return {
+        filteredSchedules: [],
+        filtersChanged: false
       };
     };
   },

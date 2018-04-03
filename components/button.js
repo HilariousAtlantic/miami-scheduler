@@ -15,7 +15,16 @@ const selected = css`
 `;
 
 const large = css`
-  padding: 16px;
+  padding: 12px 16px;
+`;
+
+const primary = css`
+  background: #4caf50;
+  color: #e8f5e9;
+`;
+
+const disabled = css`
+  opacity: 0.5;
 `;
 
 export const Button = styled.button`
@@ -27,7 +36,7 @@ export const Button = styled.button`
   outline: none;
 
   svg + span {
-    margin-left: 8px;
+    margin-left: 16px;
   }
 
   span + svg {
@@ -38,6 +47,8 @@ export const Button = styled.button`
   ${props => props.danger && danger};
   ${props => props.selected && selected};
   ${props => props.large && large};
+  ${props => props.primary && primary};
+  ${props => props.disabled && disabled};
 `;
 
 export function IconButton({ leftIcon, rightIcon, children, ...props }) {

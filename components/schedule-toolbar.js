@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 
 import { StoreConsumer } from '../store';
-import { IconButton } from './button';
 import { Selector } from './selector';
 
 const schedulesPerPage = {
@@ -35,7 +34,7 @@ const BrowserButton = styled.button`
   outline: none;
   color: #4a4a4a;
   font-size: 12px;
-  padding: 16px 32px;
+  padding: 12px 32px;
   cursor: pointer;
 
   &:hover {
@@ -50,7 +49,7 @@ const BrowserButton = styled.button`
 const BrowserLabel = styled.label`
   display: inline-block;
   width: 80px;
-  padding: 16px 0;
+  padding: 12px 0;
   background: #ffffff;
   font-size: 12px;
   text-align: center;

@@ -5,7 +5,7 @@ import { debounce } from 'lodash';
 import { StoreConsumer } from '../store';
 import { InlineSelector } from './selector';
 import { TimeInput, NumberInput, Checkbox } from './input';
-import { DayPicker, IconButton } from './button';
+import { DayPicker, IconButton, Button } from './button';
 
 const ScheduleFiltersWrapper = styled.div`
   grid-area: schedule-filters;
@@ -25,7 +25,7 @@ const FilterList = styled.div`
   padding: 16px;
   background: #fff;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
-  margin-bottom: 8px;
+  
 
   ${FilterWrapper} + ${FilterWrapper} {
     margin-top: 16px;
@@ -33,6 +33,13 @@ const FilterList = styled.div`
 `;
 
 const FilterOptions = styled.div`
+  display: flex;
+  margin-bottom: 8px;
+
+  .spacer {
+    flex: 1;
+  }
+
   button + button {
     margin-left: 8px;
   }
@@ -141,22 +148,14 @@ function AmountOperatorSelector(props) {
 
 function ScheduleFilters({
   filters,
+  filtersChanged,
   onCreateFilter,
   onUpdateFilter,
-  onDeleteFilter
+  onDeleteFilter,
+  onApplyFilters
 }) {
   return (
     <ScheduleFiltersWrapper>
-      <FilterList>
-        {filters.map(({ id, type, ...filter }) =>
-          filterComponents[type](
-            id,
-            filter,
-            update => onUpdateFilter(id, update),
-            () => onDeleteFilter(id)
-          )
-        )}
-      </FilterList>
       <FilterOptions>
         <IconButton
           leftIcon="plus"
@@ -182,7 +181,28 @@ function ScheduleFilters({
         >
           Break Time Filter
         </IconButton>
+        <div className="spacer" />
+        <IconButton
+          rightIcon="sliders-h"
+          large
+          raised
+          primary
+          disabled={!filtersChanged}
+          onClick={onApplyFilters}
+        >
+          Apply Filters
+        </IconButton>
       </FilterOptions>
+      <FilterList>
+        {filters.map(({ id, type, ...filter }) =>
+          filterComponents[type](
+            id,
+            filter,
+            update => onUpdateFilter(id, update),
+            () => onDeleteFilter(id)
+          )
+        )}
+      </FilterList>
     </ScheduleFiltersWrapper>
   );
 }
@@ -193,9 +213,11 @@ export function ScheduleFiltersContainer() {
       {(state, actions) => (
         <ScheduleFilters
           filters={state.scheduleFilters}
+          filtersChanged={state.filtersChanged}
           onCreateFilter={type => actions.createFilter(type)}
           onUpdateFilter={(id, update) => actions.updateFilter(id, update)}
           onDeleteFilter={id => actions.deleteFilter(id)}
+          onApplyFilters={() => actions.applyFilters()}
         />
       )}
     </StoreConsumer>
