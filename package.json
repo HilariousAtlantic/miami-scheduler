@@ -9,7 +9,7 @@
     "build": "next build",
     "create": "node server/create-database.js",
     "import": "node server/import-courses.js",
-    "start": "next start"
+    "start": "next build && node server/index.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
