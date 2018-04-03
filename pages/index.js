@@ -74,7 +74,12 @@ const ScheduleGenerator = withStore(
 
     render() {
       const { state } = this.props.store;
-      const showScheduleSection = state.generatedSchedules.length > 0;
+      const showGenerationLoader =
+        state.generatingSchedules[
+          state.loadingCourses.concat(state.selectedCourses).join('')
+        ];
+      const showScheduleSection =
+        !showGenerationLoader && state.generatedSchedules.length > 0;
 
       return (
         <ScheduleGeneratorWrapper>
@@ -88,6 +93,8 @@ const ScheduleGenerator = withStore(
               <SelectedCoursesContainer />
             </CourseSelector>
           </CourseSection>
+
+          {showGenerationLoader && <span>Generating Schedules</span>}
 
           {showScheduleSection && (
             <Fragment>

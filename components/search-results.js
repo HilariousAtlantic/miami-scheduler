@@ -121,9 +121,7 @@ export function SearchResultsContainer() {
               !state.loadingCourses.includes(course.code)
           )}
           onSelectCourse={async course => {
-            actions.selectCourse(course);
-            await actions.fetchSections(course.code);
-            actions.generateSchedules();
+            actions.selectCourse(course.code);
           }}
         />
       )}

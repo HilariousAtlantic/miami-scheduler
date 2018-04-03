@@ -66,38 +66,34 @@ export default {
     };
   },
   fetchSections(getState, setState) {
-    return async function(code) {
-      const { data } = await axios.get(`/api/courses/${code}`);
-      setState(
-        ({ coursesByCode, sectionsByCrn, selectedCourses, loadingCourses }) => {
-          return {
-            selectedCourses: [...selectedCourses, code],
-            loadingCourses: loadingCourses.filter(c => c !== code),
-            coursesByCode: {
-              ...coursesByCode,
-              [code]: data.course
-            },
-            sectionsByCrn: data.course.sections.reduce((acc, section) => {
-              return { ...acc, [section.crn]: section };
-            }, sectionsByCrn)
-          };
-        }
-      );
-    };
+    return async function(code) {};
   },
   selectCourse(getState, setState) {
-    return function(course) {
-      setState(({ loadingCourses, selectedCourses }) => {
-        if (
-          loadingCourses.includes(course.code) ||
-          selectedCourses.includes(course.code)
-        ) {
-          return {};
-        } else {
-          return {
-            loadingCourses: [...loadingCourses, course.code]
-          };
-        }
+    return async function(code) {
+      const { loadingCourses, selectedCourses } = getState();
+      if (loadingCourses.concat(selectedCourses).includes(code)) {
+        return;
+      }
+
+      setState(state => {
+        return {
+          loadingCourses: state.loadingCourses.concat(code)
+        };
+      });
+
+      const { data } = await axios.get(`/api/courses/${code}`);
+      setState(state => {
+        return {
+          selectedCourses: state.selectedCourses.concat(code),
+          loadingCourses: state.loadingCourses.filter(c => c !== code),
+          coursesByCode: {
+            ...state.coursesByCode,
+            [code]: data.course
+          },
+          sectionsByCrn: data.course.sections.reduce((acc, section) => {
+            return { ...acc, [section.crn]: section };
+          }, state.sectionsByCrn)
+        };
       });
     };
   },
@@ -116,10 +112,25 @@ export default {
     };
   },
   generateSchedules(getState, setState) {
-    return function() {
-      setState(state => {
+    const currentState = getState();
+    const id = currentState.loadingCourses
+      .concat(currentState.selectedCourses)
+      .join('');
+    return async function() {
+      setState({
+        generatingSchedules: {
+          ...currentState.generatingSchedules,
+          [id]: true
+        }
+      });
+      const generatedSchedules = await generateSchedules(currentState);
+      setState(({ generatingSchedules }) => {
         return {
-          generatedSchedules: generateSchedules(state)
+          generatedSchedules,
+          generatingSchedules: {
+            ...generatingSchedules,
+            [id]: false
+          }
         };
       });
     };

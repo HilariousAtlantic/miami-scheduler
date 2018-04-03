@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 
-function createActionLogger(key) {
+function logAction(key, update) {
   const name = key
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, str => str.toUpperCase());
 
-  return function(result) {
-    console.log(
-      `%c${new Date().toLocaleTimeString()} %c${name}`,
-      'color: #BDBDBD',
-      'color: #2E7D32; font-weight: bold',
-      result
-    );
-  };
+  console.log(
+    `%c${new Date().toLocaleTimeString()} %c${name}`,
+    'color: #BDBDBD',
+    'color: #2E7D32; font-weight: bold',
+    update
+  );
 }
 
 export function createStore(initialState, actionCreators) {
@@ -26,10 +24,15 @@ export function createStore(initialState, actionCreators) {
         ...acc,
         [key]: actionCreators[key](
           () => this.state,
-          update =>
-            this.setState(
-              state => (typeof update === 'function' ? update(state) : update)
-            )
+          update => {
+            this.setState(state => {
+              if (typeof update === 'function') {
+                update = update(state);
+              }
+              logAction(key, update);
+              return update;
+            });
+          }
         )
       };
     }, {});
