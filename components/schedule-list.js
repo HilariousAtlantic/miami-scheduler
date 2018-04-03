@@ -12,6 +12,11 @@ const schedulesPerPage = {
   compact: 3
 };
 
+const scheduleSorts = {
+  start_time_asc: (a, b) => a.avg_start_time - b.avg_start_time,
+  start_time_desc: (a, b) => b.avg_start_time - a.avg_start_time
+};
+
 const colors = [
   '#0D47A1',
   '#B71C1C',
@@ -178,10 +183,18 @@ export function Schedule({ courses, crns, detailed }) {
 function getSchedules(state) {
   const index = state.currentSchedule * schedulesPerPage[state.scheduleView];
   return state.generatedSchedules
-    .slice(index, index + schedulesPerPage[state.scheduleView])
-    .map(schedule =>
-      schedule.reduce(
-        ({ crns, courses, start_time, end_time }, { code, crn }) => {
+    .map(schedule => {
+      const data = schedule.reduce(
+        (
+          {
+            crns,
+            courses,
+            total_start_time,
+            total_end_time,
+            total_meets_count
+          },
+          { code, crn }
+        ) => {
           const course = state.coursesByCode[code];
           const section = state.sectionsByCrn[crn];
 
@@ -194,19 +207,39 @@ function getSchedules(state) {
                 ...section
               }
             ],
-            start_time: Math.min(
-              start_time,
-              ...section.meets.map(meet => meet.start_time)
-            ),
-            end_time: Math.max(
-              end_time,
-              ...section.meets.map(meet => meet.end_time)
-            )
+            total_start_time:
+              total_start_time +
+              section.meets.reduce(
+                (minutes, meet) => minutes + meet.start_time * meet.days.length,
+                0
+              ),
+            total_end_time:
+              total_end_time +
+              section.meets.reduce(
+                (minutes, meet) => minutes + meet.end_time * meet.days.length,
+                0
+              ),
+            total_meets_count:
+              total_meets_count +
+              section.meets.reduce((count, meet) => count + meet.days.length, 0)
           };
         },
-        { crns: [], courses: [], start_time: 1440, end_time: 0 }
-      )
-    );
+        {
+          crns: [],
+          courses: [],
+          total_start_time: 0,
+          total_end_time: 0,
+          total_meets_count: 0
+        }
+      );
+
+      data.avg_start_time = data.total_start_time / data.total_meets_count;
+      data.avg_end_time = data.total_end_time / data.total_meets_count;
+
+      return data;
+    })
+    .sort(scheduleSorts[state.scheduleSort])
+    .slice(index, index + schedulesPerPage[state.scheduleView]);
 }
 
 function ScheduleList({ schedules, view }) {

@@ -82,10 +82,8 @@ function ScheduleToolbar({
           selectedOption={scheduleSort}
           onSelectOption={onSelectSort}
           options={[
-            { name: 'Early Start', value: 'start_time_asc' },
-            { name: 'Late Start', value: 'start_time_desc' },
-            { name: 'Early Finish', value: 'finish_time_asc' },
-            { name: 'Late Finish', value: 'finish_time_desc' }
+            { name: 'Early Classes', value: 'start_time_asc' },
+            { name: 'Late Classes', value: 'start_time_desc' }
           ]}
         />
       </ScheduleOptions>
