@@ -171,9 +171,6 @@ export function Schedule({ courses, crns, detailed }) {
       </ScheduleHeader>
       <ScheduleCalendar>{meets}</ScheduleCalendar>
       <ScheduleFooter>
-        <span>
-          <i className="fa fa-download" /> {detailed && 'Download as image'}
-        </span>
         <span>{crns.join(', ')}</span>
       </ScheduleFooter>
     </ScheduleWrapper>
