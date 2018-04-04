@@ -93,12 +93,10 @@ function TimeOperatorSelector(props) {
     <InlineSelector
       {...props}
       options={[
-        { value: 'start_before', name: 'start before' },
-        { value: 'start_at', name: 'start at' },
-        { value: 'start_after', name: 'start after' },
-        { value: 'end_before', name: 'finish before' },
-        { value: 'end_at', name: 'finish at' },
-        { value: 'end_after', name: 'finish after' }
+        { value: 'start_before', name: 'start at or before' },
+        { value: 'start_after', name: 'start at or after' },
+        { value: 'end_before', name: 'finish at or before' },
+        { value: 'end_after', name: 'finish at or after' }
       ]}
     />
   );

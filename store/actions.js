@@ -39,25 +39,16 @@ const filterFunctions = {
     for (let day of filter.days) {
       switch (filter.operator) {
         case 'start_before':
-          if (start_times[day] >= time && start_times[day] != 1440)
-            return false;
-          else break;
-        case 'start_at':
-          if (start_times[day] != time && start_times[day] != 1440)
-            return false;
+          if (start_times[day] > time && start_times[day] != 1440) return false;
           else break;
         case 'start_after':
-          if (start_times[day] <= time && start_times[day] != 1440)
-            return false;
+          if (start_times[day] < time && start_times[day] != 1440) return false;
           else break;
         case 'end_before':
-          if (end_times[day] >= time && end_times[day] != 0) return false;
-          else break;
-        case 'end_at':
-          if (end_times[day] != time && end_times[day] != 0) return false;
+          if (end_times[day] > time && end_times[day] != 0) return false;
           else break;
         case 'end_after':
-          if (end_times[day] <= time && end_times[day] != 0) return false;
+          if (end_times[day] < time && end_times[day] != 0) return false;
           else break;
       }
     }
