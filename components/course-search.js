@@ -44,6 +44,7 @@ function CourseSearch({ onSearchCourses }) {
   return (
     <CourseSearchWrapper>
       <Input
+        autoComplete="off"
         placeholder="Search Courses"
         onChange={event => {
           event.persist();

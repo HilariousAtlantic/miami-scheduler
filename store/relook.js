@@ -14,17 +14,19 @@ function logAction(key, update) {
 }
 
 function cacheState(state, cachedKeys) {
-  localStorage.setItem(
-    'generatorState',
-    JSON.stringify(
-      cachedKeys.reduce((cache, key) => {
-        return {
-          ...cache,
-          [key]: state[key]
-        };
-      }, {})
-    )
-  );
+  try {
+    localStorage.setItem(
+      'generatorState',
+      JSON.stringify(
+        cachedKeys.reduce((cache, key) => {
+          return {
+            ...cache,
+            [key]: state[key]
+          };
+        }, {})
+      )
+    );
+  } catch (e) {}
 }
 
 function createActions(actionCreators) {
@@ -45,7 +47,6 @@ function createActions(actionCreators) {
               },
               () => {
                 resolve();
-                cacheState(this.state, this.cachedKeys);
               }
             );
           }),
@@ -62,13 +63,6 @@ export function createStore(initialState, actionCreators, cachedKeys) {
     state = initialState;
     actions = createActions.call(this, actionCreators);
     cachedKeys = cachedKeys;
-
-    componentDidMount() {
-      const storedGeneratorState = localStorage.getItem('generatorState');
-      if (storedGeneratorState) {
-        this.setState(JSON.parse(storedGeneratorState));
-      }
-    }
 
     render() {
       const store = { state: this.state, actions: this.actions };
