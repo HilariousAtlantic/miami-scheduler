@@ -150,7 +150,7 @@ const ScheduleGenerator = withStore(
             </GenerationSection>
           )}
 
-          {showFilterSection && (
+          {showFilterSection ? (
             <Fragment>
               <FilterSection>
                 <SectionHeader>2. Customize Filters</SectionHeader>
@@ -166,12 +166,19 @@ const ScheduleGenerator = withStore(
                   </Fragment>
                 ) : (
                   <SectionMessage>
-                    There are no schedules that match all of the filters. Keep
+                    There are no schedules that satisfy all of the filters. Try
                     deleting one until some schedules appear.
                   </SectionMessage>
                 )}
               </ScheduleSection>
             </Fragment>
+          ) : (
+            !showGenerationSection && (
+              <SectionMessage>
+                There are no schedules that will work with the selected courses.
+                Try removing one until some schedules appear.
+              </SectionMessage>
+            )
           )}
         </ScheduleGeneratorWrapper>
       );

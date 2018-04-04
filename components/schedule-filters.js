@@ -161,7 +161,7 @@ function ScheduleFilters({
           disabled={!filtersChanged}
           onClick={onApplyFilters}
         >
-          Apply Filters
+          Apply Changes
         </IconButton>
       </FilterOptions>
       {filters.length > 0 && (
