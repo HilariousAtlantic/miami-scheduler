@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const _ = require('lodash');
 
 function toMinutes(time) {
   if (!time) return -1;
@@ -88,12 +89,24 @@ module.exports = function(db) {
                 parseInt(courseSection.creditHoursHigh)
               ])
             ],
-            meets: courseSection.courseSchedules.map(courseSchedule => ({
-              days: courseSchedule.days ? courseSchedule.days.split('') : [],
-              start_time: toMinutes(courseSchedule.startTime),
-              end_time: toMinutes(courseSchedule.endTime),
-              location: `${courseSchedule.buildingCode} ${courseSchedule.room}`
-            }))
+            meets: _.uniqWith(
+              courseSection.courseSchedules
+                .filter(
+                  courseSection => courseSection.scheduleTypeCode === 'CLAS'
+                )
+                .map(courseSchedule => ({
+                  days: courseSchedule.days
+                    ? courseSchedule.days.split('')
+                    : [],
+                  start_time: toMinutes(courseSchedule.startTime),
+                  end_time: toMinutes(courseSchedule.endTime),
+                  location:
+                    courseSchedule.buildingCode && courseSchedule.room
+                      ? `${courseSchedule.buildingCode} ${courseSchedule.room}`
+                      : 'TBA'
+                })),
+              _.isEqual
+            )
           };
         });
       res.json({ course });
