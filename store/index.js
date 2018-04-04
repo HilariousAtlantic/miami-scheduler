@@ -13,6 +13,7 @@ export const { StoreProvider, StoreConsumer, withStore } = createStore(
     'generatedSchedules',
     'filteredSchedules',
     'coursesByCode',
+    'sectionsByCode',
     'sectionsByCrn'
   ]
 );

@@ -1,6 +1,13 @@
 function getValidSchedules(getState, onStatus, onFinished) {
-  const { selectedCourses, coursesByCode, sectionsByCrn } = getState();
-  const courses = selectedCourses.map(code => coursesByCode[code]);
+  const {
+    selectedCourses,
+    coursesByCode,
+    sectionsByCode,
+    sectionsByCrn
+  } = getState();
+  const courses = selectedCourses.map(code => {
+    return { ...coursesByCode[code], sections: sectionsByCode[code] };
+  });
 
   const totalSchedules = courses.reduce(
     (total, course) => total * course.sections.length,

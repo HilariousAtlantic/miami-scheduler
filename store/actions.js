@@ -163,9 +163,9 @@ export function fetchCourse(getState, setState, getActions) {
       return {
         selectedCourses: state.selectedCourses.concat(code),
         loadingCourses: state.loadingCourses.filter(c => c !== code),
-        coursesByCode: {
-          ...state.coursesByCode,
-          [code]: data.course
+        sectionsByCode: {
+          ...state.sectionsByCode,
+          [code]: data.course.sections
         },
         sectionsByCrn: data.course.sections.reduce((acc, section) => {
           return { ...acc, [section.crn]: section };
