@@ -104,7 +104,7 @@ export function ScheduleToolbarContainer() {
   const text = state => {
     const page = state.currentSchedule + 1;
     const pages = Math.ceil(
-      state.generatedSchedules.length / schedulesPerPage[state.scheduleView]
+      state.filteredSchedules.length / schedulesPerPage[state.scheduleView]
     );
     return `${page} of ${pages}`;
   };

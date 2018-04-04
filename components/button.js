@@ -21,6 +21,14 @@ const large = css`
 const primary = css`
   background: #4caf50;
   color: #e8f5e9;
+
+  &:hover {
+    background: #43a047;
+  }
+
+  &:active {
+    background: #388e3c;
+  }
 `;
 
 const disabled = css`
@@ -34,6 +42,15 @@ export const Button = styled.button`
   padding: 8px;
   font-size: 12px;
   outline: none;
+  cursor: pointer;
+
+  &:hover {
+    background: #fafafa;
+  }
+
+  &:active {
+    background: #fafafa;
+  }
 
   i + span {
     margin-left: 16px;

@@ -13,8 +13,8 @@ const schedulesPerPage = {
 };
 
 const scheduleSorts = {
-  start_time_asc: (a, b) => a.avg_start_time - b.avg_start_time,
-  start_time_desc: (a, b) => b.avg_start_time - a.avg_start_time
+  start_time_asc: (a, b) => a.weight - b.weight,
+  start_time_desc: (a, b) => b.weight - a.weight
 };
 
 const colors = [
@@ -122,45 +122,10 @@ function toTime(minutes) {
   return `${h || 12}:${('00' + m).slice(-2)}`;
 }
 
-export function Schedule({ courses, crns, detailed }) {
+export function Schedule({ courses, crns, events, detailed }) {
   const schedule_start = 450;
   const schedule_end = 1230;
   const schedule_length = schedule_end - schedule_start;
-  const meets = courses.reduce(
-    (acc, course, i) => [
-      ...acc,
-      ...course.meets.reduce(
-        (acc, meet) => [
-          ...acc,
-          ...meet.days.map((day, j) => (
-            <ScheduleMeet
-              key={course.crn + day + j}
-              color={colors[i] || '#4a4a4a'}
-              column={days.indexOf(day)}
-              start={(meet.start_time - schedule_start) / schedule_length}
-              length={(meet.end_time - meet.start_time) / schedule_length}
-            >
-              <span className="course-name">
-                {course.subject} {course.number} {course.name}
-              </span>
-              <span>
-                {toTime(meet.start_time)} - {toTime(meet.end_time)}{' '}
-                {detailed && meet.location}
-              </span>
-              {detailed && <span>{course.instructor}</span>}
-              {detailed && (
-                <div className="slots">
-                  <span>{course.slots} Seats</span>
-                </div>
-              )}
-            </ScheduleMeet>
-          ))
-        ],
-        []
-      )
-    ],
-    []
-  );
 
   return (
     <ScheduleWrapper detailed={detailed}>
@@ -169,7 +134,29 @@ export function Schedule({ courses, crns, detailed }) {
           <span key={day}>{day}</span>
         ))}
       </ScheduleHeader>
-      <ScheduleCalendar>{meets}</ScheduleCalendar>
+      <ScheduleCalendar>
+        {events.map((event, i) => (
+          <ScheduleMeet
+            key={i}
+            color={colors[crns.indexOf(event.crn)] || '#4a4a4a'}
+            column={days.indexOf(event.day)}
+            start={(event.start - schedule_start) / schedule_length}
+            length={(event.end - event.start) / schedule_length}
+          >
+            <span className="course-name">{event.name}</span>
+            <span>
+              {toTime(event.start)} - {toTime(event.end)}{' '}
+              {detailed && event.location}
+            </span>
+            {detailed && <span>{event.instructor}</span>}
+            {detailed && (
+              <div className="slots">
+                <span>{event.slots} Seats</span>
+              </div>
+            )}
+          </ScheduleMeet>
+        ))}
+      </ScheduleCalendar>
       <ScheduleFooter>
         <span>{crns.join(', ')}</span>
       </ScheduleFooter>
@@ -179,62 +166,7 @@ export function Schedule({ courses, crns, detailed }) {
 
 function getSchedules(state) {
   const index = state.currentSchedule * schedulesPerPage[state.scheduleView];
-  return state.generatedSchedules
-    .map(schedule => {
-      const data = schedule.reduce(
-        (
-          {
-            crns,
-            courses,
-            total_start_time,
-            total_end_time,
-            total_meets_count
-          },
-          { code, crn }
-        ) => {
-          const course = state.coursesByCode[code];
-          const section = state.sectionsByCrn[crn];
-
-          return {
-            crns: [...crns, crn],
-            courses: [
-              ...courses,
-              {
-                ...course,
-                ...section
-              }
-            ],
-            total_start_time:
-              total_start_time +
-              section.meets.reduce(
-                (minutes, meet) => minutes + meet.start_time * meet.days.length,
-                0
-              ),
-            total_end_time:
-              total_end_time +
-              section.meets.reduce(
-                (minutes, meet) => minutes + meet.end_time * meet.days.length,
-                0
-              ),
-            total_meets_count:
-              total_meets_count +
-              section.meets.reduce((count, meet) => count + meet.days.length, 0)
-          };
-        },
-        {
-          crns: [],
-          courses: [],
-          total_start_time: 0,
-          total_end_time: 0,
-          total_meets_count: 0
-        }
-      );
-
-      data.avg_start_time = data.total_start_time / data.total_meets_count;
-      data.avg_end_time = data.total_end_time / data.total_meets_count;
-
-      return data;
-    })
+  return state.filteredSchedules
     .sort(scheduleSorts[state.scheduleSort])
     .slice(index, index + schedulesPerPage[state.scheduleView]);
 }

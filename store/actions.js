@@ -25,6 +25,78 @@ const filterDefauls = {
   }
 };
 
+function toMinutes(time) {
+  const [h, m, p] = time
+    .toUpperCase()
+    .replace(' ', ':')
+    .split(':');
+  return (parseInt(h) % 12) * 60 + parseInt(m) + (p === 'PM' ? 12 * 60 : 0);
+}
+
+const filterFunctions = {
+  class_time({ start_times, end_times }, filter) {
+    const time = toMinutes(filter.time);
+    for (let day of filter.days) {
+      switch (filter.operator) {
+        case 'start_before':
+          if (start_times[day] >= time && start_times[day] != 1440)
+            return false;
+          else break;
+        case 'start_at':
+          if (start_times[day] != time && start_times[day] != 1440)
+            return false;
+          else break;
+        case 'start_after':
+          if (start_times[day] <= time && start_times[day] != 1440)
+            return false;
+          else break;
+        case 'end_before':
+          if (end_times[day] >= time && end_times[day] != 0) return false;
+          else break;
+        case 'end_at':
+          if (end_times[day] != time && end_times[day] != 0) return false;
+          else break;
+        case 'end_after':
+          if (end_times[day] <= time && end_times[day] != 0) return false;
+          else break;
+      }
+    }
+    return true;
+  },
+  class_load({ class_loads }, filter) {
+    for (let day of filter.days) {
+      switch (filter.operator) {
+        case 'less_than':
+          if (class_loads[day] >= filter.amount) return false;
+          else break;
+        case 'at_most':
+          if (class_loads[day] > filter.amount) return false;
+          else break;
+        case 'exactly':
+          if (class_loads[day] != filter.amount) return false;
+          else break;
+        case 'at_least':
+          if (class_loads[day] < filter.amount) return false;
+          else break;
+        case 'more_than':
+          if (class_loads[day] <= filter.amount) return false;
+          else break;
+      }
+    }
+    return true;
+  },
+  break_time({ class_times }, filter) {
+    const from = toMinutes(filter.from);
+    const until = toMinutes(filter.until);
+    for (let day of filter.days) {
+      for (let { start, end } of class_times[day]) {
+        if (Math.max(from, start) < Math.min(until, end)) return false;
+      }
+    }
+    return true;
+  }
+};
+
 export function fetchTerms(getState, setState) {
   return async function() {
     const { data } = await axios.get('/api/terms');
@@ -68,7 +140,7 @@ export function searchCourses(getState, setState) {
 }
 
 export function selectCourse(getState, setState, getActions) {
-  return async function(code) {
+  return function(code) {
     const { loadingCourses, selectedCourses } = getState();
     if (loadingCourses.concat(selectedCourses).includes(code)) {
       return;
@@ -125,21 +197,24 @@ export function deselectCourse(getState, setState, getActions) {
   };
 }
 
-export function generateSchedules(getState, setState) {
+export function generateSchedules(getState, setState, getActions) {
   return async function() {
     const { selectedCourses } = getState();
     setState({
       generatingSchedules: selectedCourses.join(''),
       generationStatus: 0
     });
-    getSchedules(getState, setState);
+    await getSchedules(getState, setState);
+
+    const { applyFilters } = getActions();
+    applyFilters();
   };
 }
 
 export function createFilter(getState, setState) {
   return function(type) {
     setState(({ scheduleFilters }) => {
-      const id = Math.max(...scheduleFilters.map(filter => filter.id)) + 1;
+      const id = Math.max(0, ...scheduleFilters.map(filter => filter.id)) + 1;
       return {
         scheduleFilters: [
           ...scheduleFilters,
@@ -165,22 +240,30 @@ export function updateFilter(getState, setState) {
 }
 
 export function deleteFilter(getState, setState) {
-  return function(id) {
-    setState(({ scheduleFilters }) => {
+  return async function(id) {
+    await setState(({ scheduleFilters }) => {
       return {
         scheduleFilters: scheduleFilters.filter(filter => filter.id !== id),
         filtersChanged: true
       };
     });
+
+    const { applyFilters } = getActions();
+    applyFilters();
   };
 }
 
 export function applyFilters(getState, setState) {
   return function() {
-    setState(state => {
+    setState(({ generatedSchedules, scheduleFilters }) => {
       return {
-        filteredSchedules: [],
-        filtersChanged: false
+        filteredSchedules: generatedSchedules.filter(schedule =>
+          scheduleFilters.every(filter =>
+            filterFunctions[filter.type](schedule, filter)
+          )
+        ),
+        filtersChanged: false,
+        currentSchedule: 0
       };
     });
   };

@@ -20,15 +20,13 @@ function getValidSchedules(getState, onStatus, onFinished) {
     let done = false;
     for (let j = 0; j < 50; j++) {
       const schedule = indices.map((sectionIndex, courseIndex) => {
-        const { code, sections } = courses[courseIndex];
-        const { crn } = sections[sectionIndex];
-        return { code, crn };
+        const { sections, ...course } = courses[courseIndex];
+        const section = sections[sectionIndex];
+        return { course, section };
       });
 
-      scheduleCount++;
-
-      if (isValidSchedule(schedule.map(s => sectionsByCrn[s.crn]))) {
-        schedules.push(schedule);
+      if (isValidSchedule(schedule)) {
+        schedules.push(formatSchedule(schedule));
       }
 
       let carry = 1;
@@ -46,6 +44,7 @@ function getValidSchedules(getState, onStatus, onFinished) {
       }
     }
     if (!done) {
+      scheduleCount += 50;
       onStatus(Math.floor(scheduleCount / totalSchedules * 100));
       requestAnimationFrame(generate);
     } else {
@@ -56,9 +55,9 @@ function getValidSchedules(getState, onStatus, onFinished) {
   requestAnimationFrame(generate);
 }
 
-function isValidSchedule(sections) {
+function isValidSchedule(schedule) {
   const validator = {};
-  for (let section of sections) {
+  for (let { section } of schedule) {
     for (let meet of section.meets) {
       for (let day of meet.days) {
         for (let time = meet.start_time; time <= meet.end_time; time += 5) {
@@ -73,19 +72,73 @@ function isValidSchedule(sections) {
   return true;
 }
 
+function formatSchedule(schedule) {
+  const crns = [];
+  const events = [];
+  const start_times = { M: 1440, T: 1440, W: 1440, R: 1440, F: 1440 };
+  const end_times = { M: 0, T: 0, W: 0, R: 0, F: 0 };
+  const class_loads = { M: 0, T: 0, W: 0, R: 0, F: 0 };
+  const class_times = { M: [], T: [], W: [], R: [], F: [] };
+
+  const weight_builder = {
+    total: 0,
+    count: 0
+  };
+
+  for (let { course, section } of schedule) {
+    crns.push(section.crn);
+    for (let meet of section.meets) {
+      for (let day of meet.days) {
+        weight_builder.total += meet.start_time;
+        weight_builder.count++;
+        class_loads[day]++;
+        class_times[day].push({ start: meet.start_time, end: meet.end_time });
+        start_times[day] = Math.min(start_times[day], meet.start_time);
+        end_times[day] = Math.max(end_times[day], meet.end_time);
+        events.push({
+          name: `${course.subject} ${course.number} ${section.name}`,
+          crn: section.crn,
+          day,
+          start: meet.start_time,
+          end: meet.end_time,
+          location: meet.location,
+          instructor: section.instructor,
+          slots: meet.slots
+        });
+      }
+    }
+  }
+  return {
+    crns,
+    events,
+    start_times,
+    end_times,
+    class_loads,
+    class_times,
+    weight: weight_builder.total / weight_builder.count
+  };
+}
+
 export function getSchedules(getState, setState) {
-  const { selectedCourses } = getState();
-  if (!selectedCourses.length) return;
-  getValidSchedules(
-    getState,
-    status =>
-      setState({
-        generationStatus: status
-      }),
-    generatedSchedules =>
-      setState({
-        generatedSchedules,
-        generatingSchedules: null
-      })
-  );
+  return new Promise((resolve, reject) => {
+    const { selectedCourses } = getState();
+    if (!selectedCourses.length) {
+      return resolve();
+    }
+    getValidSchedules(
+      getState,
+      generationStatus => {
+        setState({
+          generationStatus
+        });
+      },
+      generatedSchedules => {
+        setState({
+          generatedSchedules,
+          generatingSchedules: null
+        });
+        resolve();
+      }
+    );
+  });
 }

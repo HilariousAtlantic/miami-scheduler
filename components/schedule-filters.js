@@ -54,11 +54,7 @@ const filterComponents = {
         selectedOption={operator}
         onSelectOption={operator => onUpdate({ operator })}
       />
-      <TimeInput
-        placeholder="10:00 AM"
-        defaultValue={time}
-        onChange={event => onUpdate({ time: event.target.value })}
-      />
+      <TimeInput value={time} onChange={time => onUpdate({ time })} />
       <span>on</span>
       <DayPicker selectedDays={days} onChange={days => onUpdate({ days })} />
     </FilterWrapper>
@@ -72,9 +68,8 @@ const filterComponents = {
         onSelectOption={operator => onUpdate({ operator })}
       />
       <NumberInput
-        placeholder="3"
-        defaultValue={amount || 0}
-        onChange={event => onUpdate({ amount: parseInt(event.target.value) })}
+        value={amount || 0}
+        onChange={amount => onUpdate({ amount })}
       />
       <span>classes on</span>
       <DayPicker selectedDays={days} onChange={days => onUpdate({ days })} />
@@ -84,36 +79,14 @@ const filterComponents = {
     <FilterWrapper key={id}>
       <IconButton leftIcon="trash" danger onClick={onDelete} />
       <span>I want a break from</span>
-      <TimeInput
-        placeholder="10:00 AM"
-        defaultValue={from}
-        onChange={event => onUpdate({ from: event.target.value })}
-      />
+      <TimeInput value={from} onChange={from => onUpdate({ from })} />
       <span>until</span>
-      <TimeInput
-        placeholder="12:00 PM"
-        defaultValue={until}
-        onChange={event => onUpdate({ until: event.target.value })}
-      />
+      <TimeInput value={until} onChange={until => onUpdate({ until })} />
       <span>on</span>
       <DayPicker selectedDays={days} onChange={days => onUpdate({ days })} />
     </FilterWrapper>
   )
 };
-
-function FilterTypeSelector(props) {
-  return (
-    <InlineSelector
-      {...props}
-      options={[
-        { value: 'filter_type', name: 'Filter Type' },
-        { value: 'class_time', name: 'Class Time' },
-        { value: 'break_time', name: 'Break Time' },
-        { value: 'class_load', name: 'Class Load' }
-      ]}
-    />
-  );
-}
 
 function TimeOperatorSelector(props) {
   return (
@@ -123,9 +96,9 @@ function TimeOperatorSelector(props) {
         { value: 'start_before', name: 'start before' },
         { value: 'start_at', name: 'start at' },
         { value: 'start_after', name: 'start after' },
-        { value: 'finish_before', name: 'finish before' },
-        { value: 'finish_at', name: 'finish at' },
-        { value: 'finish_after', name: 'finish after' }
+        { value: 'end_before', name: 'finish before' },
+        { value: 'end_at', name: 'finish at' },
+        { value: 'end_after', name: 'finish after' }
       ]}
     />
   );
@@ -193,16 +166,18 @@ function ScheduleFilters({
           Apply Filters
         </IconButton>
       </FilterOptions>
-      <FilterList>
-        {filters.map(({ id, type, ...filter }) =>
-          filterComponents[type](
-            id,
-            filter,
-            update => onUpdateFilter(id, update),
-            () => onDeleteFilter(id)
-          )
-        )}
-      </FilterList>
+      {filters.length > 0 && (
+        <FilterList>
+          {filters.map(({ id, type, ...filter }) =>
+            filterComponents[type](
+              id,
+              filter,
+              update => onUpdateFilter(id, update),
+              () => onDeleteFilter(id)
+            )
+          )}
+        </FilterList>
+      )}
     </ScheduleFiltersWrapper>
   );
 }

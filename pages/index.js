@@ -71,10 +71,6 @@ const FilterSection = styled.section`
   width: 90%;
   max-width: 960px;
   margin: 64px auto;
-
-  > div {
-    text-align: center;
-  }
 `;
 
 const ScheduleSection = styled.section`
@@ -83,6 +79,13 @@ const ScheduleSection = styled.section`
   margin: 64px auto;
   display: flex;
   flex-direction: column;
+`;
+
+const SectionMessage = styled.div`
+  margin: 32px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
 `;
 
 const GenerationStatusWrapper = styled.div`
@@ -120,11 +123,12 @@ const ScheduleGenerator = withStore(
 
     render() {
       const { state } = this.props.store;
-      console.log(state);
       const showGenerationSection =
         state.generatingSchedules === state.selectedCourses.join('');
-      const showScheduleSection =
+      const showFilterSection =
         !showGenerationSection && state.generatedSchedules.length > 0;
+      const showScheduleSection =
+        showFilterSection && state.filteredSchedules.length > 0;
 
       return (
         <ScheduleGeneratorWrapper>
@@ -146,16 +150,26 @@ const ScheduleGenerator = withStore(
             </GenerationSection>
           )}
 
-          {showScheduleSection && (
+          {showFilterSection && (
             <Fragment>
               <FilterSection>
                 <SectionHeader>2. Customize Filters</SectionHeader>
-                <div>Coming Very Soon</div>
+                <ScheduleFiltersContainer />
               </FilterSection>
+
               <ScheduleSection>
                 <SectionHeader>3. Browse Schedules</SectionHeader>
-                <ScheduleToolbarContainer />
-                <ScheduleListContainer />
+                {showScheduleSection ? (
+                  <Fragment>
+                    <ScheduleToolbarContainer />
+                    <ScheduleListContainer />
+                  </Fragment>
+                ) : (
+                  <SectionMessage>
+                    There are no schedules that match all of the filters. Keep
+                    deleting one until some schedules appear.
+                  </SectionMessage>
+                )}
               </ScheduleSection>
             </Fragment>
           )}
