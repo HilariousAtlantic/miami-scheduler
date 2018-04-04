@@ -92,7 +92,9 @@ module.exports = function(db) {
             meets: _.uniqWith(
               courseSection.courseSchedules
                 .filter(
-                  courseSection => courseSection.scheduleTypeCode === 'CLAS'
+                  courseSection =>
+                    courseSection.scheduleTypeCode === 'CLAS' &&
+                    courseSection.startDate !== courseSection.endDate
                 )
                 .map(courseSchedule => ({
                   days: courseSchedule.days
