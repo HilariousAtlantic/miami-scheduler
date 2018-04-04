@@ -80,9 +80,7 @@ module.exports = function(db) {
             crn: courseSection.courseId,
             name: courseSection.courseSectionCode,
             slots: parseInt(courseSection.enrollmentCountAvailable),
-            instructor: instructor
-              ? `${instructor.namePrefix} ${instructor.nameLast}`
-              : 'TBA',
+            instructor: instructor ? instructor.nameLast : 'TBA',
             credits: [
               ...new Set([
                 parseInt(courseSection.creditHoursLow),
