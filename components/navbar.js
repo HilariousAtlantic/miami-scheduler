@@ -88,17 +88,17 @@ export function Navbar({ activeLink }) {
     <NavbarWrapper>
       <Brand>Miami Scheduler</Brand>
       <Links>
-        <Link href="/">
+        <Link href="/" prefetch>
           <a className={activeLink === 'generator' ? 'active' : ''}>
             Schedule Generator
           </a>
         </Link>
-        <Link href="/feedback">
+        <Link href="/feedback" prefetch>
           <a className={activeLink === 'feedback' ? 'active' : ''}>
             Send Feedback
           </a>
         </Link>
-        <Link href="/donate">
+        <Link href="/donate" prefetch>
           <DonateButton>
             {VenmoIcon}
             <span>Donate</span>
