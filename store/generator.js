@@ -123,7 +123,12 @@ export function getSchedules(getState, setState) {
   return new Promise((resolve, reject) => {
     const { selectedCourses } = getState();
     if (!selectedCourses.length) {
-      return resolve();
+      setState({
+        generatedSchedules: [],
+        generatingSchedules: null
+      });
+      resolve();
+      return;
     }
     getValidSchedules(
       getState,

@@ -247,9 +247,6 @@ export function deleteFilter(getState, setState) {
         filtersChanged: true
       };
     });
-
-    const { applyFilters } = getActions();
-    applyFilters();
   };
 }
 
