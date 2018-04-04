@@ -5,5 +5,14 @@ import * as actionCreators from './actions';
 
 export const { StoreProvider, StoreConsumer, withStore } = createStore(
   initialState,
-  actionCreators
+  actionCreators,
+  [
+    'selectedTerm',
+    'selectedCourses',
+    'scheduleFilters',
+    'generatedSchedules',
+    'filteredSchedules',
+    'coursesByCode',
+    'sectionsByCrn'
+  ]
 );

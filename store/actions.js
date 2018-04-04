@@ -88,35 +88,43 @@ const filterFunctions = {
   }
 };
 
-export function fetchTerms(getState, setState) {
+export function fetchTerms(getState, setState, getActions) {
   return async function() {
     const { data } = await axios.get('/api/terms');
     setState({
-      terms: data.terms,
-      selectedTerm: data.terms[0].code
+      terms: data.terms
     });
+
+    const { selectTerm } = getActions();
+    selectTerm(data.terms[0].code);
   };
 }
 
 export function selectTerm(getState, setState) {
   return function(termId) {
-    setState({
-      selectedTerm: termId,
-      selectedCourses: [],
-      generatedSchedules: []
-    });
+    const { selectedTerm } = getState();
+    if (selectedTerm !== termId) {
+      setState({
+        selectedTerm: termId,
+        searchedCourses: [],
+        selectedCourses: [],
+        generatedSchedules: [],
+        filteredSchedules: []
+      });
+    }
   };
 }
 
 export function searchCourses(getState, setState) {
-  return async function(term, query) {
+  return async function(query) {
     if (!query) {
       setState({
         searchedCourses: []
       });
     } else {
+      const { selectedTerm } = getState();
       const { data } = await axios.get(
-        `/api/search?term=${term}&query=${query}`
+        `/api/search?term=${selectedTerm}&query=${query}`
       );
       setState(({ coursesByCode }) => {
         return {

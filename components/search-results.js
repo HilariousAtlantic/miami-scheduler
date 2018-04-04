@@ -65,6 +65,10 @@ class SearchResults extends Component {
       this.setState({
         expandedCourse: searchResults[0]
       });
+    } else if (!searchResults.length) {
+      this.setState({
+        expandedCourse: null
+      });
     }
   }
 

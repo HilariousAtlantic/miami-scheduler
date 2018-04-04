@@ -13,6 +13,20 @@ function logAction(key, update) {
   );
 }
 
+function cacheState(state, cachedKeys) {
+  localStorage.setItem(
+    'generatorState',
+    JSON.stringify(
+      cachedKeys.reduce((cache, key) => {
+        return {
+          ...cache,
+          [key]: state[key]
+        };
+      }, {})
+    )
+  );
+}
+
 function createActions(actionCreators) {
   return Object.keys(actionCreators).reduce((actions, key) => {
     return {
@@ -21,13 +35,19 @@ function createActions(actionCreators) {
         () => this.state,
         update =>
           new Promise((resolve, reject) => {
-            this.setState(state => {
-              if (typeof update === 'function') {
-                update = update(state);
+            this.setState(
+              state => {
+                if (typeof update === 'function') {
+                  update = update(state);
+                }
+                logAction(key, update);
+                return update;
+              },
+              () => {
+                resolve();
+                cacheState(this.state, this.cachedKeys);
               }
-              logAction(key, update);
-              return update;
-            }, resolve);
+            );
           }),
         () => this.actions
       )
@@ -35,13 +55,20 @@ function createActions(actionCreators) {
   }, {});
 }
 
-export function createStore(initialState, actionCreators) {
+export function createStore(initialState, actionCreators, cachedKeys) {
   const { Provider, Consumer } = React.createContext();
 
   class StoreProvider extends Component {
     state = initialState;
-
     actions = createActions.call(this, actionCreators);
+    cachedKeys = cachedKeys;
+
+    componentDidMount() {
+      const storedGeneratorState = localStorage.getItem('generatorState');
+      if (storedGeneratorState) {
+        this.setState(JSON.parse(storedGeneratorState));
+      }
+    }
 
     render() {
       const store = { state: this.state, actions: this.actions };

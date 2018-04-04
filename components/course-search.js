@@ -59,11 +59,7 @@ export function CourseSearchContainer() {
   return (
     <StoreConsumer>
       {(state, actions) => (
-        <CourseSearch
-          onSearchCourses={query =>
-            actions.searchCourses(state.selectedTerm, query)
-          }
-        />
+        <CourseSearch onSearchCourses={query => actions.searchCourses(query)} />
       )}
     </StoreConsumer>
   );
