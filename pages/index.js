@@ -127,6 +127,10 @@ const ScheduleGenerator = withStore(
         state.generatingSchedules === state.selectedCourses.join('');
       const showFilterSection =
         !showGenerationSection && state.generatedSchedules.length > 0;
+      const showGenerationMessage =
+        state.selectedCourses.length > 0 &&
+        !showFilterSection &&
+        !showGenerationSection;
       const showScheduleSection =
         showFilterSection && state.filteredSchedules.length > 0;
 
@@ -173,7 +177,7 @@ const ScheduleGenerator = withStore(
               </ScheduleSection>
             </Fragment>
           ) : (
-            !showGenerationSection && (
+            showGenerationMessage && (
               <SectionMessage>
                 There are no schedules that will work with the selected courses.
                 Try removing one until some schedules appear.
