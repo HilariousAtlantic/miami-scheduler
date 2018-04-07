@@ -22,16 +22,6 @@ const SectionHeader = styled.h2`
   font-size: 24px;
   font-weight: 300;
   color: #4a4a4a;
-  text-align: center;
-
-  &:before, &:after {
-    content: "";
-    display: block
-    height: 1px;
-    flex: 1;
-    border-bottom: 2px solid #4a4a4a;
-    margin: 0 16px;
-  }
 `;
 
 const CourseSection = styled.section`
