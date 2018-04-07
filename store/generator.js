@@ -1,10 +1,5 @@
 function getValidSchedules(getState, onStatus, onFinished) {
-  const {
-    selectedCourses,
-    coursesByCode,
-    sectionsByCode,
-    sectionsByCrn
-  } = getState();
+  const { selectedCourses, coursesByCode, sectionsByCode } = getState();
   const courses = selectedCourses.map(code => {
     return { ...coursesByCode[code], sections: sectionsByCode[code] };
   });

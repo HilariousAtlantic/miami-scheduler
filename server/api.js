@@ -16,49 +16,67 @@ module.exports = function(db) {
     res.json({ terms });
   });
 
-  router.get('/search', async (req, res) => {
-    const { term, query } = req.query;
-    const courses = await db.courses.search(
-      {
-        term: `'${query}'`,
-        fields: ['subject', 'number', 'title', 'searchables'],
-        where: {
-          term
-        }
-      },
-      {
-        fields: ['code', 'subject', 'number', 'title', 'description'],
-        limit: 50
-      }
-    );
-
-    res.json({ courses });
-  });
-
   router.get('/courses', async (req, res) => {
-    const { code, term, subject, number } = req.query;
+    const { term, query } = req.query;
+    if (!term) {
+      return res.json({ courses: [] });
+    }
 
-    const plan = {};
-    if (code) plan.code = code.toUpperCase().split(',');
-    if (term) plan.term = term.split(',');
-    if (subject) plan.subject = subject.toUpperCase().split(',');
-    if (number) plan.number = number.split(',');
+    const subjects = require('./subjects.json');
+    const parts = (query || '')
+      .toUpperCase()
+      .replace(/([A-Z]+)(\d+)/g, '$1 $2')
+      .split(' ');
 
-    const courses = await db.courses.find(plan, {
-      fields: ['code', 'subject', 'number', 'title', 'description'],
-      limit: 50
-    });
+    const subject = parts.filter(part => subjects.includes(part));
+    const number = parts.filter(part => /\d{1,3}[A-Z]{0,3}/.test(part));
+    const keyword = parts[0];
+    const where = [`WHERE term = '${term}'`];
 
-    res.json({ courses });
+    if (subject.length) {
+      where.push(
+        `subject IN (${subject.map(subject => `'${subject}'`).join(',')})`
+      );
+    }
+
+    if (number.length) {
+      where.push(
+        `(${number.map(number => `number LIKE '${number}%'`).join(' OR ')})`
+      );
+    }
+
+    if (where.length === 1 && keyword) {
+      where.push(
+        `UPPER(title) LIKE '${keyword}%' OR UPPER(title) LIKE '% ${keyword}%'`
+      );
+    }
+
+    try {
+      const courses = await db.query(`
+        SELECT * 
+        FROM courses 
+        ${where.join(' AND ')}
+        ORDER BY subject, number
+        LIMIT 200
+      `);
+      res.json({ courses });
+    } catch (e) {
+      console.error(e.stack);
+      res.json({ courses: [] });
+    }
   });
 
-  router.get('/courses/:code', async (req, res) => {
+  router.get('/sections', async (req, res) => {
     try {
-      const { code } = req.params;
+      const { code } = req.query;
+      if (!code) {
+        return res.json({ sections: [] });
+      }
+      const codes = code.split(',');
       const course = await db.courses.find(
-        { code },
+        { code: codes },
         {
-          fields: ['code', 'term', 'subject', 'number', 'title', 'description'],
+          fields: ['term', 'subject', 'number'],
           single: true
         }
       );
@@ -70,7 +88,7 @@ module.exports = function(db) {
           course.number
         }`
       );
-      course.sections = data.courseSections
+      const sections = data.courseSections
         .filter(section => section.courseSchedules.length)
         .map(courseSection => {
           const instructor = courseSection.instructors.find(i =>
@@ -109,9 +127,10 @@ module.exports = function(db) {
             )
           };
         });
-      res.json({ course });
+      res.json({ sections });
     } catch (e) {
-      console.log(e.stack);
+      console.error(e.stack);
+      res.json({ sections: [] });
     }
   });
 

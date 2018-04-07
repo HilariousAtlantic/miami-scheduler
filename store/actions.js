@@ -124,14 +124,11 @@ export function searchCourses(getState, setState) {
     } else {
       const { selectedTerm } = getState();
       const { data } = await axios.get(
-        `/api/search?term=${selectedTerm}&query=${query}`
+        `/api/courses?term=${selectedTerm}&query=${query}`
       );
       setState(({ coursesByCode }) => {
         return {
-          searchedCourses: data.courses,
-          coursesByCode: data.courses.reduce((acc, course) => {
-            return { ...acc, [course.code]: course };
-          }, coursesByCode)
+          searchedCourses: data.courses
         };
       });
     }
@@ -139,37 +136,38 @@ export function searchCourses(getState, setState) {
 }
 
 export function selectCourse(getState, setState, getActions) {
-  return function(code) {
+  return function(course) {
     const { loadingCourses, selectedCourses } = getState();
-    if (loadingCourses.concat(selectedCourses).includes(code)) {
+    if (loadingCourses.concat(selectedCourses).includes(course.code)) {
       return;
     }
 
     setState(state => {
       return {
-        loadingCourses: state.loadingCourses.concat(code)
+        coursesByCode: {
+          ...state.coursesByCode,
+          [course.code]: course
+        },
+        loadingCourses: state.loadingCourses.concat(course.code)
       };
     });
 
     const { fetchCourse } = getActions();
-    fetchCourse(code);
+    fetchCourse(course.code);
   };
 }
 
 export function fetchCourse(getState, setState, getActions) {
   return async function(code) {
-    const { data } = await axios.get(`/api/courses/${code}`);
+    const { data } = await axios.get(`/api/sections?code=${code}`);
     await setState(state => {
       return {
         selectedCourses: state.selectedCourses.concat(code),
         loadingCourses: state.loadingCourses.filter(c => c !== code),
         sectionsByCode: {
           ...state.sectionsByCode,
-          [code]: data.course.sections
-        },
-        sectionsByCrn: data.course.sections.reduce((acc, section) => {
-          return { ...acc, [section.crn]: section };
-        }, state.sectionsByCrn)
+          [code]: data.sections
+        }
       };
     });
 
