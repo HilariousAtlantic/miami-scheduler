@@ -7,10 +7,12 @@ run();
 
 async function run() {
   try {
+    const terms = await fetchTerms();
+    const courses = await fetchCourses(terms);
     const db = await connectDatabase();
     await clearDatabase(db);
-    const terms = await fetchTerms();
-    await importCourses(db, terms);
+    await db.terms.insert(terms);
+    await db.courses.insert(courses);
     process.exit();
   } catch (error) {
     console.error('Error during import.');
@@ -33,20 +35,18 @@ async function fetchTerms(db) {
   return res.data.academicTerm
     .filter(term => term.displayTerm == 'true')
     .sort((a, b) => b.termId - a.termId)
-    .slice(0, 5)
+    .slice(0, 3)
     .map(formatTerm);
 }
 
-async function importCourses(db, terms) {
-  db.terms.insert(terms);
+async function fetchCourses(terms) {
+  const courses = [];
   for (let term of terms) {
     console.log(`Fetching ${term.name} courses...`);
     const sections = await fetchSections(term);
-    const courses = extractCourses(sections);
-    const result = await db.courses.insert(courses);
-    console.log(`Imported ${result.length} courses`);
+    courses.push(...extractCourses(sections));
   }
-  return true;
+  return courses;
 }
 
 function extractCourses(sections) {
