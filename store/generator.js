@@ -110,7 +110,7 @@ function formatSchedule(schedule) {
           end: meet.end_time,
           location: meet.location,
           instructor: section.instructor,
-          slots: meet.slots
+          slots: section.slots
         });
       }
     }
