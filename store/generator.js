@@ -87,8 +87,15 @@ function formatSchedule(schedule) {
     count: 0
   };
 
+  const credits = {
+    low: 0,
+    high: 0
+  };
+
   for (let { course, section } of schedule) {
     crns.push(section.crn);
+    credits.low += section.credits[0];
+    credits.high += section.credits[1] || section.credits[0];
     for (let meet of section.meets) {
       for (let day of meet.days) {
         weight_builder.total += meet.start_time;
@@ -111,6 +118,10 @@ function formatSchedule(schedule) {
     }
   }
   return {
+    credits:
+      credits.low !== credits.high
+        ? `${credits.low} - ${credits.high}`
+        : credits.low,
     crns,
     events,
     start_times,

@@ -122,7 +122,7 @@ function toTime(minutes) {
   return `${h || 12}:${('00' + m).slice(-2)}`;
 }
 
-export function Schedule({ courses, crns, events, detailed }) {
+export function Schedule({ courses, credits, crns, events, detailed }) {
   const schedule_start = 450;
   const schedule_end = 1230;
   const schedule_length = schedule_end - schedule_start;
@@ -159,6 +159,7 @@ export function Schedule({ courses, crns, events, detailed }) {
       </ScheduleCalendar>
       <ScheduleFooter>
         <span>{crns.join(', ')}</span>
+        <span>{credits} Credits</span>
       </ScheduleFooter>
     </ScheduleWrapper>
   );
