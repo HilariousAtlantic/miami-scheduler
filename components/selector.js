@@ -26,7 +26,7 @@ const SelectorWrapper = styled.div`
     pointer-events: none;
     font-size: 0.8rem;
     line-height: 1rem;
-    top: 13px;
+    top: 12px;
     right: 16px;
   }
 
@@ -53,7 +53,7 @@ const inline = css`
   }
 
   .fa-angle-down {
-    top: 10px;
+    top: 8px;
     right: 8px;
     font-size: 0.75rem;
   }

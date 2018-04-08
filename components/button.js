@@ -52,12 +52,8 @@ export const Button = styled.button`
     background: #fafafa;
   }
 
-  i + span {
-    margin-left: 16px;
-  }
-
-  span + i {
-    margin-left: 16px;
+  > * + * {
+    margin-left: 8px;
   }
 
   ${props => props.raised && raised};

@@ -154,7 +154,7 @@ function ScheduleFilters({
         </IconButton>
         <div className="spacer" />
         <IconButton
-          rightIcon="sliders-h"
+          leftIcon="sliders-h"
           large
           raised
           primary

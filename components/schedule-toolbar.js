@@ -25,6 +25,7 @@ const ScheduleOptions = styled.div`
 `;
 
 const ScheduleBrowser = styled.div`
+  display: flex;
   background: #ffffff;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
 `;
