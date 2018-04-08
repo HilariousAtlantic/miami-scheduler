@@ -13,7 +13,9 @@ import {
   SelectedCoursesContainer
 } from '../components';
 
-const ScheduleGeneratorWrapper = styled.div``;
+const ScheduleGeneratorWrapper = styled.div`
+  min-height: 100vh;
+`;
 
 const SectionHeader = styled.h2`
   display: flex;

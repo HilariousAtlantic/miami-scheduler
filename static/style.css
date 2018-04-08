@@ -11,3 +11,24 @@ ul {
   margin: 0;
   padding: 0;
 }
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 32px;
+  color: #6a6a6a;
+  font-size: 14px;
+}
+
+footer i {
+  margin-right: 4px;
+}
+
+footer a {
+  color: #6a6a6a;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #4a4a4a;
+}

@@ -40,6 +40,14 @@ export default class extends Document {
         <body>
           <Main />
           <NextScript />
+          <footer>
+            <span>
+              Created by Luke Artnak, Grant Eaton, and Brennan Hoeting
+            </span>
+            <a href="https://github.com/HilariousAtlantic/miami-scheduler">
+              <i className="fab fa-github" /> View Source
+            </a>
+          </footer>
         </body>
       </html>
     );
