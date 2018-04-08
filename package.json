@@ -12,7 +12,9 @@
     "start": "next build && node server/index.js"
   },
   "dependencies": {
+    "@sendgrid/mail": "^6.2.1",
     "axios": "^0.18.0",
+    "body-parser": "^1.18.2",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "lodash": "^4.17.5",
@@ -21,6 +23,7 @@
     "polished": "^1.9.2",
     "react": "^16.3.0-alpha.3",
     "react-dom": "^16.3.0-alpha.3",
+    "react-form": "^3.5.1",
     "styled-components": "^3.2.3"
   },
   "devDependencies": {

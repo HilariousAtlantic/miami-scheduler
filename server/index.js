@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const next = require('next');
+const bodyParser = require('body-parser');
 const { connectDatabase } = require('./database');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -17,6 +18,7 @@ async function start() {
     const server = express();
     const db = await connectDatabase();
 
+    server.use(bodyParser.json());
     server.use('/api', require('./api')(db));
 
     server.get('*', (req, res) => handle(req, res));

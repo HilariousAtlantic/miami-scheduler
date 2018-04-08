@@ -1,5 +1,8 @@
+require('dotenv');
+
 const express = require('express');
 const axios = require('axios');
+const sendgrid = require('@sendgrid/mail');
 const _ = require('lodash');
 
 function toMinutes(time) {
@@ -7,6 +10,8 @@ function toMinutes(time) {
   const [h, m] = time.split(':');
   return 60 * parseInt(h) + parseInt(m);
 }
+
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports = function(db) {
   const router = express.Router();
@@ -134,5 +139,69 @@ module.exports = function(db) {
     }
   });
 
+  router.post('/feedback', async (req, res) => {
+    const msg = {
+      to: 'hilariousatlantic@gmail.com',
+      from: 'feedback@miamischeduler.com',
+      subject: 'A user has submitted feedback',
+      html: `
+        <strong>Name</strong>
+        <p>${req.body.name}</p>
+
+        <strong>Email</strong>
+        <p>${req.body.email}</p>
+
+        ${getMessage(req.body)}
+      `
+    };
+    try {
+      await sendgrid.send(msg);
+      res.sendStatus(201);
+    } catch (error) {
+      res.sendStatus(400);
+    }
+  });
+
   return router;
 };
+
+function getMessage(body) {
+  switch (body.type) {
+    case 'issue':
+      return `
+        <strong>Feedback Type</strong>
+        <p>Issue</p>
+
+        <strong>Issue Description</strong>
+        <p>${body.issue_description}</p>
+
+        <strong>Selected Courses</strong>
+        <p>${body.issue_courses}</p>
+
+        <strong>Replication Steps</strong>
+        <p>${body.issue_replication}</p>
+      `;
+    case 'suggestion':
+      return `
+        <strong>Feedback Type</strong>
+        <p>Suggestion</p>
+
+        <strong>Suggestion Name</strong>
+        <p>${body.suggestion_name}</p>
+
+        <strong>Suggestion Description</strong>
+        <p>${body.suggestion_description}</p>
+      `;
+    case 'review':
+      return `
+        <strong>Feedback Type</strong>
+        <p>Review</p>
+
+        <strong>Rating</strong>
+        <p>${body.review_rating}</p>
+
+        <strong>Description</strong>
+        <p>${body.review_description}</p>
+      `;
+  }
+}
