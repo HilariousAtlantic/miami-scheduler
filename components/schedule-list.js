@@ -108,6 +108,7 @@ const ScheduleMeet = styled.div`
     color: ${darken(0.2, props.color)};
     background: ${transparentize(0.8, props.color)};
     left: ${props.column * 20}%;
+    opacity: ${props.full ? 0.5 : 1};
   `};
 `;
 
@@ -142,6 +143,7 @@ export function Schedule({ courses, credits, crns, events, detailed }) {
             column={days.indexOf(event.day)}
             start={(event.start - schedule_start) / schedule_length}
             length={(event.end - event.start) / schedule_length}
+            full={event.slots <= 0}
           >
             <span className="course-name">{event.name}</span>
             <span>
