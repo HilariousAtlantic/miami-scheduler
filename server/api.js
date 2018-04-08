@@ -143,7 +143,7 @@ module.exports = function(db) {
     const msg = {
       to: 'hilariousatlantic@gmail.com',
       from: 'feedback@miamischeduler.com',
-      subject: 'A user has submitted feedback',
+      subject: `${req.body.name} has submitted feedback`,
       html: `
         <strong>Name</strong>
         <p>${req.body.name}</p>
