@@ -55,6 +55,38 @@ const Expanded = styled.div`
   }
 `;
 
+const MessageWrapper = styled.div`
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #ffffff;
+  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+
+  h4 {
+    margin: 0;
+    text-align: center;
+    color: #555;
+  }
+`;
+
+const Message = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  text-align: center;
+
+  span {
+    color: #4a4a4a;
+  }
+
+  em {
+    font-size: 14px;
+    color: #999;
+    margin-top: 4px;
+  }
+`;
+
 class SearchResults extends Component {
   state = {
     expandedCourse: null
@@ -89,19 +121,41 @@ class SearchResults extends Component {
     const { expandedCourse } = this.state;
     return (
       <SearchResultsWrapper>
-        <List>
-          {searchResults.map(course => (
-            <ListItem
-              key={course.code}
-              onClick={() => onSelectCourse(course)}
-              onMouseEnter={() => this.handleFocus(course)}
-            >
-              <span>
-                {course.subject} {course.number} - {course.title}
-              </span>
-            </ListItem>
-          ))}
-        </List>
+        {searchResults.length ? (
+          <List>
+            {searchResults.map(course => (
+              <ListItem
+                key={course.code}
+                onClick={() => onSelectCourse(course)}
+                onMouseEnter={() => this.handleFocus(course)}
+              >
+                <span>
+                  {course.subject} {course.number} - {course.title}
+                </span>
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <MessageWrapper>
+            <h4>No Results</h4>
+            <Message>
+              <span>Show all courses in a subject</span>
+              <em>"ENG", "CSE", "ACC BUS"</em>
+            </Message>
+            <Message>
+              <span>Show all courses starting with a number</span>
+              <em>"ENG 1", "CSE 27", "BUS 3 4"</em>
+            </Message>
+            <Message>
+              <span>Show a specific course</span>
+              <em>"ENG 111", "CSE 174"</em>
+            </Message>
+            <Message>
+              <span>Search for a keyword in the title</span>
+              <em>"Intro", "History", "Studies"</em>
+            </Message>
+          </MessageWrapper>
+        )}
 
         <Expanded>
           {expandedCourse && (
