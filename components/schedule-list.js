@@ -161,7 +161,9 @@ export function Schedule({ courses, credits, crns, events, detailed }) {
       </ScheduleCalendar>
       <ScheduleFooter>
         <span>{crns.join(', ')}</span>
-        <span>{credits} Credits</span>
+        <span>
+          {credits} {detailed && 'Credits'}
+        </span>
       </ScheduleFooter>
     </ScheduleWrapper>
   );
