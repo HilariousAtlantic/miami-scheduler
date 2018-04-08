@@ -71,27 +71,27 @@ const types = {
   issue: (
     <Fragment>
       <Label>What happened?</Label>
-      <TextArea rows="5" field="issue_description" />
+      <TextArea rows="5" field="issue_description" required />
       <Label>What courses did you have selected when it happened?</Label>
-      <Text type="text" field="issue_courses" />
+      <Text type="text" field="issue_courses" required />
       <Label>What did you do to cause the issue?</Label>
-      <TextArea rows="5" field="issue_replication" />
+      <TextArea rows="5" field="issue_replication" required />
     </Fragment>
   ),
   suggestion: (
     <Fragment>
       <Label>Suggestion Name</Label>
-      <Text type="text" field="suggestion_name" />
+      <Text type="text" field="suggestion_name" required />
       <Label>Suggestion Description</Label>
-      <TextArea rows="5" field="suggestion_description" />
+      <TextArea rows="5" field="suggestion_description" required />
     </Fragment>
   ),
   review: (
     <Fragment>
       <Label>What would you rate the website out of 5?</Label>
-      <Text type="number" field="review_rating" />
+      <Text type="number" field="review_rating" required />
       <Label>How was your experience using the website?</Label>
-      <TextArea rows="5" field="review_description" />
+      <TextArea rows="5" field="review_description" required />
     </Fragment>
   )
 };
@@ -125,9 +125,9 @@ export default class extends Component {
             {form => (
               <FeedbackForm onSubmit={form.submitForm}>
                 <Label>Name</Label>
-                <Text type="text" field="name" />
+                <Text type="text" field="name" required />
                 <Label>Email</Label>
-                <Text field="email" type="email" />
+                <Text field="email" type="email" required />
                 <Label>Feedback Type</Label>
                 <RadioGroup field="type">
                   <RadioWrapper>
