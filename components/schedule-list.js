@@ -112,6 +112,53 @@ const ScheduleMeet = styled.div`
   `};
 `;
 
+const OnlineSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: calc(20% - 4px);
+  position: absolute;
+  box-sizing: border-box;
+  color: #fff;
+  padding: 4px;
+  font-size: 10px;
+  font-weight: 400;
+
+  .course-name {
+    font-weight: 900;
+  }
+
+  span + span {
+    margin-top: 2px;
+  }
+
+  .slots {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+  }
+
+  ${props => `
+    top: 0;
+    bottom: 0;
+    border-left: 4px solid ${props.color};
+    color: ${darken(0.2, props.color)};
+    background: ${transparentize(0.8, props.color)};
+    left: ${props.column * 20}%;
+    opacity: ${props.full ? 0.5 : 1};
+  `};
+`;
+
+const ScheduleCalendarFooter = styled.div`
+  height: 48px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #6a6a6a;
+  font-size: 12px;
+`;
+
 const ScheduleListWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -123,7 +170,15 @@ function toTime(minutes) {
   return `${h || 12}:${('00' + m).slice(-2)}`;
 }
 
-export function Schedule({ courses, credits, crns, events, detailed }) {
+export function Schedule({
+  courses,
+  credits,
+  crns,
+  events,
+  onlines,
+  unknowns,
+  detailed
+}) {
   const schedule_start = 450;
   const schedule_end = 1230;
   const schedule_length = schedule_end - schedule_start;
@@ -159,6 +214,48 @@ export function Schedule({ courses, credits, crns, events, detailed }) {
           </ScheduleMeet>
         ))}
       </ScheduleCalendar>
+      <ScheduleCalendarFooter>
+        {onlines.length || unknowns.length ? (
+          <Fragment>
+            {onlines.map((online, i) => (
+              <OnlineSection
+                key={i}
+                color={colors[crns.indexOf(online.crn)] || '#4a4a4a'}
+                column={i}
+                full={online.slots <= 0}
+              >
+                <span className="course-name">{online.name}</span>
+                <span>Online</span>
+                {detailed && <span>{online.instructor}</span>}
+                {detailed && (
+                  <div className="slots">
+                    <span>{online.slots} Seats</span>
+                  </div>
+                )}
+              </OnlineSection>
+            ))}
+            {unknowns.map((online, i) => (
+              <OnlineSection
+                key={i}
+                color={colors[crns.indexOf(online.crn)] || '#4a4a4a'}
+                column={i + onlines.length}
+                full={online.slots <= 0}
+              >
+                <span className="course-name">{online.name}</span>
+                <span>TBA</span>
+                {detailed && <span>{online.instructor}</span>}
+                {detailed && (
+                  <div className="slots">
+                    <span>{online.slots} Seats</span>
+                  </div>
+                )}
+              </OnlineSection>
+            ))}
+          </Fragment>
+        ) : (
+          <span>No online sections or sections with unknown times</span>
+        )}
+      </ScheduleCalendarFooter>
       <ScheduleFooter>
         <span>{crns.join(', ')}</span>
         <span>

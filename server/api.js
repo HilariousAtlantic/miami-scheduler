@@ -126,7 +126,8 @@ module.exports = function(db) {
                   location:
                     courseSchedule.buildingCode && courseSchedule.room
                       ? `${courseSchedule.buildingCode} ${courseSchedule.room}`
-                      : 'TBA'
+                      : 'TBA',
+                  online: courseSchedule.buildingCode === 'WEB'
                 })),
               _.isEqual
             )
