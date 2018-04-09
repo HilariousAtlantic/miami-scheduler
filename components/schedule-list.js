@@ -157,6 +157,7 @@ const ScheduleCalendarFooter = styled.div`
   align-items: center;
   color: #6a6a6a;
   font-size: 12px;
+  box-shadow: -2px -2px 8px rgba(255, 255, 255, 0.2);
 `;
 
 const ScheduleListWrapper = styled.div`
@@ -214,8 +215,8 @@ export function Schedule({
           </ScheduleMeet>
         ))}
       </ScheduleCalendar>
-      <ScheduleCalendarFooter>
-        {onlines.length || unknowns.length ? (
+      {onlines.length + unknowns.length > 0 && (
+        <ScheduleCalendarFooter>
           <Fragment>
             {onlines.map((online, i) => (
               <OnlineSection
@@ -252,10 +253,8 @@ export function Schedule({
               </OnlineSection>
             ))}
           </Fragment>
-        ) : (
-          <span>No online sections or sections with unknown times</span>
-        )}
-      </ScheduleCalendarFooter>
+        </ScheduleCalendarFooter>
+      )}
       <ScheduleFooter>
         <span>{crns.join(', ')}</span>
         <span>
