@@ -60,6 +60,7 @@ export default function() {
           <h2>Donators</h2>
           <ul>
             <li>Ryan - $5</li>
+            <li>Bianca - $5</li>
             <li>Neal - $1</li>
           </ul>
         </section>
