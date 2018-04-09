@@ -139,19 +139,19 @@ class SearchResults extends Component {
           <MessageWrapper>
             <h4>No Results</h4>
             <Message>
-              <span>Show all courses in a subject</span>
+              <span>Search for courses in subjects</span>
               <em>"ENG", "CSE", "ACC BUS"</em>
             </Message>
             <Message>
-              <span>Show all courses starting with a number</span>
+              <span>Search for starting course numbers</span>
               <em>"ENG 1", "CSE 27", "BUS 3 4"</em>
             </Message>
             <Message>
-              <span>Show a specific course</span>
+              <span>Search for specific courses</span>
               <em>"ENG 111", "CSE 174"</em>
             </Message>
             <Message>
-              <span>Search for a keyword in the title</span>
+              <span>Search for a keyword in the course title</span>
               <em>"Intro", "History", "Studies"</em>
             </Message>
           </MessageWrapper>
