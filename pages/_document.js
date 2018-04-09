@@ -35,6 +35,7 @@ export default class extends Document {
             src="https://www.googletagmanager.com/gtag/js?id=UA-93847501-1"
           />
           <script src="/static/analytics.js" />
+          <script src="/static/fullstory.js" />
           {this.props.styleTags}
         </Head>
         <body>
