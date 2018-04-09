@@ -36,23 +36,23 @@ module.exports = function(db) {
     const subject = parts.filter(part => subjects.includes(part));
     const number = parts.filter(part => /\d{1,3}[A-Z]{0,3}/.test(part));
     const keyword = parts[0];
-    const where = [`WHERE term = '${term}'`];
+    const wheres = [`WHERE term = '${term}'`];
 
     if (subject.length) {
-      where.push(
+      wheres.push(
         `subject IN (${subject.map(subject => `'${subject}'`).join(',')})`
       );
     }
 
     if (number.length) {
-      where.push(
+      wheres.push(
         `(${number.map(number => `number LIKE '${number}%'`).join(' OR ')})`
       );
     }
 
-    if (where.length === 1 && keyword) {
-      where.push(
-        `UPPER(title) LIKE '${keyword}%' OR UPPER(title) LIKE '% ${keyword}%'`
+    if (wheres.length === 1 && keyword) {
+      wheres.push(
+        `(UPPER(title) LIKE '${keyword}%' OR UPPER(title) LIKE '% ${keyword}%')`
       );
     }
 
@@ -60,7 +60,7 @@ module.exports = function(db) {
       const courses = await db.query(`
         SELECT * 
         FROM courses 
-        ${where.join(' AND ')}
+        ${wheres.join(' AND ')}
         ORDER BY subject, number
         LIMIT 200
       `);
