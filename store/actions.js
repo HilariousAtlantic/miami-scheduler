@@ -254,7 +254,8 @@ export function applyFilters(getState, setState) {
           )
         ),
         filtersChanged: false,
-        currentSchedule: 0
+        currentSchedule: 0,
+        lockedSections: []
       };
     });
   };
