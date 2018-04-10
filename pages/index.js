@@ -8,7 +8,6 @@ import {
   TermSelectorContainer,
   CourseSearchContainer,
   ScheduleFiltersContainer,
-  ScheduleToolbarContainer,
   SearchResultsContainer,
   SelectedCoursesContainer
 } from '../components';
@@ -157,7 +156,6 @@ const ScheduleGenerator = withStore(
                 <SectionHeader>3. Browse Schedules</SectionHeader>
                 {showScheduleSection ? (
                   <Fragment>
-                    <ScheduleToolbarContainer />
                     <ScheduleListContainer />
                   </Fragment>
                 ) : (

@@ -3,19 +3,7 @@ import styled from 'styled-components';
 import { transparentize, darken } from 'polished';
 
 import { StoreConsumer } from '../store';
-
-const days = ['M', 'T', 'W', 'R', 'F'];
-const days_detailed = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-const schedulesPerPage = {
-  detailed: 1,
-  compact: 3
-};
-
-const scheduleSorts = {
-  start_time_asc: (a, b) => a.weight - b.weight,
-  start_time_desc: (a, b) => b.weight - a.weight
-};
+import { SectionList } from './section-list';
 
 const colors = [
   '#0D47A1',
@@ -28,19 +16,13 @@ const colors = [
 ];
 
 const ScheduleWrapper = styled.div`
-  height: 720px;
-  min-width: 400px;
-  max-width: 960px;
+  height: 85vh;
   flex: 1;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background: #ffffff;
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
-
-  + div {
-    margin-left: 16px;
-  }
 `;
 
 const ScheduleHeader = styled.div`
@@ -60,20 +42,6 @@ const ScheduleCalendar = styled.div`
   flex: 1;
   position: relative;
   overflow-y: scroll;
-`;
-
-const ScheduleFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 500;
-  color: #4a4a4a;
-  background: #f5f5f5;
-  padding: 16px;
-
-  .fa-download {
-    margin-right: 4px;
-  }
 `;
 
 const ScheduleMeet = styled.div`
@@ -98,6 +66,12 @@ const ScheduleMeet = styled.div`
   .slots {
     position: absolute;
     top: 4px;
+    right: 4px;
+  }
+
+  .crn {
+    position: absolute;
+    bottom: 4px;
     right: 4px;
   }
 
@@ -137,6 +111,12 @@ const OnlineSection = styled.div`
     right: 4px;
   }
 
+  .crn {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+  }
+
   ${props => `
     top: 0;
     bottom: 0;
@@ -148,7 +128,7 @@ const OnlineSection = styled.div`
   `};
 `;
 
-const ScheduleCalendarFooter = styled.div`
+const ScheduleFooter = styled.div`
   height: 48px;
   position: relative;
   display: flex;
@@ -160,9 +140,35 @@ const ScheduleCalendarFooter = styled.div`
   box-shadow: -2px -2px 8px rgba(255, 255, 255, 0.2);
 `;
 
-const ScheduleListWrapper = styled.div`
+const ScheduleList = styled.div`
+  position: relative;
+`;
+
+const BrowserButton = styled.button`
+  position: absolute;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  font-size: 48px;
+  color: #6a6a6a;
+  border: none;
+  background: transparent;
+  top: 50%;
+  transform: translateY(-50%);
+  outline: none;
+  cursor: pointer;
+  ${props => (props.prev ? 'left: -88px;' : 'right: -88px;')};
+
+  span {
+    line-height: 32px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &:hover {
+    color: #4a4a4a;
+  }
 `;
 
 function toTime(minutes) {
@@ -177,46 +183,47 @@ export function Schedule({
   crns,
   events,
   onlines,
-  unknowns,
-  detailed
+  unknowns
 }) {
   const schedule_start = 450;
   const schedule_end = 1230;
   const schedule_length = schedule_end - schedule_start;
 
   return (
-    <ScheduleWrapper detailed={detailed}>
+    <ScheduleWrapper>
       <ScheduleHeader>
-        {(detailed ? days_detailed : days).map(day => (
-          <span key={day}>{day}</span>
-        ))}
+        <span>Monday</span>
+        <span>Tuesday</span>
+        <span>Wednesday</span>
+        <span>Thursday</span>
+        <span>Friday</span>
       </ScheduleHeader>
       <ScheduleCalendar>
         {events.map((event, i) => (
           <ScheduleMeet
             key={i}
             color={colors[crns.indexOf(event.crn)] || '#4a4a4a'}
-            column={days.indexOf(event.day)}
+            column={'MTWRF'.indexOf(event.day)}
             start={(event.start - schedule_start) / schedule_length}
             length={(event.end - event.start) / schedule_length}
             full={event.slots <= 0}
           >
             <span className="course-name">{event.name}</span>
             <span>
-              {toTime(event.start)} - {toTime(event.end)}{' '}
-              {detailed && event.location}
+              {toTime(event.start)} - {toTime(event.end)} {event.location}
             </span>
-            {detailed && <span>{event.instructor}</span>}
-            {detailed && (
-              <div className="slots">
-                <span>{event.slots} Seats</span>
-              </div>
-            )}
+            <span>{event.instructor}</span>
+            <div className="slots">
+              <span>{event.slots} Seats</span>
+            </div>
+            <div className="crn">
+              <span>{event.crn}</span>
+            </div>
           </ScheduleMeet>
         ))}
       </ScheduleCalendar>
       {onlines.length + unknowns.length > 0 && (
-        <ScheduleCalendarFooter>
+        <ScheduleFooter>
           <Fragment>
             {onlines.map((online, i) => (
               <OnlineSection
@@ -227,12 +234,13 @@ export function Schedule({
               >
                 <span className="course-name">{online.name}</span>
                 <span>Online</span>
-                {detailed && <span>{online.instructor}</span>}
-                {detailed && (
-                  <div className="slots">
-                    <span>{online.slots} Seats</span>
-                  </div>
-                )}
+                <span>{online.instructor}</span>
+                <div className="slots">
+                  <span>{online.slots} Seats</span>
+                </div>
+                <div className="crn">
+                  <span>{online.crn}</span>
+                </div>
               </OnlineSection>
             ))}
             {unknowns.map((online, i) => (
@@ -244,45 +252,19 @@ export function Schedule({
               >
                 <span className="course-name">{online.name}</span>
                 <span>TBA</span>
-                {detailed && <span>{online.instructor}</span>}
-                {detailed && (
-                  <div className="slots">
-                    <span>{online.slots} Seats</span>
-                  </div>
-                )}
+                <span>{online.instructor}</span>
+                <div className="slots">
+                  <span>{online.slots} Seats</span>
+                </div>
+                <div className="crn">
+                  <span>{online.crn}</span>
+                </div>
               </OnlineSection>
             ))}
           </Fragment>
-        </ScheduleCalendarFooter>
+        </ScheduleFooter>
       )}
-      <ScheduleFooter>
-        <span>{crns.join(', ')}</span>
-        <span>
-          {credits} {detailed && 'Credits'}
-        </span>
-      </ScheduleFooter>
     </ScheduleWrapper>
-  );
-}
-
-function getSchedules(state) {
-  const index = state.currentSchedule * schedulesPerPage[state.scheduleView];
-  return state.filteredSchedules
-    .sort(scheduleSorts[state.scheduleSort])
-    .slice(index, index + schedulesPerPage[state.scheduleView]);
-}
-
-function ScheduleList({ schedules, view }) {
-  return (
-    <ScheduleListWrapper>
-      {schedules.map(schedule => (
-        <Schedule
-          key={schedule.crns.join(',')}
-          detailed={view === 'detailed'}
-          {...schedule}
-        />
-      ))}
-    </ScheduleListWrapper>
   );
 }
 
@@ -290,11 +272,38 @@ export function ScheduleListContainer() {
   return (
     <StoreConsumer>
       {(state, actions) => {
+        const schedules = state.filteredSchedules.filter(schedule =>
+          state.lockedSections.every(crn => schedule.crns.includes(crn))
+        );
+        const index = state.currentSchedule;
+        const schedule = schedules[index];
         return (
-          <ScheduleList
-            schedules={getSchedules(state)}
-            view={state.scheduleView}
-          />
+          <ScheduleList>
+            {index > 0 && (
+              <BrowserButton prev onClick={() => actions.prevSchedule()}>
+                <i className="fa fa-arrow-alt-circle-left" />
+                <span>
+                  {index} of {schedules.length}
+                </span>
+              </BrowserButton>
+            )}
+            {index < schedules.length - 1 && (
+              <BrowserButton onClick={() => actions.nextSchedule()}>
+                <i className="fa fa-arrow-alt-circle-right" />
+                <span>
+                  {index + 2} of {schedules.length}
+                </span>
+              </BrowserButton>
+            )}
+            <Schedule {...schedule} />
+            <SectionList
+              sections={schedule.sections}
+              lockedSections={state.lockedSections}
+              onSelectSection={section =>
+                actions.toggleLockedSection(section.crn)
+              }
+            />
+          </ScheduleList>
         );
       }}
     </StoreConsumer>

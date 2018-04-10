@@ -2,11 +2,6 @@ import axios from 'axios';
 
 import { getSchedules } from './generator';
 
-const schedulesPerPage = {
-  detailed: 1,
-  compact: 3
-};
-
 const filterDefauls = {
   class_time: {
     operator: 'start_after',
@@ -148,7 +143,8 @@ export function selectCourse(getState, setState, getActions) {
           ...state.coursesByCode,
           [course.code]: course
         },
-        loadingCourses: state.loadingCourses.concat(course.code)
+        loadingCourses: state.loadingCourses.concat(course.code),
+        lockedSections: []
       };
     });
 
@@ -182,7 +178,8 @@ export function deselectCourse(getState, setState, getActions) {
       if (selectedCourses.includes(code)) {
         return {
           selectedCourses: selectedCourses.filter(c => c !== code),
-          currentSchedule: 0
+          currentSchedule: 0,
+          lockedSections: []
         };
       } else {
         return { selectedCourses };
@@ -263,35 +260,6 @@ export function applyFilters(getState, setState) {
   };
 }
 
-export function selectScheduleView(getState, setState) {
-  return function(view) {
-    setState(({ scheduleView }) => {
-      if (scheduleView !== view) {
-        return {
-          scheduleView: view,
-          currentSchedule: 0
-        };
-      } else {
-        return {};
-      }
-    });
-  };
-}
-
-export function selectScheduleSort(getState, setState) {
-  return function(sort) {
-    setState(({ scheduleSort }) => {
-      if (scheduleSort !== sort) {
-        return {
-          scheduleSort: sort
-        };
-      } else {
-        return {};
-      }
-    });
-  };
-}
-
 export function prevSchedule(getState, setState) {
   return function() {
     setState(({ currentSchedule }) => {
@@ -304,15 +272,30 @@ export function prevSchedule(getState, setState) {
 
 export function nextSchedule(getState, setState) {
   return function() {
-    setState(({ currentSchedule, generatedSchedules, scheduleView }) => {
+    setState(({ currentSchedule, filteredSchedules, scheduleView }) => {
       return {
-        currentSchedule: Math.min(
-          currentSchedule + 1,
-          Math.ceil(
-            generatedSchedules.length / schedulesPerPage[scheduleView]
-          ) - 1
-        )
+        currentSchedule: Math.min(currentSchedule + 1, filteredSchedules.length)
       };
+    });
+  };
+}
+
+export function toggleLockedSection(getState, setState) {
+  return function(crn) {
+    setState(state => {
+      if (state.lockedSections.includes(crn)) {
+        return {
+          lockedSections: state.lockedSections.filter(
+            section => section !== crn
+          ),
+          currentSchedule: 0
+        };
+      } else {
+        return {
+          lockedSections: state.lockedSections.concat(crn),
+          currentSchedule: 0
+        };
+      }
     });
   };
 }

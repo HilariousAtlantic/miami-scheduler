@@ -75,6 +75,7 @@ function isValidSchedule(schedule) {
 }
 
 function formatSchedule(schedule) {
+  const sections = [];
   const crns = [];
   const events = [];
   const onlines = [];
@@ -95,6 +96,10 @@ function formatSchedule(schedule) {
   };
 
   for (let { course, section } of schedule) {
+    sections.push({
+      crn: section.crn,
+      title: `${course.subject} ${course.number} ${section.name}`
+    });
     crns.push(section.crn);
     credits.low += section.credits[0];
     credits.high += section.credits[1] || section.credits[0];
@@ -140,6 +145,7 @@ function formatSchedule(schedule) {
       credits.low !== credits.high
         ? `${credits.low} - ${credits.high}`
         : credits.low,
+    sections,
     crns,
     events,
     onlines,
