@@ -59,12 +59,13 @@ export default function() {
           </p>
           <h2>Donators</h2>
           <ul>
-            <li>Ryan - $5</li>
-            <li>Bianca - $5</li>
-            <li>Chris - $5</li>
-            <li>Griffin - $5</li>
-            <li>Joseph - $5</li>
-            <li>Neal - $1</li>
+            <li>Ryan H. - $5</li>
+            <li>Bianca O. - $5</li>
+            <li>Chris G. - $5</li>
+            <li>Griffin J. - $5</li>
+            <li>Joseph B. - $5</li>
+            <li>Lynette L. - $5</span>
+            <li>Neal H. - $1</li>
           </ul>
         </section>
         <section>
