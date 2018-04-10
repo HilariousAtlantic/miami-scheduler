@@ -64,7 +64,7 @@ export default function() {
             <li>Chris G. - $5</li>
             <li>Griffin J. - $5</li>
             <li>Joseph B. - $5</li>
-            <li>Lynette L. - $5</span>
+            <li>Lynette L. - $5</li>
             <li>Neal H. - $1</li>
           </ul>
         </section>
