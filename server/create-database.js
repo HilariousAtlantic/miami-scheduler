@@ -6,7 +6,9 @@ run();
 async function run() {
   try {
     const db = await connectDatabase();
+    console.log('Creating tables...');
     await createTables(db);
+    console.log('Tables created');
     process.exit();
   } catch (error) {
     console.error('Error during import.');
@@ -16,15 +18,13 @@ async function run() {
 
 async function createTables(db) {
   return await db.query(`
-    DROP TABLE IF EXISTS terms;
-    CREATE TABLE terms (
+    CREATE TABLE IF NOT EXISTS terms (
       id serial primary key,
       code varchar(8) not null,
       name varchar(64) not null
     );
 
-    DROP TABLE IF EXISTS courses;
-    CREATE TABLE courses (
+    CREATE TABLE IF NOT EXISTS courses (
       id serial primary key,
       term varchar(8) not null,
       code varchar(16) not null,
@@ -33,6 +33,12 @@ async function createTables(db) {
       title varchar(256) not null,
       description text not null,
       searchables text not null
+    );
+
+    CREATE TABLE IF NOT EXISTS donations (
+      id serial primary key,
+      name varchar(32) not null,
+      amount decimal not null
     );
   `);
 }

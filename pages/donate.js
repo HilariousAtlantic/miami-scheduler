@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 import { Navbar } from '../components';
 
@@ -41,40 +42,69 @@ const SplitContainer = styled.div`
   }
 `;
 
-export default function() {
-  return (
-    <DonatePageWrapper>
-      <Navbar activeLink="donate" />
-      <SplitContainer>
-        <section>
-          <h1>Every donation helps!</h1>
-          <p>
-            We pay for the domain and the hosting out of our own pocket,
-            averaging around <strong>$5 per month</strong> in addition to the
-            hours of blood, sweat, and tears put into this project.
-          </p>
-          <p>
-            Of course, we wanted to do this regardless of the cost, but it would
-            be awesome if this could pay for itself and maybe a beer or two!
-          </p>
-          <h2>Donators</h2>
-          <ul>
-            <li>Ryan H. - $5</li>
-            <li>Bianca O. - $5</li>
-            <li>Chris G. - $5</li>
-            <li>Griffin J. - $5</li>
-            <li>Joseph B. - $5</li>
-            <li>Lynette L. - $5</li>
-            <li>Neal H. - $1</li>
-          </ul>
-        </section>
-        <section>
-          <img
-            className="venmo-screenshot"
-            src="/static/venmo_screenshot.jpg"
-          />
-        </section>
-      </SplitContainer>
-    </DonatePageWrapper>
-  );
+const List = styled.ul``;
+
+const ListItem = styled.li`
+  display: flex;
+  list-style: none;
+  margin-bottom: 8px;
+
+  span:first-of-type {
+    flex: 1;
+  }
+
+  span:last-of-type {
+    min-width: 200px;
+  }
+`;
+
+export default class DonationPage extends Component {
+  state = {
+    donations: []
+  };
+
+  async componentDidMount() {
+    const { data } = await axios.get('/api/donations');
+    this.setState({
+      donations: data.donations
+    });
+  }
+
+  render() {
+    return (
+      <DonatePageWrapper>
+        <Navbar activeLink="donate" />
+        <SplitContainer>
+          <section>
+            <h1>Every donation helps!</h1>
+            <p>
+              We pay for the domain and the hosting out of our own pocket,
+              averaging around <strong>$5 per month</strong> in addition to the
+              hours of blood, sweat, and tears put into this project.
+            </p>
+            <p>
+              Of course, we wanted to do this regardless of the cost, but it
+              would be awesome if this could pay for itself and maybe a beer or
+              two!
+            </p>
+            <h2>Donators</h2>
+            <List>
+              {this.state.donations.map(donation => (
+                <ListItem key={donation.id}>
+                  <span>{donation.name}</span>
+                  <span>${parseFloat(donation.amount).toFixed(2)}</span>
+                </ListItem>
+              ))}
+            </List>
+          </section>
+          <section>
+            <img
+              className="venmo-screenshot"
+              src="/static/venmo_screenshot.jpg"
+            />
+          </section>
+        </SplitContainer>
+      </DonatePageWrapper>
+    );
+  }
 }

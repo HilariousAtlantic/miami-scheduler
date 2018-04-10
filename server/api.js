@@ -159,7 +159,56 @@ module.exports = function(db) {
       await sendgrid.send(msg);
       res.sendStatus(201);
     } catch (error) {
-      res.sendStatus(400);
+      console.error(e.stack);
+      res.sendStatus(500);
+    }
+  });
+
+  router.get('/donations', async (req, res) => {
+    try {
+      const donations = await db.donations.find(
+        {},
+        {
+          order: 'amount desc, id'
+        }
+      );
+      res.json({ donations });
+    } catch (e) {
+      console.error(e.stack);
+      res.sendStatus(500);
+    }
+  });
+
+  router.post('/donations', async (req, res) => {
+    const { key } = req.query;
+    if (!key || key !== process.env.DONATION_API_KEY) {
+      return res.sendStatus(401);
+    }
+    const { donations } = req.body;
+    if (!donations) {
+      return res.sendStatus(400);
+    }
+    try {
+      const donation = await db.donations.insert(donations);
+      res.json({ donations });
+    } catch (e) {
+      console.error(e.stack);
+      res.sendStatus(500);
+    }
+  });
+
+  router.delete('/donations/:id', async (req, res) => {
+    const { key } = req.query;
+    if (!key || key !== process.env.DONATION_API_KEY) {
+      return res.sendStatus(401);
+    }
+    const { id } = req.params;
+    try {
+      await db.donations.destroy(parseInt(id));
+      res.sendStatus(200);
+    } catch (e) {
+      console.error(e.stack);
+      res.sendStatus(500);
     }
   });
 
