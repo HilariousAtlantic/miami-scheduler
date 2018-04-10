@@ -52,9 +52,6 @@ const filterFunctions = {
   class_load({ class_loads }, filter) {
     for (let day of filter.days) {
       switch (filter.operator) {
-        case 'less_than':
-          if (class_loads[day] >= filter.amount) return false;
-          else break;
         case 'at_most':
           if (class_loads[day] > filter.amount) return false;
           else break;
@@ -63,9 +60,6 @@ const filterFunctions = {
           else break;
         case 'at_least':
           if (class_loads[day] < filter.amount) return false;
-          else break;
-        case 'more_than':
-          if (class_loads[day] <= filter.amount) return false;
           else break;
       }
     }

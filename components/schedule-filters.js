@@ -107,11 +107,9 @@ function AmountOperatorSelector(props) {
     <InlineSelector
       {...props}
       options={[
-        { value: 'less_than', name: 'less than' },
         { value: 'at_most', name: 'at most' },
         { value: 'exactly', name: 'exactly' },
-        { value: 'at_least', name: 'at least' },
-        { value: 'more_than', name: 'more than' }
+        { value: 'at_least', name: 'at least' }
       ]}
     />
   );
