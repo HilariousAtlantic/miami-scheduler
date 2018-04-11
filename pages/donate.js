@@ -15,12 +15,23 @@ const SplitContainer = styled.div`
   margin: 64px auto;
   display: flex;
 
+  @media screen and (max-width: 960px) {
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      width: 100%;
+    }
+  }
+
   section {
     flex: 1;
     padding: 32px;
+    max-width: 400px;
   }
 
   h1 {
+    font-size: 24px;
     font-weight: 500;
   }
 
