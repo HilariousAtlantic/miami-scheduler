@@ -21,7 +21,7 @@ export default class extends Document {
           />
           <meta
             name="google-site-verification"
-            content="EIyoMY_ypFI8110eifgTTSgqOzMeWq36easCbUJ0uKQ"
+            content="UdR6JMfwUEVrwQjIAKWfZZxpVaWeONAKgv0vyuHASQw"
           />
           <title>Miami Scheduler</title>
           <link
