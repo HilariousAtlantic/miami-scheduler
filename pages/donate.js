@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import Head from 'next/head';
 
 import { Navbar } from '../components';
 
@@ -73,6 +74,12 @@ export default class DonationPage extends Component {
   render() {
     return (
       <DonatePageWrapper>
+        <Head>
+          <meta
+            name="description"
+            content="You can support us by sending over some pocket change to help pay for server hosting and the occasional beer."
+          />
+        </Head>
         <Navbar activeLink="donate" />
         <SplitContainer>
           <section>

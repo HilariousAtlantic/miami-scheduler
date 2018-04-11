@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
+import Head from 'next/head';
 
 import { StoreProvider, withStore } from '../store';
 import {
@@ -181,5 +182,19 @@ const ScheduleGenerator = withStore(
 );
 
 export default function() {
-  return <StoreProvider>{() => <ScheduleGenerator />}</StoreProvider>;
+  return (
+    <StoreProvider>
+      {() => (
+        <Fragment>
+          <Head>
+            <meta
+              name="description"
+              content="Find the perfect schedule at Miami University. Choose the courses you want to take, and browse through every possible schedule. Use the filters to narrow down your choices to schedules that fit your preferences."
+            />
+          </Head>
+          <ScheduleGenerator />
+        </Fragment>
+      )}
+    </StoreProvider>
+  );
 }

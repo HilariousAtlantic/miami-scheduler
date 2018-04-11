@@ -49,9 +49,10 @@ const DonateButton = styled.button`
   padding: 12px 24px;
   color: #3d95ce;
   font-weight: 900;
-  margin-left: 32px;
   font-size: 12px;
   cursor: pointer;
+  text-decoration: none;
+  outline: none;
 
   &:hover {
     background: #3d95ce;
@@ -99,10 +100,12 @@ export function Navbar({ activeLink }) {
           </a>
         </Link>
         <Link href="/donate" prefetch>
-          <DonateButton>
-            {VenmoIcon}
-            <span>Donate</span>
-          </DonateButton>
+          <a>
+            <DonateButton>
+              {VenmoIcon}
+              <span>Donate</span>
+            </DonateButton>
+          </a>
         </Link>
       </Links>
     </NavbarWrapper>

@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import { Form, Text, RadioGroup, Radio, TextArea } from 'react-form';
 import axios from 'axios';
+import Head from 'next/head';
 
 import { Navbar } from '../components';
 
@@ -115,6 +116,12 @@ export default class extends Component {
   render() {
     return (
       <FeedbackWrapper>
+        <Head>
+          <meta
+            name="description"
+            content="Help us improve your experience by reporting any issues and offering suggestions for new features."
+          />
+        </Head>
         <Navbar activeLink="feedback" />
 
         {this.state.submitted ? (
