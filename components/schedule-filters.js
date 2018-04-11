@@ -9,6 +9,10 @@ import { DayPicker, IconButton, Button } from './button';
 
 const ScheduleFiltersWrapper = styled.div`
   grid-area: schedule-filters;
+
+  @media screen and (max-width: 480px) {
+    display: none;
+  }
 `;
 
 const FilterWrapper = styled.div`

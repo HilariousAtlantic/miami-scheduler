@@ -41,6 +41,16 @@ const CourseSelector = styled.div`
     'course-search term-selector'
     'search-results search-results'
     'selected-courses selected-courses';
+
+  @media screen and (max-width: 480px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 48px 48px 320px auto;
+    grid-template-areas:
+      'term-selector'
+      'course-search'
+      'search-results'
+      'selected-courses';
+  }
 `;
 
 const GenerationSection = styled.section`

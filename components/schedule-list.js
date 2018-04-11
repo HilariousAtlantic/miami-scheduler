@@ -75,6 +75,13 @@ const ScheduleMeet = styled.div`
     right: 4px;
   }
 
+  @media screen and (max-width: 480px) {
+    .slots,
+    .crn {
+      display: none;
+    }
+  }
+
   ${props => `
     top: ${props.start * 100}%;
     height: ${props.length * 100}%;
@@ -115,6 +122,13 @@ const OnlineSection = styled.div`
     position: absolute;
     bottom: 4px;
     right: 4px;
+  }
+
+  @media screen and (max-width: 480px) {
+    .slots,
+    .crn {
+      display: none;
+    }
   }
 
   ${props => `
@@ -168,6 +182,14 @@ const BrowserButton = styled.button`
 
   &:hover {
     color: #4a4a4a;
+  }
+
+  @media screen and (max-width: 480px) {
+    top: unset;
+    bottom: -96px;
+    transform: none;
+
+    ${props => (props.prev ? 'left: 48px;' : 'right: 48px;')};
   }
 `;
 

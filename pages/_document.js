@@ -15,7 +15,10 @@ export default class extends Document {
     return (
       <html>
         <Head>
-          <meta name="viewport" content="width=device-width" />
+          <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1,user-scalable=no"
+          />
           <title>Miami Scheduler</title>
           <link
             rel="stylesheet"

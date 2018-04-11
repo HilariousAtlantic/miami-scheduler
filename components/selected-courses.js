@@ -22,6 +22,11 @@ const List = styled.ul`
   grid-template-columns: repeat(6, 1fr);
   grid-auto-rows: 40px;
   grid-gap: 8px;
+
+  @media screen and (max-width: 480px) {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 40px;
+  }
 `;
 
 const ListItem = styled.li`

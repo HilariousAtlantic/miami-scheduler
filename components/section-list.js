@@ -23,6 +23,10 @@ const HelpMessage = styled.span`
 const SectionListWrapper = styled.div`
   margin-top: 8px;
 
+  @media screen and (max-width: 480px) {
+    display: none;
+  }
+
   &:hover ${HelpMessage} {
     opacity: 1;
   }

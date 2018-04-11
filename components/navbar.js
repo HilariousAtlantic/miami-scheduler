@@ -37,6 +37,12 @@ const Links = styled.nav`
   a + a {
     margin-left: 24px;
   }
+
+  @media screen and (max-width: 480px) {
+    a:not(:last-of-type) {
+      display: none;
+    }
+  }
 `;
 
 const DonateButton = styled.button`
@@ -87,7 +93,9 @@ const VenmoIcon = (
 export function Navbar({ activeLink }) {
   return (
     <NavbarWrapper>
-      <Brand>Miami Scheduler</Brand>
+      <Link href="/" prefetch>
+        <Brand href="">Miami Scheduler</Brand>
+      </Link>
       <Links>
         <Link href="/" prefetch>
           <a className={activeLink === 'generator' ? 'active' : ''}>

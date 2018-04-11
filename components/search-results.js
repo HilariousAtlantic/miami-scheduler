@@ -53,6 +53,10 @@ const Expanded = styled.div`
     font-size: 12px;
     line-height: 1.6;
   }
+
+  @media screen and (max-width: 480px) {
+    display: none;
+  }
 `;
 
 const MessageWrapper = styled.div`
