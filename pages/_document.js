@@ -19,6 +19,10 @@ export default class extends Document {
             name="viewport"
             content="width=device-width,initial-scale=1,user-scalable=no"
           />
+          <meta
+            name="google-site-verification"
+            content="EIyoMY_ypFI8110eifgTTSgqOzMeWq36easCbUJ0uKQ"
+          />
           <title>Miami Scheduler</title>
           <link
             rel="stylesheet"
