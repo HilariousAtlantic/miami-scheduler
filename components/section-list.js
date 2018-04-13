@@ -46,15 +46,25 @@ const ListItem = styled.li`
   justify-content: space-between;
   color: #fff;
   background: ${props => props.color || '#4a4a4a'};
-  padding: 16px;
+
   font-size: 12px;
   font-weight: 500;
-  opacity: ${props => (props.loading ? 0.5 : 1)};
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+`;
 
-  i {
-    cursor: pointer;
+const SectionInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  span:last-of-type {
+    font-size: 10px;
+    font-weight: 400;
   }
+`;
+
+const SectionAction = styled.div`
+  cursor: pointer;
 `;
 
 export function SectionList({ sections, lockedSections, onSelectSection }) {
@@ -63,13 +73,18 @@ export function SectionList({ sections, lockedSections, onSelectSection }) {
       <List>
         {sections.map((section, i) => (
           <ListItem key={section.crn} color={colors[i]}>
-            <span>{section.title}</span>
-            <i
-              className={`fa fa-${
-                lockedSections.includes(section.crn) ? 'lock' : 'lock-open'
-              }`}
-              onClick={() => onSelectSection(section)}
-            />
+            <SectionInfo>
+              <span>{section.title}</span>
+              <span>{section.crn}</span>
+            </SectionInfo>
+            <SectionAction>
+              <i
+                className={`fa fa-${
+                  lockedSections.includes(section.crn) ? 'lock' : 'lock-open'
+                }`}
+                onClick={() => onSelectSection(section)}
+              />
+            </SectionAction>
           </ListItem>
         ))}
       </List>

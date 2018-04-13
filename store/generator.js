@@ -60,9 +60,9 @@ function getValidSchedules(getState, onStatus, onFinished) {
 function isValidSchedule(schedule) {
   const validator = {};
   for (let { section } of schedule) {
-    for (let meet of section.meets) {
-      for (let day of meet.days) {
-        for (let time = meet.start_time; time <= meet.end_time; time += 5) {
+    for (let event of section.events) {
+      for (let day of event.days) {
+        for (let time = event.start_time; time <= event.end_time; time += 5) {
           if (time >= 0 && validator[day + time]) {
             return false;
           }
@@ -103,40 +103,24 @@ function formatSchedule(schedule) {
     crns.push(section.crn);
     credits.low += section.credits[0];
     credits.high += section.credits[1] || section.credits[0];
-    for (let meet of section.meets) {
-      if (meet.online) {
-        onlines.push({
+    for (let event of section.events) {
+      for (let day of event.days) {
+        weight_builder.total += event.start_time;
+        weight_builder.count++;
+        class_loads[day]++;
+        class_times[day].push({ start: event.start_time, end: event.end_time });
+        start_times[day] = Math.min(start_times[day], event.start_time);
+        end_times[day] = Math.max(end_times[day], event.end_time);
+        events.push({
           name: `${course.subject} ${course.number} ${section.name}`,
           crn: section.crn,
+          day,
+          start: event.start_time,
+          end: event.end_time,
+          location: event.location,
           instructor: section.instructor,
-          slots: section.slots
+          seats: section.seats
         });
-      } else if (meet.start_time < 0 || meet.end_time < 0) {
-        unknowns.push({
-          name: `${course.subject} ${course.number} ${section.name}`,
-          crn: section.crn,
-          instructor: section.instructor,
-          slots: section.slots
-        });
-      } else {
-        for (let day of meet.days) {
-          weight_builder.total += meet.start_time;
-          weight_builder.count++;
-          class_loads[day]++;
-          class_times[day].push({ start: meet.start_time, end: meet.end_time });
-          start_times[day] = Math.min(start_times[day], meet.start_time);
-          end_times[day] = Math.max(end_times[day], meet.end_time);
-          events.push({
-            name: `${course.subject} ${course.number} ${section.name}`,
-            crn: section.crn,
-            day,
-            start: meet.start_time,
-            end: meet.end_time,
-            location: meet.location,
-            instructor: section.instructor,
-            slots: section.slots
-          });
-        }
       }
     }
   }

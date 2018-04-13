@@ -3,7 +3,7 @@ require('dotenv');
 const express = require('express');
 const axios = require('axios');
 const sendgrid = require('@sendgrid/mail');
-const _ = require('lodash');
+const { uniqWith, isEqual } = require('lodash');
 
 function toMinutes(time) {
   if (!time) return -1;
@@ -77,60 +77,65 @@ module.exports = function(db) {
       if (!code) {
         return res.json({ sections: [] });
       }
-      const codes = code.split(',');
-      const course = await db.courses.find(
-        { code: codes },
-        {
-          fields: ['term', 'subject', 'number'],
-          single: true
-        }
-      );
 
+      const term = code.slice(0, 6);
+      const subject = code.slice(6, 9);
+      const number = code.slice(9);
       const { data } = await axios.get(
-        `http://ws.miamioh.edu/courseSectionV2/${
-          course.term
-        }.json?campusCode=O&courseSubjectCode=${course.subject}&courseNumber=${
-          course.number
-        }`
+        `http://ws.miamioh.edu/courseSectionV2/${term}.json?campusCode=O&courseSubjectCode=${subject}&courseNumber=${number}`
       );
       const sections = data.courseSections
-        .filter(section => section.courseSchedules.length)
+        .filter(section => section.prntInd === 'Y')
         .map(courseSection => {
           const instructor = courseSection.instructors.find(i =>
             Boolean(i.primaryInstructor)
+          ) || { nameLast: 'TBA' };
+
+          const attributes = courseSection.attributes.reduce(
+            (acc, attr) => ({
+              ...acc,
+              [attr.attributeCode]: attr.attributeDescription
+            }),
+            {}
           );
+
+          const credits = [
+            ...new Set([
+              parseInt(courseSection.creditHoursLow),
+              parseInt(courseSection.creditHoursHigh)
+            ])
+          ];
+
+          const events = uniqWith(
+            courseSection.courseSchedules
+              .filter(
+                courseSchedule =>
+                  courseSchedule.scheduleTypeCode === 'CLAS' &&
+                  courseSchedule.days &&
+                  courseSchedule.startDate &&
+                  courseSchedule.endDate &&
+                  courseSchedule.startDate !== courseSection.endDate
+              )
+              .map(courseSchedule => ({
+                days: courseSchedule.days.split(''),
+                start_time: toMinutes(courseSchedule.startTime),
+                end_time: toMinutes(courseSchedule.endTime),
+                location:
+                  courseSchedule.buildingCode && courseSchedule.room
+                    ? `${courseSchedule.buildingCode} ${courseSchedule.room}`
+                    : 'TBA'
+              })),
+            isEqual
+          );
+
           return {
             crn: courseSection.courseId,
             name: courseSection.courseSectionCode,
-            slots: parseInt(courseSection.enrollmentCountAvailable),
-            instructor: instructor ? instructor.nameLast : 'TBA',
-            credits: [
-              ...new Set([
-                parseInt(courseSection.creditHoursLow),
-                parseInt(courseSection.creditHoursHigh)
-              ])
-            ],
-            meets: _.uniqWith(
-              courseSection.courseSchedules
-                .filter(
-                  courseSection =>
-                    courseSection.scheduleTypeCode === 'CLAS' &&
-                    courseSection.startDate !== courseSection.endDate
-                )
-                .map(courseSchedule => ({
-                  days: courseSchedule.days
-                    ? courseSchedule.days.split('')
-                    : [],
-                  start_time: toMinutes(courseSchedule.startTime),
-                  end_time: toMinutes(courseSchedule.endTime),
-                  location:
-                    courseSchedule.buildingCode && courseSchedule.room
-                      ? `${courseSchedule.buildingCode} ${courseSchedule.room}`
-                      : 'TBA',
-                  online: courseSchedule.buildingCode === 'WEB'
-                })),
-              _.isEqual
-            )
+            seats: parseInt(courseSection.enrollmentCountAvailable),
+            instructor: instructor.nameLast,
+            attributes,
+            credits,
+            events
           };
         });
       res.json({ sections });
@@ -219,9 +224,6 @@ function getMessage(body) {
   switch (body.type) {
     case 'issue':
       return `
-        <strong>Feedback Type</strong>
-        <p>Issue</p>
-
         <strong>Issue Description</strong>
         <p>${body.issue_description}</p>
 
@@ -233,9 +235,6 @@ function getMessage(body) {
       `;
     case 'suggestion':
       return `
-        <strong>Feedback Type</strong>
-        <p>Suggestion</p>
-
         <strong>Suggestion Name</strong>
         <p>${body.suggestion_name}</p>
 
@@ -244,9 +243,6 @@ function getMessage(body) {
       `;
     case 'review':
       return `
-        <strong>Feedback Type</strong>
-        <p>Review</p>
-
         <strong>Rating</strong>
         <p>${body.review_rating}</p>
 
