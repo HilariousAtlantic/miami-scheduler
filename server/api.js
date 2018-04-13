@@ -94,7 +94,9 @@ module.exports = function(db) {
         }`
       );
       const sections = data.courseSections
-        .filter(section => section.courseSchedules.length)
+        .filter(
+          section => section.courseSchedules.length && section.prntInd === 'Y'
+        )
         .map(courseSection => {
           const instructor = courseSection.instructors.find(i =>
             Boolean(i.primaryInstructor)
