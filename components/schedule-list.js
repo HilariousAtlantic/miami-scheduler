@@ -16,7 +16,8 @@ const colors = [
 ];
 
 const ScheduleWrapper = styled.div`
-  height: 85vh;
+  width: 100%;
+  height: 700px;
   flex: 1;
   box-sizing: border-box;
   display: flex;
@@ -44,7 +45,7 @@ const ScheduleCalendar = styled.div`
   overflow-y: scroll;
 `;
 
-const ScheduleMeet = styled.div`
+const ScheduleEvent = styled.div`
   display: flex;
   flex-direction: column;
   width: calc(20% - 4px);
@@ -63,21 +64,14 @@ const ScheduleMeet = styled.div`
     margin-top: 2px;
   }
 
-  .slots {
+  .seats {
     position: absolute;
     top: 4px;
     right: 4px;
   }
 
-  .crn {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-  }
-
   @media screen and (max-width: 480px) {
-    .slots,
-    .crn {
+    .seats {
       display: none;
     }
   }
@@ -93,65 +87,14 @@ const ScheduleMeet = styled.div`
   `};
 `;
 
-const OnlineSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: calc(20% - 4px);
-  position: absolute;
-  box-sizing: border-box;
-  color: #fff;
-  padding: 4px;
-  font-size: 10px;
-  font-weight: 400;
-
-  .course-name {
-    font-weight: 900;
-  }
-
-  span + span {
-    margin-top: 2px;
-  }
-
-  .slots {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-  }
-
-  .crn {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-  }
-
-  @media screen and (max-width: 480px) {
-    .slots,
-    .crn {
-      display: none;
-    }
-  }
-
-  ${props => `
-    top: 0;
-    bottom: 0;
-    border-left: 4px solid ${props.color};
-    color: ${darken(0.2, props.color)};
-    background: ${transparentize(0.8, props.color)};
-    left: ${props.column * 20}%;
-    opacity: ${props.full ? 0.5 : 1};
-  `};
-`;
-
 const ScheduleFooter = styled.div`
-  height: 48px;
-  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #6a6a6a;
+  justify-content: space-between;
+  padding: 16px;
+  background: #fafafa;
+  color: #4a4a4a;
   font-size: 12px;
-  box-shadow: -2px -2px 8px rgba(255, 255, 255, 0.2);
+  font-weight: 500;
 `;
 
 const ScheduleList = styled.div`
@@ -159,20 +102,21 @@ const ScheduleList = styled.div`
 `;
 
 const BrowserButton = styled.button`
-  position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   font-size: 48px;
-  color: #6a6a6a;
+  color: #4a4a4a;
+  opacity: 0.75;
+  transition: opacity 100ms ease-in;
   border: none;
   background: transparent;
-  top: 50%;
-  transform: translateY(-50%);
   outline: none;
   cursor: pointer;
-  ${props => (props.prev ? 'left: -88px;' : 'right: -88px;')};
+  position: absolute;
+  top: calc(50% - 48px);
+  ${props => (props.prev ? 'left: -80px;' : 'right: -80px;')};
 
   span {
     line-height: 32px;
@@ -181,15 +125,13 @@ const BrowserButton = styled.button`
   }
 
   &:hover {
-    color: #4a4a4a;
+    opacity: 1;
   }
 
-  @media screen and (max-width: 480px) {
-    top: unset;
-    bottom: -96px;
-    transform: none;
-
-    ${props => (props.prev ? 'left: 48px;' : 'right: 48px;')};
+  @media screen and (max-width: 1096px) {
+    opacity: 0.25;
+    top: 64px;
+    ${props => (props.prev ? 'left: 16px;' : 'right: 16px;')};
   }
 `;
 
@@ -199,14 +141,7 @@ function toTime(minutes) {
   return `${h || 12}:${('00' + m).slice(-2)}`;
 }
 
-export function Schedule({
-  courses,
-  credits,
-  crns,
-  events,
-  onlines,
-  unknowns
-}) {
+export function Schedule({ credits, crns, events, onlines }) {
   const schedule_start = 450;
   const schedule_end = 1230;
   const schedule_length = schedule_end - schedule_start;
@@ -222,70 +157,46 @@ export function Schedule({
       </ScheduleHeader>
       <ScheduleCalendar>
         {events.map((event, i) => (
-          <ScheduleMeet
+          <ScheduleEvent
             key={i}
             color={colors[crns.indexOf(event.crn)] || '#4a4a4a'}
             column={'MTWRF'.indexOf(event.day)}
             start={(event.start - schedule_start) / schedule_length}
             length={(event.end - event.start) / schedule_length}
-            full={event.slots <= 0}
+            full={event.seats <= 0}
           >
             <span className="course-name">{event.name}</span>
             <span>
               {toTime(event.start)} - {toTime(event.end)} {event.location}
             </span>
             <span>{event.instructor}</span>
-            <div className="slots">
-              <span>{event.slots} Seats</span>
+            <div className="seats">
+              <span>{event.seats} Seats</span>
             </div>
-            <div className="crn">
-              <span>{event.crn}</span>
+          </ScheduleEvent>
+        ))}
+        {onlines.map((event, i) => (
+          <ScheduleEvent
+            key={events.length + i}
+            color={colors[crns.indexOf(event.crn)] || '#4a4a4a'}
+            column={i}
+            start={0}
+            length={55 / schedule_length}
+            full={event.seats <= 0}
+          >
+            <span className="course-name">{event.name}</span>
+            <span>{event.hybrid && 'Hybrid '}Online</span>
+            <span>{event.instructor}</span>
+            <div className="seats">
+              <span>{event.seats} Seats</span>
             </div>
-          </ScheduleMeet>
+          </ScheduleEvent>
         ))}
       </ScheduleCalendar>
-      {onlines.length + unknowns.length > 0 && (
-        <ScheduleFooter>
-          <Fragment>
-            {onlines.map((online, i) => (
-              <OnlineSection
-                key={i}
-                color={colors[crns.indexOf(online.crn)] || '#4a4a4a'}
-                column={i}
-                full={online.slots <= 0}
-              >
-                <span className="course-name">{online.name}</span>
-                <span>Online</span>
-                <span>{online.instructor}</span>
-                <div className="slots">
-                  <span>{online.slots} Seats</span>
-                </div>
-                <div className="crn">
-                  <span>{online.crn}</span>
-                </div>
-              </OnlineSection>
-            ))}
-            {unknowns.map((online, i) => (
-              <OnlineSection
-                key={i}
-                color={colors[crns.indexOf(online.crn)] || '#4a4a4a'}
-                column={i + onlines.length}
-                full={online.slots <= 0}
-              >
-                <span className="course-name">{online.name}</span>
-                <span>TBA</span>
-                <span>{online.instructor}</span>
-                <div className="slots">
-                  <span>{online.slots} Seats</span>
-                </div>
-                <div className="crn">
-                  <span>{online.crn}</span>
-                </div>
-              </OnlineSection>
-            ))}
-          </Fragment>
-        </ScheduleFooter>
-      )}
+      <ScheduleFooter>
+        <span>{crns.join(', ')}</span>
+        <span>{credits} Credits</span>
+      </ScheduleFooter>
     </ScheduleWrapper>
   );
 }
@@ -301,6 +212,14 @@ export function ScheduleListContainer() {
         const schedule = schedules[index];
         return (
           <ScheduleList>
+            <Schedule {...schedule} />
+            <SectionList
+              sections={schedule.sections}
+              lockedSections={state.lockedSections}
+              onSelectSection={section =>
+                actions.toggleLockedSection(section.crn)
+              }
+            />
             {index > 0 && (
               <BrowserButton prev onClick={() => actions.prevSchedule()}>
                 <i className="fa fa-arrow-alt-circle-left" />
@@ -317,14 +236,6 @@ export function ScheduleListContainer() {
                 </span>
               </BrowserButton>
             )}
-            <Schedule {...schedule} />
-            <SectionList
-              sections={schedule.sections}
-              lockedSections={state.lockedSections}
-              onSelectSection={section =>
-                actions.toggleLockedSection(section.crn)
-              }
-            />
           </ScheduleList>
         );
       }}
