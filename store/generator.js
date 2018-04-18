@@ -79,7 +79,6 @@ function formatSchedule(schedule) {
   const crns = [];
   const events = [];
   const onlines = [];
-  const unknowns = [];
   const start_times = { M: 1440, T: 1440, W: 1440, R: 1440, F: 1440 };
   const end_times = { M: 0, T: 0, W: 0, R: 0, F: 0 };
   const class_loads = { M: 0, T: 0, W: 0, R: 0, F: 0 };
@@ -123,6 +122,15 @@ function formatSchedule(schedule) {
         });
       }
     }
+    if (section.attributes['ONL'] || section.attributes['HYB']) {
+      onlines.push({
+        name: `${course.subject} ${course.number} ${section.name}`,
+        crn: section.crn,
+        instructor: section.instructor,
+        seats: section.seats,
+        hybrid: !!section.attributes['HYB']
+      });
+    }
   }
   return {
     credits:
@@ -133,7 +141,6 @@ function formatSchedule(schedule) {
     crns,
     events,
     onlines,
-    unknowns,
     start_times,
     end_times,
     class_loads,

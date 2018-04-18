@@ -141,7 +141,7 @@ function toTime(minutes) {
   return `${h || 12}:${('00' + m).slice(-2)}`;
 }
 
-export function Schedule({ courses, credits, crns, events }) {
+export function Schedule({ credits, crns, events, onlines }) {
   const schedule_start = 450;
   const schedule_end = 1230;
   const schedule_length = schedule_end - schedule_start;
@@ -175,7 +175,28 @@ export function Schedule({ courses, credits, crns, events }) {
             </div>
           </ScheduleEvent>
         ))}
+        {onlines.map((event, i) => (
+          <ScheduleEvent
+            key={events.length + i}
+            color={colors[crns.indexOf(event.crn)] || '#4a4a4a'}
+            column={i}
+            start={0}
+            length={55 / schedule_length}
+            full={event.seats <= 0}
+          >
+            <span className="course-name">{event.name}</span>
+            <span>{event.hybrid && 'Hybrid '}Online</span>
+            <span>{event.instructor}</span>
+            <div className="seats">
+              <span>{event.seats} Seats</span>
+            </div>
+          </ScheduleEvent>
+        ))}
       </ScheduleCalendar>
+      <ScheduleFooter>
+        <span>{crns.join(', ')}</span>
+        <span>{credits} Credits</span>
+      </ScheduleFooter>
     </ScheduleWrapper>
   );
 }
