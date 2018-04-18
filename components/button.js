@@ -9,11 +9,6 @@ const danger = css`
   color: #b71c1c;
 `;
 
-const selected = css`
-  padding-bottom: 6px;
-  border-bottom: 2px solid #4a4a4a;
-`;
-
 const large = css`
   padding: 12px 16px;
 `;
@@ -58,7 +53,6 @@ export const Button = styled.button`
 
   ${props => props.raised && raised};
   ${props => props.danger && danger};
-  ${props => props.selected && selected};
   ${props => props.large && large};
   ${props => props.primary && primary};
   ${props => props.disabled && disabled};
@@ -74,16 +68,38 @@ export function IconButton({ leftIcon, rightIcon, children, ...props }) {
   );
 }
 
+const error = css`
+  background: #ffcdd2;
+  color: #b71c1c;
+`;
+
+const selected = css`
+  padding-bottom: 6px;
+  border-bottom: 2px solid #4a4a4a;
+`;
+
 const DayButton = Button.extend`
   height: 32px;
   width: 32px;
-  background: #f5f5f5;
   font-size: 12px;
+  background: inherit;
+  color: inherit;
+
+  &:hover {
+    background: inherit;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #8a8a8a;
+  }
+
+  ${props => props.selected && selected};
 `;
 
 const DayPickerWrapper = styled.div`
   display: flex;
   align-items: center;
+  background: #f5f5f5;
+
+  ${props => props.error && error};
 `;
 
 function toggleDay(day, days) {
@@ -96,7 +112,7 @@ function toggleDay(day, days) {
 
 export function DayPicker({ selectedDays, onChange }) {
   return (
-    <DayPickerWrapper>
+    <DayPickerWrapper error={selectedDays.length === 0}>
       {['M', 'T', 'W', 'R', 'F'].map(day => (
         <DayButton
           key={day}
