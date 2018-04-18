@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
-import { Form, Text, RadioGroup, Radio, TextArea } from 'react-form';
+import { Form, Text, TextArea } from 'react-form';
 import axios from 'axios';
 import Head from 'next/head';
 
@@ -18,9 +18,7 @@ const FeedbackForm = styled.form`
   flex-direction: column;
   align-items: flex-start;
 
-  input[type='text'],
-  input[type='email'],
-  input[type='number'],
+  input,
   textarea {
     width: 400px;
     margin-bottom: 16px;
@@ -36,15 +34,6 @@ const FeedbackForm = styled.form`
 const Label = styled.label`
   font-weight: 500;
   margin-bottom: 8px;
-`;
-
-const RadioWrapper = styled.div`
-  display: flex;
-  margin-bottom: 8px;
-
-  input {
-    margin-right: 8px;
-  }
 `;
 
 const SubmitButton = styled.button`
@@ -66,39 +55,6 @@ const SubmitMessage = styled.div`
   font-weight: 500;
   color: #4a4a4a;
 `;
-
-const types = {
-  issue: (
-    <Fragment>
-      <Label>What happened?</Label>
-      <TextArea rows="5" field="issue_description" required />
-      <Label>What courses did you have selected when it happened?</Label>
-      <Text type="text" field="issue_courses" required />
-      <Label>What did you do to cause the issue?</Label>
-      <TextArea rows="5" field="issue_replication" required />
-    </Fragment>
-  ),
-  suggestion: (
-    <Fragment>
-      <Label>Suggestion Name</Label>
-      <Text type="text" field="suggestion_name" required />
-      <Label>Suggestion Description</Label>
-      <TextArea rows="5" field="suggestion_description" required />
-    </Fragment>
-  ),
-  review: (
-    <Fragment>
-      <Label>What would you rate the website out of 5?</Label>
-      <Text type="number" field="review_rating" required />
-      <Label>How was your experience using the website?</Label>
-      <TextArea rows="5" field="review_description" required />
-    </Fragment>
-  )
-};
-
-const initialValues = {
-  type: 'issue'
-};
 
 export default class extends Component {
   state = {
@@ -127,30 +83,15 @@ export default class extends Component {
         {this.state.submitted ? (
           <SubmitMessage>Thanks for the feedback!</SubmitMessage>
         ) : (
-          <Form onSubmit={this.handleSubmit} defaultValues={initialValues}>
+          <Form onSubmit={this.handleSubmit}>
             {form => (
               <FeedbackForm onSubmit={form.submitForm}>
-                <Label>Name</Label>
-                <Text type="text" field="name" required />
-                <Label>Email</Label>
+                <Label>Miami Email</Label>
                 <Text field="email" type="email" required />
-                <Label>Feedback Type</Label>
-                <RadioGroup field="type">
-                  <RadioWrapper>
-                    <Radio value="issue" />
-                    <label>Report Issue</label>
-                  </RadioWrapper>
-                  <RadioWrapper>
-                    <Radio value="suggestion" />
-                    <label>Suggest Feature</label>
-                  </RadioWrapper>
-                  <RadioWrapper>
-                    <Radio value="review" />
-                    <label>Leave Review</label>
-                  </RadioWrapper>
-                </RadioGroup>
-                <br />
-                {types[form.values.type]}
+                <Label>Report an issue</Label>
+                <TextArea field="issue" rows="5" />
+                <Label>Suggest a feature</Label>
+                <TextArea field="feature" rows="5" />
                 <SubmitButton disabled={this.state.submitting} type="submit">
                   Submit Feedback
                 </SubmitButton>

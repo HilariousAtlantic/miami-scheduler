@@ -146,18 +146,20 @@ module.exports = function(db) {
   });
 
   router.post('/feedback', async (req, res) => {
+    const { email, issue, feature } = req.body;
     const msg = {
       to: 'hilariousatlantic@gmail.com',
       from: 'feedback@miamischeduler.com',
-      subject: `${req.body.name} has submitted feedback`,
+      subject: `${email.slice(0, email.indexOf('@'))} has submitted feedback`,
       html: `
-        <strong>Name</strong>
-        <p>${req.body.name}</p>
-
         <strong>Email</strong>
-        <p>${req.body.email}</p>
+        <p>${email}</p>
 
-        ${getMessage(req.body)}
+        <strong>Issue</strong>
+        <p>${issue || 'None'}</p>
+
+        <strong>Feature</strong>
+        <p>${feature || 'None'}</p>
       `
     };
     try {
@@ -219,35 +221,3 @@ module.exports = function(db) {
 
   return router;
 };
-
-function getMessage(body) {
-  switch (body.type) {
-    case 'issue':
-      return `
-        <strong>Issue Description</strong>
-        <p>${body.issue_description}</p>
-
-        <strong>Selected Courses</strong>
-        <p>${body.issue_courses}</p>
-
-        <strong>Replication Steps</strong>
-        <p>${body.issue_replication}</p>
-      `;
-    case 'suggestion':
-      return `
-        <strong>Suggestion Name</strong>
-        <p>${body.suggestion_name}</p>
-
-        <strong>Suggestion Description</strong>
-        <p>${body.suggestion_description}</p>
-      `;
-    case 'review':
-      return `
-        <strong>Rating</strong>
-        <p>${body.review_rating}</p>
-
-        <strong>Description</strong>
-        <p>${body.review_description}</p>
-      `;
-  }
-}
