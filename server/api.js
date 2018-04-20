@@ -114,7 +114,7 @@ module.exports = function(db) {
                   courseSchedule.days &&
                   courseSchedule.startDate &&
                   courseSchedule.endDate &&
-                  courseSchedule.startDate !== courseSection.endDate
+                  courseSchedule.startDate !== courseSchedule.endDate
               )
               .map(courseSchedule => ({
                 days: courseSchedule.days.split(''),
