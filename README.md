@@ -19,8 +19,8 @@ Create a `.env` file in the root with the following:
 ```bash
 DATABASE_HOST=127.0.0.1
 DATABASE_PORT=5432
-DATABASE_NAME=miami_schedueler
-DATABASE_USER=miami_schedueler
+DATABASE_NAME=miami_scheduler
+DATABASE_USER=miami_scheduler
 DATABASE_PASSWORD=
 ```
 Create the database tables and import the data
