@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Head from 'next/head';
 
-import { StoreProvider, withStore } from '../store';
+import { StoreProvider, consume } from '../store';
 import {
   Navbar,
   ScheduleListContainer,
@@ -116,95 +116,116 @@ function GenerationStatus({ status }) {
   );
 }
 
-const ScheduleGenerator = withStore(
-  class extends Component {
-    componentWillMount() {
-      const { actions } = this.props.store;
+class ScheduleGenerator extends Component {
+  componentWillMount() {
+    this.props.onFetchTerms();
+  }
+
+  render() {
+    const {
+      generatingSchedules,
+      generationStatus,
+      generatedSchedules,
+      selectedCourses,
+      filteredSchedules
+    } = this.props;
+    const showGenerationSection =
+      generatingSchedules === selectedCourses.join('');
+    const showFilterSection =
+      !showGenerationSection && generatedSchedules.length > 0;
+    const showGenerationMessage =
+      selectedCourses.length > 0 &&
+      !showFilterSection &&
+      !showGenerationSection;
+    const showScheduleSection =
+      showFilterSection && filteredSchedules.length > 0;
+
+    return (
+      <ScheduleGeneratorWrapper>
+        <Navbar activeLink="generator" />
+        <CourseSection>
+          <SectionHeader>1. Select Courses</SectionHeader>
+          <CourseSelector>
+            <CourseSearchContainer />
+            <TermSelectorContainer />
+            <SearchResultsContainer />
+            <SelectedCoursesContainer />
+          </CourseSelector>
+        </CourseSection>
+
+        {showGenerationSection && (
+          <GenerationSection>
+            <GenerationStatus status={generationStatus} />
+            <span>Generating Schedules ({generationStatus}%)</span>
+          </GenerationSection>
+        )}
+
+        {showFilterSection ? (
+          <Fragment>
+            <FilterSection>
+              <SectionHeader>2. Customize Filters</SectionHeader>
+              <ScheduleFiltersContainer />
+            </FilterSection>
+
+            <ScheduleSection>
+              <SectionHeader>3. Browse Schedules</SectionHeader>
+              {showScheduleSection ? (
+                <Fragment>
+                  <ScheduleListContainer />
+                </Fragment>
+              ) : (
+                <SectionMessage>
+                  There are no schedules that satisfy all of the filters. Try
+                  deleting one until some schedules appear.
+                </SectionMessage>
+              )}
+            </ScheduleSection>
+          </Fragment>
+        ) : (
+          showGenerationMessage && (
+            <SectionMessage>
+              There are no schedules that will work with the selected courses.
+              Try removing one until some schedules appear.
+            </SectionMessage>
+          )
+        )}
+      </ScheduleGeneratorWrapper>
+    );
+  }
+}
+
+function mapStoreToProps(state, actions) {
+  const {
+    generatingSchedules,
+    generationStatus,
+    generatedSchedules,
+    selectedCourses,
+    filteredSchedules
+  } = state;
+  return {
+    generatingSchedules,
+    generationStatus,
+    generatedSchedules,
+    selectedCourses,
+    filteredSchedules,
+    onFetchTerms() {
       actions.fetchTerms();
     }
+  };
+}
 
-    render() {
-      const { state } = this.props.store;
-      const showGenerationSection =
-        state.generatingSchedules === state.selectedCourses.join('');
-      const showFilterSection =
-        !showGenerationSection && state.generatedSchedules.length > 0;
-      const showGenerationMessage =
-        state.selectedCourses.length > 0 &&
-        !showFilterSection &&
-        !showGenerationSection;
-      const showScheduleSection =
-        showFilterSection && state.filteredSchedules.length > 0;
-
-      return (
-        <ScheduleGeneratorWrapper>
-          <Navbar activeLink="generator" />
-          <CourseSection>
-            <SectionHeader>1. Select Courses</SectionHeader>
-            <CourseSelector>
-              <CourseSearchContainer />
-              <TermSelectorContainer />
-              <SearchResultsContainer />
-              <SelectedCoursesContainer />
-            </CourseSelector>
-          </CourseSection>
-
-          {showGenerationSection && (
-            <GenerationSection>
-              <GenerationStatus status={state.generationStatus} />
-              <span>Generating Schedules ({state.generationStatus}%)</span>
-            </GenerationSection>
-          )}
-
-          {showFilterSection ? (
-            <Fragment>
-              <FilterSection>
-                <SectionHeader>2. Customize Filters</SectionHeader>
-                <ScheduleFiltersContainer />
-              </FilterSection>
-
-              <ScheduleSection>
-                <SectionHeader>3. Browse Schedules</SectionHeader>
-                {showScheduleSection ? (
-                  <Fragment>
-                    <ScheduleListContainer />
-                  </Fragment>
-                ) : (
-                  <SectionMessage>
-                    There are no schedules that satisfy all of the filters. Try
-                    deleting one until some schedules appear.
-                  </SectionMessage>
-                )}
-              </ScheduleSection>
-            </Fragment>
-          ) : (
-            showGenerationMessage && (
-              <SectionMessage>
-                There are no schedules that will work with the selected courses.
-                Try removing one until some schedules appear.
-              </SectionMessage>
-            )
-          )}
-        </ScheduleGeneratorWrapper>
-      );
-    }
-  }
-);
+const ConsumedScheduleGenerator = consume(mapStoreToProps)(ScheduleGenerator);
 
 export default function() {
   return (
     <StoreProvider>
-      {() => (
-        <Fragment>
-          <Head>
-            <meta
-              name="description"
-              content="Find the perfect schedule at Miami University. Choose the courses you want to take, and browse through every possible schedule. Use the filters to narrow down your choices to schedules that fit your preferences."
-            />
-          </Head>
-          <ScheduleGenerator />
-        </Fragment>
-      )}
+      <Head>
+        <meta
+          name="description"
+          content="Find the perfect schedule at Miami University. Choose the courses you want to take, and browse through every possible schedule. Use the filters to narrow down your choices to schedules that fit your preferences."
+        />
+      </Head>
+      <ConsumedScheduleGenerator />
     </StoreProvider>
   );
 }

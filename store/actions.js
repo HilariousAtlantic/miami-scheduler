@@ -77,7 +77,7 @@ const filterFunctions = {
   }
 };
 
-export function fetchTerms(getState, setState, getActions) {
+export function fetchTerms(setState, getState, getActions) {
   return async function() {
     const { data } = await axios.get('/api/terms');
     setState({
@@ -89,7 +89,7 @@ export function fetchTerms(getState, setState, getActions) {
   };
 }
 
-export function selectTerm(getState, setState) {
+export function selectTerm(setState, getState) {
   return function(termId) {
     const { selectedTerm } = getState();
     if (selectedTerm !== termId) {
@@ -104,7 +104,7 @@ export function selectTerm(getState, setState) {
   };
 }
 
-export function searchCourses(getState, setState) {
+export function searchCourses(setState, getState) {
   return async function(query) {
     if (!query) {
       setState({
@@ -124,7 +124,7 @@ export function searchCourses(getState, setState) {
   };
 }
 
-export function selectCourse(getState, setState, getActions) {
+export function selectCourse(setState, getState, getActions) {
   return function(course) {
     const { loadingCourses, selectedCourses } = getState();
     if (loadingCourses.concat(selectedCourses).includes(course.code)) {
@@ -147,7 +147,7 @@ export function selectCourse(getState, setState, getActions) {
   };
 }
 
-export function fetchCourse(getState, setState, getActions) {
+export function fetchCourse(setState, getState, getActions) {
   return async function(code) {
     const { data } = await axios.get(`/api/sections?code=${code}`);
     await setState(state => {
@@ -166,7 +166,7 @@ export function fetchCourse(getState, setState, getActions) {
   };
 }
 
-export function deselectCourse(getState, setState, getActions) {
+export function deselectCourse(setState, getState, getActions) {
   return async function(code) {
     await setState(({ selectedCourses }) => {
       if (selectedCourses.includes(code)) {
@@ -185,7 +185,7 @@ export function deselectCourse(getState, setState, getActions) {
   };
 }
 
-export function generateSchedules(getState, setState, getActions) {
+export function generateSchedules(setState, getState, getActions) {
   return async function() {
     const { selectedCourses } = getState();
     setState({
@@ -199,7 +199,7 @@ export function generateSchedules(getState, setState, getActions) {
   };
 }
 
-export function createFilter(getState, setState) {
+export function createFilter(setState, getState) {
   return function(type) {
     setState(({ scheduleFilters }) => {
       const id = Math.max(0, ...scheduleFilters.map(filter => filter.id)) + 1;
@@ -214,7 +214,7 @@ export function createFilter(getState, setState) {
   };
 }
 
-export function updateFilter(getState, setState) {
+export function updateFilter(setState, getState) {
   return function(id, update) {
     setState(({ scheduleFilters }) => {
       return {
@@ -227,7 +227,7 @@ export function updateFilter(getState, setState) {
   };
 }
 
-export function deleteFilter(getState, setState) {
+export function deleteFilter(setState, getState) {
   return async function(id) {
     await setState(({ scheduleFilters }) => {
       return {
@@ -238,7 +238,7 @@ export function deleteFilter(getState, setState) {
   };
 }
 
-export function applyFilters(getState, setState) {
+export function applyFilters(setState, getState) {
   return function() {
     setState(({ generatedSchedules, scheduleFilters }) => {
       return {
@@ -255,7 +255,7 @@ export function applyFilters(getState, setState) {
   };
 }
 
-export function prevSchedule(getState, setState) {
+export function prevSchedule(setState, getState) {
   return function() {
     setState(({ currentSchedule }) => {
       return {
@@ -265,7 +265,7 @@ export function prevSchedule(getState, setState) {
   };
 }
 
-export function nextSchedule(getState, setState) {
+export function nextSchedule(setState, getState) {
   return function() {
     setState(({ currentSchedule, filteredSchedules, scheduleView }) => {
       return {
@@ -275,7 +275,7 @@ export function nextSchedule(getState, setState) {
   };
 }
 
-export function toggleLockedSection(getState, setState) {
+export function toggleLockedSection(setState, getState) {
   return function(crn) {
     setState(state => {
       if (state.lockedSections.includes(crn)) {

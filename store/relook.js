@@ -1,40 +1,25 @@
 import React, { Component } from 'react';
 
-function logAction(key, update) {
+function createLogger(key) {
   const name = key
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, str => str.toUpperCase());
-
-  console.log(
-    `%c${new Date().toLocaleTimeString()} %c${name}`,
-    'color: #BDBDBD',
-    'color: #2E7D32; font-weight: bold',
-    update
-  );
-}
-
-function cacheState(state, cachedKeys) {
-  try {
-    localStorage.setItem(
-      'generatorState',
-      JSON.stringify(
-        cachedKeys.reduce((cache, key) => {
-          return {
-            ...cache,
-            [key]: state[key]
-          };
-        }, {})
-      )
+  return function logger(update) {
+    console.log(
+      `%c${new Date().toLocaleTimeString()} %c${name}`,
+      'color: #BDBDBD',
+      'color: #2E7D32; font-weight: bold',
+      update
     );
-  } catch (e) {}
+  };
 }
 
-function createActions(actionCreators) {
+function createActions(actionCreators, enableLogging) {
   return Object.keys(actionCreators).reduce((actions, key) => {
+    const logger = createLogger(key);
     return {
       ...actions,
       [key]: actionCreators[key](
-        () => this.state,
         update =>
           new Promise((resolve, reject) => {
             this.setState(
@@ -42,7 +27,7 @@ function createActions(actionCreators) {
                 if (typeof update === 'function') {
                   update = update(state);
                 }
-                logAction(key, update);
+                if (enableLogging) logger(update);
                 return update;
               },
               () => {
@@ -50,23 +35,31 @@ function createActions(actionCreators) {
               }
             );
           }),
+        () => this.state,
         () => this.actions
       )
     };
   }, {});
 }
 
-export function createStore(initialState, actionCreators, cachedKeys) {
+const defaultConfig = {
+  enableLogging: false
+};
+
+export function createStore(
+  initialState,
+  actionCreators,
+  config = defaultConfig
+) {
   const { Provider, Consumer } = React.createContext();
 
   class StoreProvider extends Component {
     state = initialState;
-    actions = createActions.call(this, actionCreators);
-    cachedKeys = cachedKeys;
+    actions = createActions.call(this, actionCreators, config.enableLogging);
 
     render() {
       const store = { state: this.state, actions: this.actions };
-      return <Provider value={store}>{this.props.children()}</Provider>;
+      return <Provider value={store}>{this.props.children}</Provider>;
     }
   }
 
@@ -80,17 +73,15 @@ export function createStore(initialState, actionCreators, cachedKeys) {
     }
   }
 
-  function withStore(WrappedComponent) {
-    return function ComponentWithStore(props) {
-      return (
-        <Consumer>
-          {({ state, actions }) => (
-            <WrappedComponent store={{ state, actions }} {...props} />
-          )}
-        </Consumer>
-      );
-    };
+  function consume(mapStoreToProps) {
+    return WrappedComponent => props => (
+      <Consumer>
+        {({ state, actions }) => (
+          <WrappedComponent {...mapStoreToProps(state, actions)} {...props} />
+        )}
+      </Consumer>
+    );
   }
 
-  return { StoreProvider, StoreConsumer, withStore };
+  return { StoreProvider, StoreConsumer, consume };
 }
