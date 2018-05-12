@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+const peristance = {};
+
 function createLogger(key) {
   const name = key
     .replace(/([A-Z])/g, ' $1')
@@ -31,6 +33,7 @@ function createActions(actionCreators, enableLogging) {
                 return update;
               },
               () => {
+                peristance.state = this.state;
                 resolve();
               }
             );
@@ -52,9 +55,10 @@ export function createStore(
   config = defaultConfig
 ) {
   const { Provider, Consumer } = React.createContext();
+  console.log('creating store');
 
   class StoreProvider extends Component {
-    state = initialState;
+    state = peristance.state || initialState;
     actions = createActions.call(this, actionCreators, config.enableLogging);
 
     render() {
