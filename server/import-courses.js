@@ -88,7 +88,7 @@ async function fetchSections(term) {
 
 function extractDescription(section) {
   let desc = section.courseDescription;
-  return desc ? desc.substring(desc.lastIndexOf('\n') + 1) : '';
+  return desc ? desc.substring(desc.trim().lastIndexOf('\n') + 1) : '';
 }
 
 function extractTitle(section) {
