@@ -117,7 +117,7 @@ function GenerationStatus({ status }) {
 }
 
 class ScheduleGenerator extends Component {
-  componentWillMount() {
+  componentDidMount() {
     this.props.onFetchTerms();
   }
 

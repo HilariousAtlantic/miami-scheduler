@@ -4,6 +4,10 @@
   "description": "Web application designed to help students find the perfect schedule at Miami University - Oxford.",
   "author": "Hilarious Atlantic",
   "license": "MIT",
+  "engines": {
+    "node": "v15.3.0",
+    "npm": "7.0.14"
+  },
   "scripts": {
     "dev": "node server/index.js",
     "build": "next build",
@@ -13,17 +17,18 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^6.2.1",
-    "babel-plugin-styled-components": "^1.1.5",
     "axios": "^0.18.0",
+    "babel-plugin-styled-components": "^1.1.5",
+    "babel-runtime": "^6.26.0",
     "body-parser": "^1.18.2",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "lodash": "^4.17.5",
-    "massive": "^4.7.1",
-    "next": "^6.0.0",
+    "massive": "6.8",
+    "next": "^6.1.2",
     "polished": "^1.9.2",
-    "react": "^16.3.0-alpha.3",
-    "react-dom": "^16.3.0-alpha.3",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
     "react-form": "^3.5.1",
     "styled-components": "^3.2.3"
   },
