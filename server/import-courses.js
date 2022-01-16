@@ -6,60 +6,65 @@ const subjects = require('./subjects.json');
 run();
 
 async function run() {
-  try {
-    const terms = await fetchTerms();
-    const courses = await fetchCourses(terms);
-    const db = await connectDatabase();
-    await clearDatabase(db);
-    await db.terms.insert(terms);
-    await db.courses.insert(courses);
-    process.exit();
-  } catch (error) {
-    console.error('Error during import.');
-    console.log(error);
-  }
+  const terms = await fetchTerms();
+  const courses = await fetchCourses(terms);
+  const db = connectDatabase();
+
+  clearDatabase(db);
+  insertTerms(db, terms);
+  insertCourses(db, courses);
+  db.end();
 }
 
-async function clearDatabase(db) {
-  await db.terms.destroy();
-  await db.courses.destroy();
+function clearDatabase(db) {
+  db.query('truncate table terms;');
+  db.query('truncate table courses;');
 }
 
 async function fetchTerms(db) {
-  const formatTerm = term => ({
-    code: term.termId,
-    name: term.name.replace(/ (Semester|Term) /, ' ')
-  });
+  // const formatTerm = term => ({
+  //   code: term.termId,
+  //   name: term.name.replace(/ (Semester|Term) /, ' ')
+  // });
 
-  const res = await axios.get('https://ws.muohio.edu/academicTerms');
-  return res.data.academicTerm
-    .filter(term => term.displayTerm == 'true')
-    .sort((a, b) => b.termId - a.termId)
-    .slice(0, 3)
-    .map(formatTerm);
+  // const res = await axios.get('https://ws.muohio.edu/academicTerms');
+  // return res.data.academicTerm
+  //   .filter(term => term.displayTerm == 'true')
+  //   .sort((a, b) => b.termId - a.termId)
+  //   .slice(0, 3)
+  //   .map(formatTerm);
+  return [{ code: 202220, name: 'Spring Semester 2021-22' }]
 }
 
 async function fetchCourses(terms) {
   const courses = [];
   for (let term of terms) {
     console.log(`Fetching ${term.name} courses...`);
+
     const sections = await fetchSections(term);
     courses.push(...extractCourses(sections));
   }
   return courses;
 }
 
+function insertTerms(db, terms) {
+  db.query('INSERT INTO terms(code, name) VALUES ?', [terms.map((term) => [term.code, term.name])]);
+};
+
+function insertCourses(db, courses) {
+  db.query(`INSERT INTO courses(term, code, subject,
+    number, title, description, searchables) VALUES ?`, [courses]);
+};
+
 function extractCourses(sections) {
   const courses = {};
   for (let section of sections) {
-    const code = `${section.academicTerm}${section.courseSubjectCode}${
-      section.courseNumber
-    }`;
+    const code = `${section.academicTerm}${section.courseSubjectCode}${section.courseNumber}`;
 
     if (courses[code] || !section.courseSchedules.length) continue;
     courses[code] = {
-      code,
       term: section.academicTerm,
+      code,
       subject: section.courseSubjectCode,
       number: section.courseNumber,
       title: extractTitle(section),
@@ -67,15 +72,17 @@ function extractCourses(sections) {
       searchables: extractSearchables(section)
     };
   }
-  return Object.values(courses);
+
+  return Object.values(courses).map((course) =>
+    [course.term, course.code, course.subject, course.number,
+    course.title, course.description, course.searchables]);
 }
 
 async function fetchSections(term) {
   const res = await Promise.all(
     subjects.map(subject =>
       axios.get(
-        `http://ws.miamioh.edu/courseSectionV2/${
-          term.code
+        `http://ws.miamioh.edu/courseSectionV2/${term.code
         }.json?campusCode=O&courseSubjectCode=${subject}`
       )
     )
