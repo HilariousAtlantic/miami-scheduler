@@ -1,0 +1,5 @@
+INSERT INTO courses(term, code, subject, number, title, description, searchables) VALUES
+('202220', '202220AAA211', 'AAA', '211', 'Writing with Purpose',
+'This is an intermediate level course which enables students to investigate and discuss interdisciplinary practices of knowledge creation and dissemination.  Students will practice a variety of writing and other communication strategies necessary for the effective dissemination of ideas to interdisciplinary audiences and the general public, and  can expect to gain experience in working with a wide spectrum of interdisciplinary research, tools and methods while engaging intellectually in interdisciplinary modes of thinking, reading, listening, and speaking. ADVW. Cross-listed with AMS/BWS/LAS/WGS.', 'AAA211 AAA211'),
+('202220', '202220AAA269', 'AAA', '212',
+          'Colonial & Postcolonial Lit', 'Introduction to postcolonial literature and theories of colonial and postcolonial identity. IIB, IIIB. CAS-B-LIT. Cross-listed with ENG 269.', 'AAA269 AAA269');
