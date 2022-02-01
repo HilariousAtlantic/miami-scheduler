@@ -31,8 +31,8 @@ async function fetchTerms(db) {
     name: term.name.replace(/ (Semester|Term) /, ' ')
   });
 
-  const res = await axios.get('https://ws.muohio.edu/academicTerms');
-  return res.data.academicTerm
+  const res = await axios.get('https://ws.miamioh.edu/api/academic/banner/v2/academicTerms');
+  return res.data.data
     .filter(term => term.displayTerm == 'true')
     .sort((a, b) => b.termId - a.termId)
     .slice(0, 3)
