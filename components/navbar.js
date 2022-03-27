@@ -107,14 +107,6 @@ export function Navbar({ activeLink }) {
             Send Feedback
           </a>
         </Link>
-        <Link href="/donate" prefetch>
-          <a>
-            <DonateButton>
-              {VenmoIcon}
-              <span>Donate</span>
-            </DonateButton>
-          </a>
-        </Link>
       </Links>
     </NavbarWrapper>
   );
