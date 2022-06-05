@@ -149,7 +149,7 @@ module.exports = function(db) {
     const { email, issue, feature } = req.body;
     const msg = {
       to: 'hilariousatlantic@gmail.com',
-      from: 'feedback@miamischeduler.com',
+      from: 'hilariousatlantic@gmail.com',
       subject: `${email.slice(0, email.indexOf('@'))} has submitted feedback`,
       html: `
         <strong>Email</strong>
@@ -166,7 +166,7 @@ module.exports = function(db) {
       await sendgrid.send(msg);
       res.sendStatus(201);
     } catch (error) {
-      console.error(e.stack);
+      console.error(error);
       res.sendStatus(500);
     }
   });

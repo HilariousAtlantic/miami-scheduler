@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const next = require('next');
 const { connectDatabase } = require('./database');
 
@@ -16,6 +17,8 @@ async function start() {
   try {
     const server = express();
     const db = await connectDatabase();
+
+    server.use(bodyParser.json())
 
     server.use('/api', require('./api')(db));
 
